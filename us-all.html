@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+
+  <html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PSUdb - Because Efficiency Matters!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="REPLACE ME BEFORE YOU GO LIVE">
+
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  </head>
+
+  <body>
+    <div id="filters">
+      <h1>PSUdb</h1>
+      <hr>
+      ROI Calculator | FAQ | Privacy
+      <hr>
+      <fieldset>
+        <legend>Price source</legend><div>
+          <input type="radio" class="location-radio" id="us" name="location" value="amazon.com" checked />
+          <label for="us">amazon.com</label>
+        </div><div>
+          <input type="radio" class="location-radio" id="location-uk" name="location" value="amazon.co.uk" onclick='redirectPage("uk")'/>
+          <label for="location-uk">amazon.co.uk</label>
+        </div><div>
+          <input type="radio" class="location-radio" id="location-fr" name="location" value="amazon.fr" onclick='redirectPage("fr")'/>
+          <label for="location-fr">amazon.fr</label>
+        </div><div>
+          <input type="radio" class="location-radio" id="location-de" name="location" value="amazon.de" onclick='redirectPage("de")'/>
+          <label for="location-de">amazon.de</label>
+        </div><div>
+          <input type="radio" class="location-radio" id="location-es" name="location" value="amazon.es" onclick='redirectPage("es")'/>
+          <label for="location-es">amazon.es</label>
+        </div><div>
+          <input type="radio" class="location-radio" id="location-it" name="location" value="amazon.it" onclick='redirectPage("it")'/>
+          <label for="location-it">amazon.it</label>
+        </div>
+        </fieldset>
+      <fieldset>
+        <legend>Filters</legend>
+        <label class="cat-label pt-0">Form Factor</label>
+        <div>
+          <input type="checkbox" id="ATX12V" name="ATX12V" value="ATX12V" class="checkbox" checked/>
+          <label for="ATX12V">ATX12V</label>
+        </div>
+        <div>
+          <input type="checkbox" id="SFX-L" name="SFX-L" value="SFX-L" class="checkbox" checked/>
+          <label for="SFX-L">SFX-L</label>
+        </div>
+        <div>
+          <input type="checkbox" id="SFX" name="SFX" value="SFX" class="checkbox" checked/>
+          <label for="SFX">SFX</label>
+        </div>
+        <div>
+          <label for="minWattage" class="cat-label">Minimum wattage</label>
+          <input class="btn" type="button" value="-" onclick="adjustValue('minWattage', -100)"/>
+          <input type="text" id="minWattage" name="name" required minlength="3" maxlength="4" size="5" value="100"/>
+          <input class="btn" type="button" value="+" onclick="adjustValue('minWattage', 100)"/>
+        </div>
+        <div>
+          <label for="maxNoise" class="cat-label">Max average noise</label>
+          <input class="btn" type="button" value="-" onclick="adjustValue('maxNoise', -5)"/>
+          <input type="text" id="maxNoise" name="name" required minlength="0" maxlength="3" size="5" value="50" />db
+          <input class="btn" type="button" value="+" onclick="adjustValue('maxNoise', 5)"/>
+        </div>
+        <label for="maxPrice" class="cat-label">Maximum price</label>
+        <div>
+          <input class="btn" type="button" value="-" onclick="adjustValue('maxPrice', -25)"/>$
+          <input type="text" id="maxPrice" name="name" required minlength="4" maxlength="8" size="6" value="600"/>
+          <input class="btn" type="button" value="+" onclick="adjustValue('maxPrice', 25)"/>
+        </div>
+        <label class="cat-label">Modular?</label>
+        <div>
+          <input type="checkbox" id="ModularYes" name="ModularYes" value="ModularYes" class="checkbox" checked/>
+          <label for="ModularYes">Yes</label>
+        </div>
+        <div>
+          <input type="checkbox" id="ModularNo" name="ModularNo" value="ModularNo" class="checkbox" checked/>
+          <label for="ModularNo">No</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Availability</legend>
+        <div>
+          <input type="checkbox" id="ShowUnavailable" name="ShowUnavailable" value="ShowUnavailable" />
+          <label for="ShowUnavailable">Show unavailable</label>
+        </div>
+      </fieldset>
+
+
+      <hr>
+      <p>As an Amazon Associate, we may earn an affiliate commision from qualifying purchases made from links on this page. There is no additional cost to you.</p>
+      <hr>
+      <p>Updated 02/24/2024, 17:38:06</p>
+    </div>
+    <div id="data">
+      <table cellspacing="0" cellpadding="0" class="dataframe">
+        <thead id="table-header">
+          <tr>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(0,'str');">Brand</a></th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(1,'str');">Model</a></th>
+            <th rowspan="2">Max Watts</th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(3,'num');">Price</a></th>
+            <th colspan="5">Efficiency (%)</th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(9,'str');">Rating</a></th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(10,'num');">Avg Noise</a></th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(11,'num');">Warranty (Years)</a></th>
+            <th rowspan="2">OEM</th>
+            <th colspan="2">Standby Draw</th>
+            <th rowspan="2">Form Factor</th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(16,'str');">Modular</th>
+
+            <th rowspan="2">Report link</th>
+          </tr>
+          <tr class="subheadings">
+            <th><a href="javascript://" onclick = "sortTable(4,'num');"">20W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(5,'num');"">40W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(6,'num');"">60W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(7,'num');"">80W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(8,'num');"">Avg</a></th>
+            <th>115v</th>
+            <th>230v</th>
+          </tr>
+        </thead>
+        <tbody id="main-table">
+          
+  
+    <tr>
+      <td><b>Corsair</b></td>
+      <td>AX1600i (Sample #2)</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>68.46%</td>
+      <td>81.70%</td>
+      <td>85.52%</td>
+      <td>88.18%</td>
+      <td>94.21%</td>
+      <td>Titanium</td>
+      <td>23.70</td>
+      <td>10.0</td>
+      <td>Flextronics</td>
+      <td>0.0732</td>
+      <td>0.0481</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_DNX.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime TX-1300 ATX3.0</td>
+      <td>1300</td>
+      <td>Unavailable</td>
+      <td>67.04%</td>
+      <td>81.46%</td>
+      <td>86.21%</td>
+      <td>88.81%</td>
+      <td>94.04%</td>
+      <td>Titanium</td>
+      <td>11.02</td>
+      <td>12.0</td>
+      <td>Seasonic</td>
+      <td>0.1095</td>
+      <td>0.0192</td>
+      <td>ATX12V</td>
+      <td><span class="warning">✗</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_F3c.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>FSP Technology Inc.</b></td>
+      <td>Hydro Ti Pro 1000W</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>74.49%</td>
+      <td>84.79%</td>
+      <td>89.12%</td>
+      <td>90.79%</td>
+      <td>93.95%</td>
+      <td>Titanium</td>
+      <td>12.65</td>
+      <td>10.0</td>
+      <td>FSP</td>
+      <td>0.1218</td>
+      <td>0.0756</td>
+      <td>ATX12V</td>
+      <td><span class="warning">✗</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_sM2.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Antec</b></td>
+      <td>Signature Titanium 1000W</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>76.61%</td>
+      <td>85.10%</td>
+      <td>88.43%</td>
+      <td>90.33%</td>
+      <td>93.87%</td>
+      <td>Titanium</td>
+      <td>23.28</td>
+      <td>10.0</td>
+      <td>Seasonic</td>
+      <td>0.0935</td>
+      <td>0.0565</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_3Nn.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime TX-1600 ATX3.0</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>60.92%</td>
+      <td>75.41%</td>
+      <td>82.46%</td>
+      <td>86.76%</td>
+      <td>93.87%</td>
+      <td>Titanium</td>
+      <td>20.69</td>
+      <td>12.0</td>
+      <td>Seasonic</td>
+      <td>0.102</td>
+      <td>0.0169</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_pQY.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Corsair</b></td>
+      <td>AX1600i (Sample #3)</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>68.60%</td>
+      <td>81.81%</td>
+      <td>85.52%</td>
+      <td>88.17%</td>
+      <td>93.81%</td>
+      <td>Titanium</td>
+      <td>25.60</td>
+      <td>10.0</td>
+      <td>Flextronics</td>
+      <td>0.0744</td>
+      <td>0.0457</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_MJV.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime Titanium Ultra 1000W (#2)</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>71.08%</td>
+      <td>85.46%</td>
+      <td>89.39%</td>
+      <td>91.00%</td>
+      <td>93.73%</td>
+      <td>Titanium</td>
+      <td>13.16</td>
+      <td>12.0</td>
+      <td>Seasonic</td>
+      <td>0.0841</td>
+      <td>0.0532</td>
+      <td>ATX12V</td>
+      <td><span class="warning">✗</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_LLm.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Wentai</b></td>
+      <td>Aidan 1616W</td>
+      <td>1616</td>
+      <td>Unavailable</td>
+      <td>69.21%</td>
+      <td>80.13%</td>
+      <td>85.29%</td>
+      <td>88.18%</td>
+      <td>93.69%</td>
+      <td>Titanium</td>
+      <td>36.94</td>
+      <td>-</td>
+      <td>Wentai</td>
+      <td>0.0704</td>
+      <td>0.0404</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_fUW.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>be quiet!</b></td>
+      <td>Dark Power 13 850W</td>
+      <td>850</td>
+      <td>Unavailable</td>
+      <td>74.32%</td>
+      <td>83.81%</td>
+      <td>87.22%</td>
+      <td>88.68%</td>
+      <td>93.66%</td>
+      <td>Titanium</td>
+      <td>14.53</td>
+      <td>10</td>
+      <td>FSP</td>
+      <td>0.1464</td>
+      <td>0.0577</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_Rr9.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime PX-1600 ATX 3.0</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>66.63%</td>
+      <td>79.48%</td>
+      <td>85.10%</td>
+      <td>87.91%</td>
+      <td>93.66%</td>
+      <td>Titanium</td>
+      <td>29.52</td>
+      <td>-</td>
+      <td>Seasonic</td>
+      <td>0.1489</td>
+      <td>0.0218</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_q9D.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime Titanium Ultra 1000W</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>70.48%</td>
+      <td>85.35%</td>
+      <td>89.23%</td>
+      <td>90.99%</td>
+      <td>93.64%</td>
+      <td>Titanium</td>
+      <td>19.80</td>
+      <td>-</td>
+      <td>Seasonic</td>
+      <td>0.0841</td>
+      <td>0.0530</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_7md.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>SilverStone</b></td>
+      <td>Nightjar 700W</td>
+      <td>700</td>
+      <td>Unavailable</td>
+      <td>76.83%</td>
+      <td>85.43%</td>
+      <td>88.44%</td>
+      <td>89.81%</td>
+      <td>93.64%</td>
+      <td>Titanium</td>
+      <td>6.00</td>
+      <td>-</td>
+      <td>Seasonic</td>
+      <td>0.0834</td>
+      <td>0.0547</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_BFM.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime TX-1000</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>76.62%</td>
+      <td>85.62%</td>
+      <td>89.23%</td>
+      <td>90.68%</td>
+      <td>93.57%</td>
+      <td>Titanium</td>
+      <td>25.12</td>
+      <td>12</td>
+      <td>Seasonic</td>
+      <td>0.0883</td>
+      <td>0.0553</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_955.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime Fanless TX-700 (#2)</td>
+      <td>700</td>
+      <td>Unavailable</td>
+      <td>76.60%</td>
+      <td>85.77%</td>
+      <td>89.01%</td>
+      <td>90.52%</td>
+      <td>93.51%</td>
+      <td>Titanium</td>
+      <td>6.00</td>
+      <td>12</td>
+      <td>Seasonic</td>
+      <td>0.0978</td>
+      <td>0.0564</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_O6o.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>be quiet!</b></td>
+      <td>Dark Power 13 1000W</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>74.48%</td>
+      <td>84.83%</td>
+      <td>88.43%</td>
+      <td>90.04%</td>
+      <td>93.44%</td>
+      <td>Titanium</td>
+      <td>17.93</td>
+      <td>10</td>
+      <td>FSP</td>
+      <td>0.1628</td>
+      <td>0.068</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_iPc.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>EVGA</b></td>
+      <td>SuperNOVA 1600 T2 (Sample #2)</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>65.17%</td>
+      <td>77.50%</td>
+      <td>82.88%</td>
+      <td>85.58%</td>
+      <td>93.13%</td>
+      <td>Titanium</td>
+      <td>38.16</td>
+      <td>-</td>
+      <td>Super Flower</td>
+      <td>0.2193</td>
+      <td>0.1157</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_g4y.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Micronics</b></td>
+      <td>Wizmax Platinum 1050W</td>
+      <td>1050</td>
+      <td>Unavailable</td>
+      <td>72.13%</td>
+      <td>82.11%</td>
+      <td>85.61%</td>
+      <td>87.52%</td>
+      <td>93.08%</td>
+      <td>Titanium</td>
+      <td>30.12</td>
+      <td>-</td>
+      <td>Huizhou HuiAn Technology</td>
+      <td>0.1101</td>
+      <td>0.0792</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_StT.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime Fanless TX-700</td>
+      <td>700</td>
+      <td>Unavailable</td>
+      <td>77.91%</td>
+      <td>85.78%</td>
+      <td>88.79%</td>
+      <td>90.63%</td>
+      <td>93.05%</td>
+      <td>Titanium</td>
+      <td>6.00</td>
+      <td>-</td>
+      <td>Seasonic</td>
+      <td>0.0835</td>
+      <td>0.0538</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_qm9.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Salcomp</b></td>
+      <td>ATX 1600W</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>63.49%</td>
+      <td>75.47%</td>
+      <td>81.27%</td>
+      <td>84.17%</td>
+      <td>92.96%</td>
+      <td>Titanium</td>
+      <td>41.47</td>
+      <td>-</td>
+      <td>Salcomp</td>
+      <td>0.1436</td>
+      <td>0.032</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_7iD.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Micronics</b></td>
+      <td>Wizmax Platinum 1200W</td>
+      <td>1200</td>
+      <td>Unavailable</td>
+      <td>59.34%</td>
+      <td>80.23%</td>
+      <td>84.75%</td>
+      <td>87.41%</td>
+      <td>92.96%</td>
+      <td>Titanium</td>
+      <td>33.66</td>
+      <td>-</td>
+      <td>Huizhou HuiAn Technology</td>
+      <td>0.1029</td>
+      <td>0.078</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_hfF.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>SilverStone</b></td>
+      <td>Strider Platinum 1000W</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>67.42%</td>
+      <td>78.57%</td>
+      <td>83.36%</td>
+      <td>85.83%</td>
+      <td>92.85%</td>
+      <td>Titanium</td>
+      <td>23.87</td>
+      <td>5</td>
+      <td>Enhance Electronics</td>
+      <td>0.1090</td>
+      <td>0.0729</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_5pL.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>SilverStone</b></td>
+      <td>Strider Platinum 1200W</td>
+      <td>1200</td>
+      <td>Unavailable</td>
+      <td>68.82%</td>
+      <td>79.21%</td>
+      <td>83.80%</td>
+      <td>85.99%</td>
+      <td>92.85%</td>
+      <td>Platinum</td>
+      <td>32.95</td>
+      <td>5</td>
+      <td>Enhance Electronics</td>
+      <td>0.1088</td>
+      <td>0.0738</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_NoA.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>1st Player</b></td>
+      <td>NGDP 1300W</td>
+      <td>1300</td>
+      <td>Unavailable</td>
+      <td>71.59%</td>
+      <td>81.53%</td>
+      <td>85.87%</td>
+      <td>87.92%</td>
+      <td>92.75%</td>
+      <td>Platinum</td>
+      <td>37.28</td>
+      <td>-</td>
+      <td>Helly Technology</td>
+      <td>0.1199</td>
+      <td>0.0758</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_EdT.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>FSP Technology Inc.</b></td>
+      <td>HPT850M Hydro</td>
+      <td>850</td>
+      <td>Unavailable</td>
+      <td>72.10%</td>
+      <td>82.30%</td>
+      <td>85.97%</td>
+      <td>87.96%</td>
+      <td>92.67%</td>
+      <td>Platinum</td>
+      <td>24.90</td>
+      <td>-</td>
+      <td>FSP</td>
+      <td>0.1603</td>
+      <td>0.0551</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_6UD.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Thermaltake</b></td>
+      <td>Toughpower TF1 1550W</td>
+      <td>1550</td>
+      <td>Unavailable</td>
+      <td>67.91%</td>
+      <td>79.88%</td>
+      <td>84.90%</td>
+      <td>87.73%</td>
+      <td>92.67%</td>
+      <td>Titanium</td>
+      <td>36.88</td>
+      <td>-</td>
+      <td>CWT</td>
+      <td>0.0638</td>
+      <td>0.0117</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_hpj.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Seasonic</b></td>
+      <td>Prime Platinum 1000W (#2)</td>
+      <td>1000</td>
+      <td>Unavailable</td>
+      <td>73.75%</td>
+      <td>83.16%</td>
+      <td>87.04%</td>
+      <td>89.01%</td>
+      <td>92.66%</td>
+      <td>Platinum</td>
+      <td>36.91</td>
+      <td>-</td>
+      <td>Seasonic</td>
+      <td>0.0832</td>
+      <td>0.0535</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_zGm.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Super Flower</b></td>
+      <td>Leadex Titanium 1600W</td>
+      <td>1600</td>
+      <td>Unavailable</td>
+      <td>66.84%</td>
+      <td>78.23%</td>
+      <td>83.32%</td>
+      <td>85.93%</td>
+      <td>92.65%</td>
+      <td>Titanium</td>
+      <td>39.79</td>
+      <td>-</td>
+      <td>Super Flower</td>
+      <td>0.2235</td>
+      <td>0.1003</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_rX0.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>be quiet!</b></td>
+      <td>Dark Power Pro 12 1500W</td>
+      <td>1500</td>
+      <td>Unavailable</td>
+      <td>61.20%</td>
+      <td>79.91%</td>
+      <td>85.05%</td>
+      <td>87.81%</td>
+      <td>92.63%</td>
+      <td>Titanium</td>
+      <td>27.78</td>
+      <td>-</td>
+      <td>CWT</td>
+      <td>0.0483</td>
+      <td>0.0324</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_oYq.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Thermaltake</b></td>
+      <td>Toughpower PF1 650W</td>
+      <td>650</td>
+      <td>Unavailable</td>
+      <td>75.26%</td>
+      <td>83.91%</td>
+      <td>87.39%</td>
+      <td>88.82%</td>
+      <td>92.62%</td>
+      <td>Platinum</td>
+      <td>23.08</td>
+      <td>-</td>
+      <td>Jiu Zhou Yang Guang Power Supply (HKC)</td>
+      <td>0.0810</td>
+      <td>0.0563</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_ZH9.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Thermaltake</b></td>
+      <td>Toughpower PF1 750W</td>
+      <td>750</td>
+      <td>Unavailable</td>
+      <td>75.12%</td>
+      <td>83.66%</td>
+      <td>86.97%</td>
+      <td>89.16%</td>
+      <td>92.60%</td>
+      <td>Platinum</td>
+      <td>27.02</td>
+      <td>-</td>
+      <td>Jiu Zhou Yang Guang Power Supply (HKC)</td>
+      <td>0.0774</td>
+      <td>0.0555</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_NZd.pdf'>Cybenetics</a></td>
+    </tr>
+  
+
+        </tbody>
+      </table>
+      <p id="no-results">I'm sorry, no power supplies in this list meet your requirements. Please lower your expectations.</p>
+    </div>
+    <script>
+      let filteredRows = []
+      function sortTable(n, type) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("main-table");
+        switching = true;
+        // Set the sorting direction to ascending:
+        dir = "asc";
+        /* Make a loop that will continue until
+        no switching has been done: */
+        while (switching) {
+          // Start by saying: no switching is done:
+          switching = false;
+          rows = table.rows;
+          /* Loop through all table rows (except the
+          first, which contains table headers): */
+          for (i = 0; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("td")[n];
+            y = rows[i + 1].getElementsByTagName("td")[n];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (type == "str") {
+              if (dir == "asc") {
+                if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) {
+                  // If so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (x.innerText.toLowerCase() < y.innerText.toLowerCase()) {
+                  // If so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+            else if (type == "num") {
+              if (dir == "asc") {
+                if (stripCurrency(x) > stripCurrency(y)) {
+                  // If so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (stripCurrency(x) < stripCurrency(y)) {
+                  // If so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount++;
+          } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+              dir = "desc";
+              switching = true;
+            }
+          }
+        }
+        applyStriping() 
+      }
+
+      function stripCurrency(t) {
+        let toReturn = 0.00
+        if (t.innerText == "-") {
+          toReturn = 0.00
+        }
+        else {
+          toReturn = parseFloat(t.innerText.replace("$", ""))
+        }
+        return toReturn
+      }
+      function filterTable() {
+      filteredRows = []
+      listThreshold(2,"minWattage","above")
+      listThreshold(3,"maxPrice","below")
+      listThreshold(10,"maxNoise","below")
+      if (!document.getElementById("ATX12V").checked) {
+        hasAttribute(15, "ATX12V")
+      }
+      if (!document.getElementById("SFX-L").checked) {
+        hasAttribute(15, "SFX-L")
+      }
+      if (!document.getElementById("SFX").checked) {
+        hasAttribute(15, "SFX")
+      }
+      if (!document.getElementById("ModularYes").checked) {
+        hasAttribute(16, "✓")
+      }
+      if (!document.getElementById("ModularNo").checked) {
+        hasAttribute(16, "✗")
+      }
+      applyFilter()
+      }
+
+      function listThreshold(column, DOMthreshold, belowOrAbove) {
+        let threshold = parseFloat(document.getElementById(DOMthreshold).value)
+        let table = document.getElementById("main-table");
+        let rows = table.rows
+        if (belowOrAbove == "below") {
+        for (i = 0; i < (rows.length); i++) {
+          if (((stripCurrency(rows[i].children[column]))) > threshold) {
+            filteredRows.push(i)
+          }
+        }
+      }
+      else{
+        for (i = 0; i < (rows.length); i++) {
+          if (((stripCurrency(rows[i].children[column]))) < threshold) {
+            filteredRows.push(i)
+          }
+        }
+      }
+      }
+
+      function hasAttribute(column, attribute) {
+        let table = document.getElementById("main-table");
+        let rows = table.rows
+        for (i = 0; i < (rows.length); i++) {
+          console.log(rows[i].children[column].innerText)
+          if (rows[i].children[column].innerText == attribute) {
+            filteredRows.push(i)
+          }
+      }
+    }
+
+      function applyStriping() {
+        let table = document.getElementById("main-table");
+        let rows = table.rows
+        for (i = 0, j =0; i < (rows.length); i++) { 
+          if (rows[i].style.display == "table-row") {
+            if (j % 2 == 0) {
+            rows[i].classList.add("striped")
+            }
+            else {
+              rows[i].classList.remove("striped")
+            }
+            j += 1
+          }
+          else {
+            rows[i].classList.remove("striped")
+          }
+        }
+      }
+      function applyFilter() {
+        let table = document.getElementById("main-table");
+        let rows = table.rows
+        let j = 0
+        for (i = 0; i < (rows.length); i++) {
+          if (filteredRows.includes(i)) {
+            rows[i].style.display = "none";
+          }
+          else {
+            rows[i].style.display = "table-row";
+          }
+        }
+        applyStriping()
+        checkIfNoResults()
+      }
+      function checkIfNoResults() {
+        let table = document.getElementById("main-table");
+        let rows = table.rows
+        if (table.rows.length <= filteredRows.length) {
+          document.getElementById("no-results").classList.add("visible")
+          document.getElementById("table-header").classList.add("invisible")
+        }
+        else {
+          document.getElementById("no-results").classList.remove("visible")
+          document.getElementById("table-header").classList.remove("invisible")
+        }
+      }
+      function adjustValue(target, amount) {
+        document.getElementById(target).value = String(parseFloat(document.getElementById(target).value) + amount) 
+        filterTable()
+      }
+      function redirectPage(loc) {
+        window.location.href = "http://" + document.domain + "/" + loc + ".html"
+      }
+      document.getElementById("minWattage").addEventListener('change', filterTable);
+      document.getElementById("maxPrice").addEventListener('change', filterTable);
+      document.getElementById("maxNoise").addEventListener('change', filterTable);
+      for (i=0; i< document.getElementsByClassName("checkbox").length; i++) {
+        document.getElementsByClassName("checkbox")[i].addEventListener('change', filterTable)
+      }
+      filterTable()
+    </script>
+  </body>

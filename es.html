@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+  <html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PSUdb - Because Efficiency Matters!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="A frequently updated comparison table of PC Power Supply (PSU) efficiency and noise">
+
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  </head>
+
+  <body>
+    <div id="filters">
+      <h1>PSUdb</h1>
+      <hr>
+      <a href="roi.html">ROI Calculator</a> | <a href="faq.html">FAQ</a> | <a href="privacy.html">Privacy</a>
+      <hr>
+      <fieldset>
+        <legend>Price source</legend><select name='location' id ='location' onchange='changeLocation(this)'><option value = uk>amazon.co.uk</option><option value = fr>amazon.fr</option><option value = de>amazon.de</option><option value = es selected>amazon.es</option><option value = it>amazon.it</option></select>
+        </fieldset>
+      <fieldset>
+        <legend>Filters</legend>
+        <label class="cat-label pt-0">Form Factor</label>
+        <div>
+          <input type="checkbox" id="ATX12V" name="ATX12V" value="ATX12V" class="checkbox formFactors" checked/>
+          <label for="ATX12V">ATX12V</label>
+        </div>
+        <div>
+          <input type="checkbox" id="SFX-L" name="SFX-L" value="SFX-L" class="checkbox formFactors" checked/>
+          <label for="SFX-L">SFX-L</label>
+        </div>
+        <div>
+          <input type="checkbox" id="SFX" name="SFX" value="SFX" class="checkbox formFactors" checked/>
+          <label for="SFX">SFX</label>
+        </div>
+        <div>
+          <input type="checkbox" id="FLEX-ATX" name="FLEX-ATX" value="FLEX-ATX" class="checkbox formFactors" checked/>
+          <label for="FLEX-ATX">FLEX-ATX</label>
+        </div>
+        <div>
+          <input type="checkbox" id="1U" name="1U" value="1U" class="checkbox formFactors" checked/>
+          <label for="1U">1U</label>
+        </div>
+        <div>
+          <input type="checkbox" id="2U" name="2U" value="2U" class="checkbox formFactors" checked/>
+          <label for="2U">2U</label>
+        </div>
+        <div>
+          <input type="checkbox" id="PS2" name="PS2" value="PS2" class="checkbox formFactors" checked/>
+          <label for="PS2">PS2</label>
+        </div>
+        <div>
+          <label for="minWattage" class="cat-label">Minimum wattage</label>
+          <input class="btn" type="button" value="-" onclick="adjustValue('minWattage', -100)"/>
+          <input type="text" id="minWattage" name="name" required minlength="3" maxlength="4" size="5" value="100"/>
+          <input class="btn" type="button" value="+" onclick="adjustValue('minWattage', 100)"/>
+        </div>
+        <div>
+          <label for="maxNoise" class="cat-label">Max average noise</label>
+          <input class="btn" type="button" value="-" onclick="adjustValue('maxNoise', -5)"/>
+          <input type="text" id="maxNoise" name="name" required minlength="0" maxlength="3" size="5" value="50" />db
+          <input class="btn" type="button" value="+" onclick="adjustValue('maxNoise', 5)"/>
+        </div>
+        <label for="maxPrice" class="cat-label">Maximum price</label>
+        <div>
+          <input class="btn" type="button" value="-" onclick="adjustValue('maxPrice', -25)"/>€
+          <input type="text" id="maxPrice" name="name" required minlength="4" maxlength="8" size="6" value="600"/>
+          <input class="btn" type="button" value="+" onclick="adjustValue('maxPrice', 25)"/>
+        </div>
+        <label class="cat-label">Modular?</label>
+        <div>
+          <input type="checkbox" id="ModularYes" name="ModularYes" value="ModularYes" class="checkbox isModular" checked/>
+          <label for="ModularYes">Yes</label>
+        </div>
+        <div>
+          <input type="checkbox" id="ModularNo" name="ModularNo" value="ModularNo" class="checkbox isModular" checked/>
+          <label for="ModularNo">No</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Availability</legend>
+        <div>
+          <input type="checkbox" id="ShowUnavailable" name="ShowUnavailable" value="ShowUnavailable" onchange="changeAvailable()"/>
+          <label for="ShowUnavailable">Show unavailable</label>
+        </div>
+      </fieldset>
+
+
+      <hr>
+      <p>As an Amazon Associate, we may earn an affiliate commision from qualifying purchases made from links on this page. There is no additional cost to you.</p>
+      <hr>
+      <p>Updated 03/03/2024, 14:09:48</p>
+    </div>
+    <div id="data">
+      <table cellspacing="0" cellpadding="0" class="dataframe">
+        <thead id="table-header">
+          <tr>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(0,'str');">Brand</a></th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(1,'str');">Model</a></th>
+            <th rowspan="2">Max Watts</th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(3,'num');">Price</a></th>
+            <th colspan="5">Efficiency (%)</th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(9,'str');">Rating</a></th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(10,'num');">Avg Noise</a></th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(11,'num');">Warranty (Years)</a></th>
+            <th rowspan="2">OEM</th>
+            <th colspan="2">Standby Draw</th>
+            <th rowspan="2">Form Factor</th>
+            <th rowspan="2"><a href="javascript://" onclick = "sortTable(16,'str');">Modular</th>
+
+            <th rowspan="2">Report link</th>
+          </tr>
+          <tr class="subheadings">
+            <th><a href="javascript://" onclick = "sortTable(4,'num');"">20W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(5,'num');"">40W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(6,'num');"">60W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(7,'num');"">80W</a></th>
+            <th><a href="javascript://" onclick = "sortTable(8,'num');"">Avg</a></th>
+            <th>115v</th>
+            <th>230v</th>
+          </tr>
+        </thead>
+        <tbody id="main-table">
+          
+  
+    <tr>
+      <td><b>Deepcool</b></td>
+      <td>PX1200G</td>
+      <td>1200.0</td>
+      <td><a class='btn' href = 'https://www.amazon.es/dp/B0BRXTBXJD?tag=psudb0d-21&th=1'>€204,99</a></td>
+      <td>74.97%</td>
+      <td>80.15%</td>
+      <td>84.93%</td>
+      <td>84.95%</td>
+      <td>88.97%</td>
+      <td>Platinum</td>
+      <td>38.64</td>
+      <td>-</td>
+      <td>CWT</td>
+      <td>0.0152</td>
+      <td>nan</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_3Te.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>SilverStone</b></td>
+      <td>SFX Platinum 700W</td>
+      <td>700.0</td>
+      <td><a class='btn' href = 'https://www.amazon.es/dp/B08HNFPY6X?tag=psudb0d-21&th=1'>€186,80</a></td>
+      <td>68.97%</td>
+      <td>79.76%</td>
+      <td>84.13%</td>
+      <td>86.97%</td>
+      <td>92.10%</td>
+      <td>Platinum</td>
+      <td>36.22</td>
+      <td>-</td>
+      <td>High Power</td>
+      <td>0.1452</td>
+      <td>0.0883</td>
+      <td>SFX</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_65N.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Asus</b></td>
+      <td>ROG-LOKI-1200T-SFX-L-GAMING</td>
+      <td>1200.0</td>
+      <td><a class='btn' href = 'https://www.amazon.es/dp/B0C65T6F8N?tag=psudb0d-21&th=1'>€330,26</a></td>
+      <td>75.11%</td>
+      <td>83.45%</td>
+      <td>87.27%</td>
+      <td>89.74%</td>
+      <td>91.76%</td>
+      <td>Titanium</td>
+      <td>34.14</td>
+      <td>-</td>
+      <td>Great Wall</td>
+      <td>0.0533</td>
+      <td>nan</td>
+      <td>SFX-L</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_bUl.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Corsair</b></td>
+      <td>RM850 (2019)</td>
+      <td>850.0</td>
+      <td><a class='btn' href = 'https://www.amazon.es/dp/B07RCKG95L?tag=psudb0d-21&th=1'>€409,20</a></td>
+      <td>79.00%</td>
+      <td>84.18%</td>
+      <td>86.21%</td>
+      <td>86.76%</td>
+      <td>90.64%</td>
+      <td>Gold</td>
+      <td>26.16</td>
+      <td>10</td>
+      <td>CWT</td>
+      <td>0.0756</td>
+      <td>0.0404</td>
+      <td>ATX12V</td>
+      <td><span class="success">✓</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_bBw.pdf'>Cybenetics</a></td>
+    </tr>
+    <tr>
+      <td><b>Corsair</b></td>
+      <td>RM650x (2018)</td>
+      <td>650.0</td>
+      <td><a class='btn' href = 'https://www.amazon.es/dp/B079H6111J?tag=psudb0d-21&th=1'>€369,26</a></td>
+      <td>68.14%</td>
+      <td>79.19%</td>
+      <td>83.87%</td>
+      <td>86.81%</td>
+      <td>88.12%</td>
+      <td>Platinum</td>
+      <td>14.5</td>
+      <td>10</td>
+      <td>CWT</td>
+      <td>0.0339</td>
+      <td>0.0481</td>
+      <td>ATX12V</td>
+      <td><span class="warning">✗</span></td>
+      <td><a href='https://www.cybenetics.com/d/cybenetics_f2m.pdf'>Cybenetics</a></td>
+    </tr>
+  
+
+        </tbody>
+      </table>
+      <p id="no-results">I'm sorry, no power supplies in this list meet your requirements. Please lower your expectations.</p>
+    </div>
+    <script>
+//"http://127.0.0.1/uk.html#sortBy=1&sortType=str&sortOrder=desc&formFactors=ATX12V,SFX-L,SFX&minWattage=200&maxNoise=40&maxPrice=500&isModular=ModularYes,ModularNo"
+
+let queryStringFilters = {}
+
+let filteredRows = []
+function sortTable(n, type, dir = "asc") {
+    queryStringFilters["sortBy"] = n
+    queryStringFilters["sortType"] = type
+    queryStringFilters["sortOrder"] = dir
+    setFiltersToURL()
+    var table, rows, switching, i, x, y, shouldSwitch, switchcount = 0;
+    table = document.getElementById("main-table");
+    switching = true;
+    // Set the sorting direction to ascending:
+    //dir = "asc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 0; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("td")[n];
+            y = rows[i + 1].getElementsByTagName("td")[n];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (type == "str") {
+                if (dir == "asc") {
+                    if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerText.toLowerCase() < y.innerText.toLowerCase()) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            else if (type == "num") {
+                if (dir == "asc") {
+                    if (stripCurrency(x) > stripCurrency(y)) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (stripCurrency(x) < stripCurrency(y)) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+    applyStriping()
+}
+
+function stripCurrency(t) {
+    let toReturn = 0.00
+    if (t.innerText == "-") {
+        toReturn = 0.00
+    }
+    else {
+        toReturn = parseFloat(t.innerText.replace("€", ""))
+    }
+    return toReturn
+}
+function filterTable() {
+    filteredRows = []
+    listThreshold(2, "minWattage", "above")
+    listThreshold(3, "maxPrice", "below")
+    listThreshold(10, "maxNoise", "below")
+    if (!document.getElementById("ATX12V").checked) {
+        hasAttribute(15, "ATX12V")
+    }
+    if (!document.getElementById("SFX-L").checked) {
+        hasAttribute(15, "SFX-L")
+    }
+    if (!document.getElementById("SFX").checked) {
+        hasAttribute(15, "SFX")
+    }
+    if (!document.getElementById("ModularYes").checked) {
+        hasAttribute(16, "✓")
+    }
+    if (!document.getElementById("ModularNo").checked) {
+        hasAttribute(16, "✗")
+    }
+    applyFilter()
+}
+
+function listThreshold(column, DOMthreshold, belowOrAbove) {
+    let threshold = parseFloat(document.getElementById(DOMthreshold).value)
+    let table = document.getElementById("main-table");
+    let rows = table.rows
+    if (belowOrAbove == "below") {
+        for (i = 0; i < (rows.length); i++) {
+            if (((stripCurrency(rows[i].children[column]))) > threshold) {
+                filteredRows.push(i)
+            }
+        }
+    }
+    else {
+        for (i = 0; i < (rows.length); i++) {
+            if (((stripCurrency(rows[i].children[column]))) < threshold) {
+                filteredRows.push(i)
+            }
+        }
+    }
+}
+
+function hasAttribute(column, attribute) {
+    let table = document.getElementById("main-table");
+    let rows = table.rows
+    for (i = 0; i < (rows.length); i++) {
+        console.log(rows[i].children[column].innerText)
+        if (rows[i].children[column].innerText == attribute) {
+            filteredRows.push(i)
+        }
+    }
+}
+
+function applyStriping() {
+    let table = document.getElementById("main-table");
+    let rows = table.rows
+    for (i = 0, j = 0; i < (rows.length); i++) {
+        if (rows[i].style.display == "table-row") {
+            if (j % 2 == 0) {
+                rows[i].classList.add("striped")
+            }
+            else {
+                rows[i].classList.remove("striped")
+            }
+            j += 1
+        }
+        else {
+            rows[i].classList.remove("striped")
+        }
+    }
+}
+function applyFilter() {
+    let table = document.getElementById("main-table");
+    let rows = table.rows
+    let j = 0
+    for (i = 0; i < (rows.length); i++) {
+        if (filteredRows.includes(i)) {
+            rows[i].style.display = "none";
+        }
+        else {
+            rows[i].style.display = "table-row";
+        }
+    }
+    applyStriping()
+    checkIfNoResults()
+}
+function checkIfNoResults() {
+    let table = document.getElementById("main-table");
+    let rows = table.rows
+    if (table.rows.length <= filteredRows.length) {
+        document.getElementById("no-results").classList.add("visible")
+        document.getElementById("table-header").classList.add("invisible")
+    }
+    else {
+        document.getElementById("no-results").classList.remove("visible")
+        document.getElementById("table-header").classList.remove("invisible")
+    }
+}
+function adjustValue(target, amount) {
+    document.getElementById(target).value = String(parseFloat(document.getElementById(target).value) + amount)
+    filterTable()
+}
+function changeLocation(loc) {
+    if (window.location.href.includes("-all")) {
+        window.location.href = "http://" + document.domain + "/" + loc.value + "-all.html" + window.location.hash
+    }
+    else {
+        window.location.href = "http://" + document.domain + "/" + loc.value + ".html" + window.location.hash
+    }
+}
+
+function changeAvailable() {
+    if (document.getElementById("ShowUnavailable").checked) {
+        if (!window.location.href.includes("-all")) {
+            toRedirect = window.location.href.replace('.html', '-all.html')
+            window.location.href = toRedirect + window.location.hash
+        }
+    }
+    else {
+        if (window.location.href.includes("-all")) {
+            toRedirect = window.location.href.replace('-all.html', '.html')
+            window.location.href = toRedirect + window.location.hash
+        }
+    }
+}
+function filterAndUpdateUrl() {
+    console.log("filtering by URL")
+    filterTable()
+    setFiltersToURL()
+}
+
+function getFiltersFromURL() {
+    var hash = window.location.hash.replace('#', '').split('&');
+    var hashArray = {}
+    for (var x = 0; x < hash.length; x++) {
+        var itemArray = hash[x].split('=');
+        var item = new Object();
+        item.key = itemArray[0];
+        if (itemArray[0] == "isModular" || itemArray[0] == "formFactors") {
+            hashArray[itemArray[0]] = itemArray[1].split(',');
+        }
+        else {
+            hashArray[itemArray[0]] = itemArray[1]
+        }
+        //hashArray.push(item);
+    }
+
+    //console.log(hashArray)
+    var toCheck = []
+    var toUncheck = []
+    for (key in hashArray) {
+        if (Array.isArray(hashArray[key])) {
+            //to add - an array of to check/uncheck?
+            if ('formFactors' in hashArray) {
+                for (let i = 0; i < document.getElementsByClassName("formFactors").length; i++) {
+                    toUncheck.push(document.getElementsByClassName("formFactors")[i])
+                }
+            }
+            if ('isModular' in hashArray) {
+                for (let i = 0; i < document.getElementsByClassName("isModular").length; i++) {
+                    toUncheck.push(document.getElementsByClassName("isModular")[i])
+                }
+            }
+            for (let i = 0; i < hashArray[key].length; i++) {
+                if (document.getElementById(hashArray[key][i])) {
+                    console.log(hashArray[key][i])
+                    if (toUncheck.includes(document.getElementById(hashArray[key][i]))) {
+                        //toUncheck.splice(toUncheck.indexOf(document.getElementById(hashArray[key][i]), 1))
+                    }
+                    toCheck.push(document.getElementById(hashArray[key][i]))
+
+                }
+            }
+
+        }
+
+        else if ((document.getElementById(key))) {
+            document.getElementById(key).value = hashArray[key]
+        }
+        for (let i = 0; i < toUncheck.length; i++) {
+            toUncheck[i].checked = false
+        }
+        for (let i = 0; i < toCheck.length; i++) {
+            toCheck[i].checked = true
+        }
+        filterTable()
+        if ('sortBy' in hashArray && 'sortType' in hashArray && 'sortOrder' in hashArray) {
+            //console.log
+            sortTable(Number(hashArray.sortBy), hashArray.sortType, hashArray.sortOrder)
+        }
+    }
+
+}
+
+function setFiltersToURL() {
+
+    queryStringFilters["formFactors"] = []
+    for (let i = 0; i < document.getElementsByClassName("formFactors").length; i++) {
+        if (document.getElementsByClassName("formFactors")[i].checked) {
+            queryStringFilters.formFactors.push(document.getElementsByClassName("formFactors")[i].id)
+        }
+    }
+    queryStringFilters["isModular"] = []
+    for (let i = 0; i < document.getElementsByClassName("isModular").length; i++) {
+        if (document.getElementsByClassName("isModular")[i].checked) {
+            queryStringFilters.isModular.push(document.getElementsByClassName("isModular")[i].id)
+        }
+    }
+
+    queryStringFilters["minWattage"] = document.getElementById("minWattage").value
+    queryStringFilters["maxNoise"] = document.getElementById("maxNoise").value
+    queryStringFilters["maxPrice"] = document.getElementById("maxPrice").value
+    queryString = ""
+    for (key in queryStringFilters) {
+        queryString += key + "=" + queryStringFilters[key] + "&"
+    }
+
+    window.location.hash = queryString
+}
+
+getFiltersFromURL()
+
+if (window.location.hash == "") {
+    filterTable()
+}
+
+document.getElementById("minWattage").addEventListener('change', filterAndUpdateUrl);
+document.getElementById("maxPrice").addEventListener('change', filterAndUpdateUrl);
+document.getElementById("maxNoise").addEventListener('change', filterAndUpdateUrl);
+for (i = 0; i < document.getElementsByClassName("checkbox").length; i++) {
+    document.getElementsByClassName("checkbox")[i].addEventListener('change', filterAndUpdateUrl)
+}
+    </script>
+    <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+  </body>
