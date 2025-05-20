@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMDRGB test 1</title>
+    <style>
+        body { font-family: Arial; text-align: center; margin-top: 50px; }
+        #colorPicker { margin: 20px; width: 100px; height: 100px; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>ESP32 LED Control</h1>
+    <input type="color" id="colorPicker" value="#ff0000">
+    <br>
+    <button id="connectBtn">Connect & Send Color</button>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const connectBtn = document.getElementById('connectBtn');
+        let device, characteristic;
+
+        connectBtn.addEventListener('click', async () => {
+            try {
+                // 1. Connect to BLE Device
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: "ESP32-LED-Control" }],
+                    optionalServices: [0x4fafc201, 0x1fb5, 0x459e, 0x8fcc, 0xc5c9c331914b] // Same as SERVICE_UUID
+                });
+                
+                const server = await device.gatt.connect();
+                
+                // 2. Get Service & Characteristic
+                const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+                characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+                
+                connectBtn.textContent = "Connected!";
+                connectBtn.style.background = "#4CAF50";
+                
+                // 3. Send color when picker changes
+                colorPicker.addEventListener('input', sendColor);
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Connection failed: " + error.message);
+            }
+        });
+
+        function sendColor() {
+            if (!characteristic) return;
+            
+            // Convert hex color (e.g. #FF00FF) to RGB bytes
+            const hex = colorPicker.value.slice(1); // Remove '#'
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            // Send as 3-byte array
+            characteristic.writeValue(new Uint8Array([r, g, b]));
+        }
+    </script>
+</body>
+</html>
