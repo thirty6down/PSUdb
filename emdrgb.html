@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>EMDRGB</title>
+    <title>ESP32 LED Control</title>
     <style>
         body { font-family: Arial; text-align: center; margin-top: 30px; }
         button { 
@@ -12,45 +12,62 @@
             border-radius: 5px;
             color: white;
             cursor: pointer;
+            min-width: 120px;
         }
-        #status { margin: 20px; font-weight: bold; }
+        #status { 
+            margin: 20px; 
+            font-weight: bold;
+            min-height: 24px;
+        }
+        #connectBtn {
+            background: #333;
+            color: white;
+            margin-bottom: 30px;
+        }
         #red { background-color: #ff0000; }
         #green { background-color: #00ff00; }
         #blue { background-color: #0000ff; }
-        #yellow { background-color: #ffff00; }
+        #yellow { background-color: #ffff00; color: black; }
         #purple { background-color: #800080; }
         #orange { background-color: #ffa500; }
         #rainbow { 
             background: linear-gradient(to right, red, orange, yellow, green, blue, purple);
             color: black;
         }
+        .color-buttons { display: none; }
     </style>
 </head>
 <body>
     <h1>EMD<font color="#f00">R</font><font color="#0f0">G</font><font color="#00f">B</font></h1>
+
     
-    <div>
-        <button id="red">Red</button>
-        <button id="green">Green</button>
-        <button id="blue">Blue</button>
-    </div>
-    <div>
-        <button id="yellow">Yellow</button>
-        <button id="purple">Purple</button>
-        <button id="orange">Orange</button>
-    </div>
-    <div>
-        <button id="rainbow">Rainbow Mode</button>
-    </div>
+    <button id="connectBtn">Connect to ESP32</button>
+    <div id="status">Press "Connect" to begin</div>
     
-    <div id="status">Disconnected</div>
+    <div class="color-buttons">
+        <div>
+            <button id="red">Red</button>
+            <button id="green">Green</button>
+            <button id="blue">Blue</button>
+        </div>
+        <div>
+            <button id="yellow">Yellow</button>
+            <button id="purple">Purple</button>
+            <button id="orange">Orange</button>
+        </div>
+        <div>
+            <button id="rainbow">Rainbow Mode</button>
+        </div>
+    </div>
 
     <script>
         const statusDiv = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const colorButtons = document.querySelector('.color-buttons');
         let device, characteristic;
         let rainbowInterval = null;
         
-        // Color buttons (R and G are swapped to match ESP32)
+        // Color definitions (R and G swapped to match ESP32)
         const colors = {
             red: [255, 0, 0],
             green: [0, 255, 0],
@@ -60,27 +77,38 @@
             orange: [255, 165, 0]
         };
 
-        // Connect to ESP32
-        async function connect() {
+        // Connect to ESP32 - now triggered by button click
+        async function connectToDevice() {
             try {
-                statusDiv.textContent = "Connecting...";
+                statusDiv.textContent = "Searching for device...";
+                statusDiv.style.color = "black";
+                
                 device = await navigator.bluetooth.requestDevice({
                     filters: [{ name: "ESP32-LED-Control" }],
                     optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
                 });
                 
+                statusDiv.textContent = "Connecting...";
                 const server = await device.gatt.connect();
+                
+                statusDiv.textContent = "Accessing service...";
                 const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+                
+                statusDiv.textContent = "Accessing characteristic...";
                 characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
-                statusDiv.textContent = "Connected!";
-                Object.keys(colors).forEach(color => {
-                    document.getElementById(color).disabled = false;
-                });
-                document.getElementById('rainbow').disabled = false;
+                // Success - show color buttons
+                connectBtn.style.display = 'none';
+                colorButtons.style.display = 'block';
+                statusDiv.textContent = "Connected! Choose a color:";
+                statusDiv.style.color = "green";
+                
+                // Set default color
+                sendColor(0, 0, 255); // Blue
                 
             } catch (error) {
                 statusDiv.textContent = `Error: ${error.message}`;
+                statusDiv.style.color = "red";
                 console.error(error);
             }
         }
@@ -88,6 +116,7 @@
         // Send color to ESP32 (with R and G swapped)
         function sendColor(r, g, b) {
             if (!characteristic) return;
+            stopRainbow();
             characteristic.writeValue(new Uint8Array([g, r, b])); // SWAPPED R and G
         }
 
@@ -98,7 +127,7 @@
                 const r = Math.floor(Math.sin(hue) * 127 + 128);
                 const g = Math.floor(Math.sin(hue + 2) * 127 + 128);
                 const b = Math.floor(Math.sin(hue + 4) * 127 + 128);
-                sendColor(r, g, b);
+                characteristic.writeValue(new Uint8Array([g, r, b])); // SWAPPED R and G
                 hue += 0.05;
             }, 50);
         }
@@ -107,13 +136,15 @@
             if (rainbowInterval) {
                 clearInterval(rainbowInterval);
                 rainbowInterval = null;
+                document.getElementById('rainbow').textContent = "Rainbow Mode";
             }
         }
 
         // Event listeners
-        document.querySelectorAll('button:not(#rainbow)').forEach(button => {
+        connectBtn.addEventListener('click', connectToDevice);
+        
+        document.querySelectorAll('button:not(#connectBtn):not(#rainbow)').forEach(button => {
             button.addEventListener('click', () => {
-                stopRainbow();
                 const color = colors[button.id];
                 sendColor(color[0], color[1], color[2]);
             });
@@ -122,16 +153,12 @@
         document.getElementById('rainbow').addEventListener('click', function() {
             if (rainbowInterval) {
                 stopRainbow();
-                this.textContent = "Rainbow Mode";
             } else {
                 startRainbow();
                 this.textContent = "Stop Rainbow";
             }
         });
-
-        // Initial connect
-        connect();
     </script>
-    v2
+    v3
 </body>
 </html>
