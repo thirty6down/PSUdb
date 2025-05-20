@@ -3,81 +3,135 @@
 <head>
     <title>EMDRGB</title>
     <style>
-        body { font-family: Arial; text-align: center; margin-top: 50px; }
-        #colorPicker { margin: 20px; width: 100px; height: 100px; }
-        button { padding: 10px 20px; font-size: 16px; }
-        #status { color: red; margin-top: 20px; }
+        body { font-family: Arial; text-align: center; margin-top: 30px; }
+        button { 
+            padding: 15px 25px; 
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        #status { margin: 20px; font-weight: bold; }
+        #red { background-color: #ff0000; }
+        #green { background-color: #00ff00; }
+        #blue { background-color: #0000ff; }
+        #yellow { background-color: #ffff00; }
+        #purple { background-color: #800080; }
+        #orange { background-color: #ffa500; }
+        #rainbow { 
+            background: linear-gradient(to right, red, orange, yellow, green, blue, purple);
+            color: black;
+        }
     </style>
 </head>
 <body>
     <h1>EMD<font color="#f00">R</font><font color="#0f0">G</font><font color="#00f">B</font></h1>
-    <input type="color" id="colorPicker" value="#ff0000" disabled>
-    <br>
-    <button id="connectBtn">Connect to ESP32</button>
-    <div id="status"></div>
+    
+    <div>
+        <button id="red">Red</button>
+        <button id="green">Green</button>
+        <button id="blue">Blue</button>
+    </div>
+    <div>
+        <button id="yellow">Yellow</button>
+        <button id="purple">Purple</button>
+        <button id="orange">Orange</button>
+    </div>
+    <div>
+        <button id="rainbow">Rainbow Mode</button>
+    </div>
+    
+    <div id="status">Disconnected</div>
 
     <script>
-        const colorPicker = document.getElementById('colorPicker');
-        const connectBtn = document.getElementById('connectBtn');
         const statusDiv = document.getElementById('status');
+        let device, characteristic;
+        let rainbowInterval = null;
         
-        // Service UUIDs (must match ESP32 code)
-        const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-        const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+        // Color buttons (R and G are swapped to match ESP32)
+        const colors = {
+            red: [255, 0, 0],
+            green: [0, 255, 0],
+            blue: [0, 0, 255],
+            yellow: [255, 255, 0],
+            purple: [128, 0, 128],
+            orange: [255, 165, 0]
+        };
 
-        connectBtn.addEventListener('click', async () => {
+        // Connect to ESP32
+        async function connect() {
             try {
-                statusDiv.textContent = 'Searching for device...';
-                statusDiv.style.color = 'black';
-                
-                // Request device with service UUID explicitly listed
-                const device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: 'ESP32-LED-Control' }],
-                    optionalServices: [SERVICE_UUID]  // <<-- CRITICAL FIX
+                statusDiv.textContent = "Connecting...";
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: "ESP32-LED-Control" }],
+                    optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
                 });
                 
-                statusDiv.textContent = 'Connecting...';
                 const server = await device.gatt.connect();
+                const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+                characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
-                statusDiv.textContent = 'Accessing service...';
-                const service = await server.getPrimaryService(SERVICE_UUID);
-                
-                statusDiv.textContent = 'Accessing characteristic...';
-                const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
-                
-                // Enable controls
-                colorPicker.disabled = false;
-                connectBtn.textContent = 'Connected!';
-                connectBtn.style.backgroundColor = '#4CAF50';
-                statusDiv.textContent = 'Ready! Change color below:';
-                statusDiv.style.color = 'green';
-                
-                // Send color updates
-                colorPicker.addEventListener('input', () => {
-                    const hex = colorPicker.value.slice(1); // Remove #
-                    const rgb = [
-                        parseInt(hex.substr(0, 2), 16),
-                        parseInt(hex.substr(2, 2), 16),
-                        parseInt(hex.substr(4, 2), 16)
-                    ];
-                    characteristic.writeValue(new Uint8Array(rgb));
+                statusDiv.textContent = "Connected!";
+                Object.keys(colors).forEach(color => {
+                    document.getElementById(color).disabled = false;
                 });
-                
-                // Send initial color
-                colorPicker.dispatchEvent(new Event('input'));
+                document.getElementById('rainbow').disabled = false;
                 
             } catch (error) {
                 statusDiv.textContent = `Error: ${error.message}`;
-                statusDiv.style.color = 'red';
-                console.error('Bluetooth error:', error);
+                console.error(error);
+            }
+        }
+
+        // Send color to ESP32 (with R and G swapped)
+        function sendColor(r, g, b) {
+            if (!characteristic) return;
+            characteristic.writeValue(new Uint8Array([g, r, b])); // SWAPPED R and G
+        }
+
+        // Rainbow effect
+        function startRainbow() {
+            let hue = 0;
+            rainbowInterval = setInterval(() => {
+                const r = Math.floor(Math.sin(hue) * 127 + 128);
+                const g = Math.floor(Math.sin(hue + 2) * 127 + 128);
+                const b = Math.floor(Math.sin(hue + 4) * 127 + 128);
+                sendColor(r, g, b);
+                hue += 0.05;
+            }, 50);
+        }
+
+        function stopRainbow() {
+            if (rainbowInterval) {
+                clearInterval(rainbowInterval);
+                rainbowInterval = null;
+            }
+        }
+
+        // Event listeners
+        document.querySelectorAll('button:not(#rainbow)').forEach(button => {
+            button.addEventListener('click', () => {
+                stopRainbow();
+                const color = colors[button.id];
+                sendColor(color[0], color[1], color[2]);
+            });
+        });
+
+        document.getElementById('rainbow').addEventListener('click', function() {
+            if (rainbowInterval) {
+                stopRainbow();
+                this.textContent = "Rainbow Mode";
+            } else {
+                startRainbow();
+                this.textContent = "Stop Rainbow";
             }
         });
 
-        // Check for Web Bluetooth support
-        if (!navigator.bluetooth) {
-            statusDiv.textContent = 'Web Bluetooth not supported. Use Chrome/Edge on desktop or Android.';
-        }
+        // Initial connect
+        connect();
     </script>
-    v1
+    v2
 </body>
 </html>
