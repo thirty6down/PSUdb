@@ -1,61 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>EMDRGB test 1</title>
+    <title>EMDRGB</title>
     <style>
         body { font-family: Arial; text-align: center; margin-top: 50px; }
         #colorPicker { margin: 20px; width: 100px; height: 100px; }
         button { padding: 10px 20px; font-size: 16px; }
+        #status { color: red; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <h1>ESP32 LED Control</h1>
-    <input type="color" id="colorPicker" value="#ff0000">
+    <h1>EMD<font color="#f00">R</font><font color="#0f0">G</font><font color="#00f">B</font></h1>
+    <input type="color" id="colorPicker" value="#ff0000" disabled>
     <br>
-    <button id="connectBtn">Connect & Send Color</button>
+    <button id="connectBtn">Connect to ESP32</button>
+    <div id="status"></div>
 
     <script>
         const colorPicker = document.getElementById('colorPicker');
         const connectBtn = document.getElementById('connectBtn');
-        let device, characteristic;
+        const statusDiv = document.getElementById('status');
+        
+        // Service UUIDs (must match ESP32 code)
+        const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+        const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 
         connectBtn.addEventListener('click', async () => {
             try {
-                // 1. Connect to BLE Device
-                device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: "ESP32-LED-Control" }],
-                    optionalServices: [0x4fafc201, 0x1fb5, 0x459e, 0x8fcc, 0xc5c9c331914b] // Same as SERVICE_UUID
+                statusDiv.textContent = 'Searching for device...';
+                statusDiv.style.color = 'black';
+                
+                // Request device with service UUID explicitly listed
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: 'ESP32-LED-Control' }],
+                    optionalServices: [SERVICE_UUID]  // <<-- CRITICAL FIX
                 });
                 
+                statusDiv.textContent = 'Connecting...';
                 const server = await device.gatt.connect();
                 
-                // 2. Get Service & Characteristic
-                const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
-                characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+                statusDiv.textContent = 'Accessing service...';
+                const service = await server.getPrimaryService(SERVICE_UUID);
                 
-                connectBtn.textContent = "Connected!";
-                connectBtn.style.background = "#4CAF50";
+                statusDiv.textContent = 'Accessing characteristic...';
+                const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
                 
-                // 3. Send color when picker changes
-                colorPicker.addEventListener('input', sendColor);
+                // Enable controls
+                colorPicker.disabled = false;
+                connectBtn.textContent = 'Connected!';
+                connectBtn.style.backgroundColor = '#4CAF50';
+                statusDiv.textContent = 'Ready! Change color below:';
+                statusDiv.style.color = 'green';
+                
+                // Send color updates
+                colorPicker.addEventListener('input', () => {
+                    const hex = colorPicker.value.slice(1); // Remove #
+                    const rgb = [
+                        parseInt(hex.substr(0, 2), 16),
+                        parseInt(hex.substr(2, 2), 16),
+                        parseInt(hex.substr(4, 2), 16)
+                    ];
+                    characteristic.writeValue(new Uint8Array(rgb));
+                });
+                
+                // Send initial color
+                colorPicker.dispatchEvent(new Event('input'));
+                
             } catch (error) {
-                console.error("Error:", error);
-                alert("Connection failed: " + error.message);
+                statusDiv.textContent = `Error: ${error.message}`;
+                statusDiv.style.color = 'red';
+                console.error('Bluetooth error:', error);
             }
         });
 
-        function sendColor() {
-            if (!characteristic) return;
-            
-            // Convert hex color (e.g. #FF00FF) to RGB bytes
-            const hex = colorPicker.value.slice(1); // Remove '#'
-            const r = parseInt(hex.substring(0, 2), 16);
-            const g = parseInt(hex.substring(2, 4), 16);
-            const b = parseInt(hex.substring(4, 6), 16);
-            
-            // Send as 3-byte array
-            characteristic.writeValue(new Uint8Array([r, g, b]));
+        // Check for Web Bluetooth support
+        if (!navigator.bluetooth) {
+            statusDiv.textContent = 'Web Bluetooth not supported. Use Chrome/Edge on desktop or Android.';
         }
     </script>
+    v1
 </body>
 </html>
