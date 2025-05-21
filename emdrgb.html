@@ -80,6 +80,279 @@
         #pink { background: linear-gradient(to bottom right, #ff69b4, #cc5490); }
         #teal { background: linear-gradient(to bottom right, #008080, #006666); }
         #white { background: linear-gradient(to bottom right, #ffffff, #dddddd); color: #333; }
+        .effect-btn {
+            grid-column: span 3;
+            text-shadow: 0 0 5px rgba(0,0,0,0.7);
+            font-size: 1.2em;
+        }
+        #rainbow { 
+            background: linear-gradient(to right, 
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
+            );
+        }
+        #bounce {
+            background: linear-gradient(to right, #4b0082, #0000ff, #4b0082);
+        }
+        #off {
+            background: #333;
+        }
+        .slider-container {
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 10px;
+            background: #333;
+            outline: none;
+            margin: 20px 0;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        label {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .bounce-controls {
+            display: none;
+            background: rgba(50, 50, 80, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 120px;
+            margin: 10px;
+        }
+        .color-wheel {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: conic-gradient(
+                red, orange, yellow, green, blue, indigo, violet, red
+            );
+            position: relative;
+            cursor: pointer;
+            border: 3px solid #444;
+        }
+        .color-wheel-selector {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid white;
+            background: transparent;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESP32 WS2812B Controller</h1>
+
+        <button id="connectBtn">Connect to LED Controller</button>
+        <div id="status">Press "Connect" to begin</div>
+        
+        <div id="controls" class="controls-container">
+            <div class="slider-container">
+                <label for="brightness">Master Brightness</label>
+                <input type="range" min="1" max="255" value="150" class="slider" id="brightness">
+            </div>
+            
+            <div class="color-grid">
+                <button id="red" class="color-btn">Red</button>
+                <button id="green" class="color-btn">Green</button>
+                <button id="blue" class="color-btn">Blue</button>
+                <button id="yellow" class="color-btn">Yellow</button>
+                <button id="purple" class="color-btn">Purple</button>
+                <button id="orange" class="color-btn">Orange</button>
+                <button id="pink" class="color-btn">Pink</button>
+                <button id="teal" class="color-btn">Teal</button>
+                <button id="white" class="color-btn">White</button>
+                
+                <button id="rainbow" class="color-btn effect-btn">Rainbow Effect</button>
+                <button id="bounce" class="color-btn effect-btn">Bounce Effect</button>
+                <button id="off" class="color-btn effect-btn">Turn Off</button>
+            </div>
+            
+            <!-- Bounce effect controls -->
+            <div id="bounceControls" class="bounce-controls">
+                <h3>Bounce Effect Settings</h3>
+                <div class="flex-row">
+                    <div class="control-group">
+                        <label for="bounceSize">Light Size</label>
+                        <input type="range" min="1" max="10" value="3" class="slider" id="bounceSize">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="bounceSpeed">Speed</label>
+                        <input type="range" min="1" max="50" value="10" class="slider" id="bounceSpeed">
+                        <span id="speedValue">10 ms</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Color</label>
+                    <div class="color-wheel" id="colorWheel">
+                        <div class="color-wheel-selector" id="colorSelector"></div>
+                    </div>
+                </div>
+                
+                <button id="applyBounce" style="background: #4CAF50; margin-top: 20px;">Apply Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const controlsDiv = document.getElementById('controls');
+        const brightnessSlider = document.getElementById('brightness');
+        const bounceControls = document.getElementById('bounceControls');
+        const bounceSizeSlider = document.getElementById('bounceSize');
+        const bounceSpeedSlider = document.getElementById('bounceSpeed');
+        const speedValue = document.getElementById('speedValue');
+        const colorWheel = document.getElementById('colorWheel');
+        const colorSelector = document.getElementById('colorSelector');
+        
+        let device, ledCharacteristic;
+        let selectedHue = 0; // Default hue
+        let colorWheelActive = false;
+        
+        // Color definitions
+        const colors = {
+            red: [255, 0, 0],
+            green: [0, 255, 0],
+            blue: [0, 0, 255],
+            yellow: [255, 255, 0],
+            purple: [128, 0, 128],
+            orange: [255, 165, 0],
+            pink: [255, 105, 180],
+            teal: [0, 128, 128],
+            white: [255, 255, 255]
+        };
+
+        // Initialize color wheel selector position
+        updateColorWheelSelector(0);
+
+        // Connect to ESP32
+        async function connectToDevice() {
+            try {
+                statusDiv.textContent = "Searching for device...";
+                statusDiv.style.color = "yellow";
+                
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: "ESP32-LED-Controller" }],
+                    optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
+                <!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 LED Controller</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin-top: 30px; 
+            background: #000; 
+            color: #fff;
+            padding-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button { 
+            padding: 15px 25px; 
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 99px;
+            color: white;
+            cursor: pointer;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #status { 
+            margin: 20px; 
+            font-weight: bold;
+            min-height: 24px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #connectBtn {
+            background: #fff;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .controls-container {
+            display: none;
+            background: #111;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 700px;
+        }
+        .color-btn {
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        #red { background: linear-gradient(to bottom right, #ff0000, #cc0000); }
+        #green { background: linear-gradient(to bottom right, #00ff00, #00cc00); }
+        #blue { background: linear-gradient(to bottom right, #0000ff, #0000cc); }
+        #yellow { background: linear-gradient(to bottom right, #ffff00, #cccc00); color: #333; }
+        #purple { background: linear-gradient(to bottom right, #800080, #660066); }
+        #orange { background: linear-gradient(to bottom right, #ffa500, #cc8400); }
+        #pink { background: linear-gradient(to bottom right, #ff69b4, #cc5490); }
+        #teal { background: linear-gradient(to bottom right, #008080, #006666); }
+        #white { background: linear-gradient(to bottom right, #ffffff, #dddddd); color: #333; }
         #rainbow { 
             background: linear-gradient(to right, 
                 #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
