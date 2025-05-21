@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESP32 LED Controller</title>
     <style>
         body { 
-            font-family: Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             text-align: center; 
-            margin-top: 30px; 
-            background: #000; 
+            margin: 0;
+            padding: 20px; 
+            background: #121212; 
             color: #fff;
-            padding-bottom: 30px;
         }
         h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 20px;
         }
         .container {
@@ -25,51 +27,54 @@
             margin: 10px;
             font-size: 16px;
             border: none;
-            border-radius: 99px;
+            border-radius: 10px;
             color: white;
             cursor: pointer;
-            min-width: 200px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         #status { 
-            margin: 20px; 
-            font-weight: bold;
-            min-height: 24px;
+            margin: 20px auto; 
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
+            background-color: #222;
+            max-width: 400px;
+            font-weight: bold;
         }
         #connectBtn {
             background: #fff;
             color: #333;
             margin-bottom: 30px;
             font-weight: bold;
+            min-width: 250px;
         }
-        .controls-container {
+        #controls {
             display: none;
-            background: #111;
-            border-radius: 15px;
+        }
+        .panel {
+            background: #1e1e1e;
+            border-radius: 12px;
             padding: 20px;
             margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .color-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
             margin: 20px auto;
-            max-width: 700px;
+            max-width: 600px;
         }
         .color-btn {
-            height: 80px;
-            border-radius: 10px;
+            height: 70px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         #red { background: linear-gradient(to bottom right, #ff0000, #cc0000); }
         #green { background: linear-gradient(to bottom right, #00ff00, #00cc00); }
@@ -80,10 +85,11 @@
         #pink { background: linear-gradient(to bottom right, #ff69b4, #cc5490); }
         #teal { background: linear-gradient(to bottom right, #008080, #006666); }
         #white { background: linear-gradient(to bottom right, #ffffff, #dddddd); color: #333; }
+        
         .effect-btn {
             grid-column: span 3;
-            text-shadow: 0 0 5px rgba(0,0,0,0.7);
-            font-size: 1.2em;
+            font-size: 1.1em;
+            height: 60px;
         }
         #rainbow { 
             background: linear-gradient(to right, 
@@ -96,62 +102,64 @@
         #off {
             background: #333;
         }
+        
         .slider-container {
             margin: 20px auto;
-            max-width: 500px;
+            max-width: 400px;
         }
         .slider {
             -webkit-appearance: none;
+            appearance: none;
             width: 100%;
-            height: 15px;
-            border-radius: 10px;
+            height: 10px;
+            border-radius: 5px;
             background: #333;
             outline: none;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 25px;
-            height: 25px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
         }
         .slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
         }
-        label {
-            display: block;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
+        
         .bounce-controls {
             display: none;
-            background: rgba(50, 50, 80, 0.3);
-            border-radius: 15px;
-            padding: 15px;
+            background: rgba(40, 40, 80, 0.3);
+            border-radius: 12px;
+            padding: 20px;
             margin-top: 20px;
         }
-        .flex-row {
+        
+        .control-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            margin: 20px 0;
         }
+        
         .control-group {
             flex: 1;
-            min-width: 120px;
+            min-width: 150px;
             margin: 10px;
         }
+        
         .color-wheel {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
+            width: 150px;
+            height: 150px;
+            margin: 10px auto;
             border-radius: 50%;
             background: conic-gradient(
                 red, orange, yellow, green, blue, indigo, violet, red
@@ -160,16 +168,36 @@
             cursor: pointer;
             border: 3px solid #444;
         }
+        
         .color-wheel-selector {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            border: 3px solid white;
+            border: 2px solid white;
             background: transparent;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            box-shadow: 0 0 10px rgba(0,0,0,0.7);
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .value-display {
+            display: inline-block;
+            min-width: 60px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        
+        #applyBounce {
+            background: #4CAF50;
+            margin-top: 15px;
+            min-width: 200px;
         }
     </style>
 </head>
@@ -180,41 +208,49 @@
         <button id="connectBtn">Connect to LED Controller</button>
         <div id="status">Press "Connect" to begin</div>
         
-        <div id="controls" class="controls-container">
-            <div class="slider-container">
-                <label for="brightness">Master Brightness</label>
-                <input type="range" min="1" max="255" value="150" class="slider" id="brightness">
+        <div id="controls">
+            <div class="panel">
+                <div class="slider-container">
+                    <label for="brightness">Master Brightness</label>
+                    <input type="range" min="1" max="255" value="150" class="slider" id="brightness">
+                    <div><span id="brightnessValue">150</span>/255</div>
+                </div>
             </div>
             
-            <div class="color-grid">
-                <button id="red" class="color-btn">Red</button>
-                <button id="green" class="color-btn">Green</button>
-                <button id="blue" class="color-btn">Blue</button>
-                <button id="yellow" class="color-btn">Yellow</button>
-                <button id="purple" class="color-btn">Purple</button>
-                <button id="orange" class="color-btn">Orange</button>
-                <button id="pink" class="color-btn">Pink</button>
-                <button id="teal" class="color-btn">Teal</button>
-                <button id="white" class="color-btn">White</button>
-                
-                <button id="rainbow" class="color-btn effect-btn">Rainbow Effect</button>
-                <button id="bounce" class="color-btn effect-btn">Bounce Effect</button>
-                <button id="off" class="color-btn effect-btn">Turn Off</button>
+            <div class="panel">
+                <h3>Colors & Effects</h3>
+                <div class="color-grid">
+                    <button id="red" class="color-btn">Red</button>
+                    <button id="green" class="color-btn">Green</button>
+                    <button id="blue" class="color-btn">Blue</button>
+                    <button id="yellow" class="color-btn">Yellow</button>
+                    <button id="purple" class="color-btn">Purple</button>
+                    <button id="orange" class="color-btn">Orange</button>
+                    <button id="pink" class="color-btn">Pink</button>
+                    <button id="teal" class="color-btn">Teal</button>
+                    <button id="white" class="color-btn">White</button>
+                    
+                    <button id="rainbow" class="color-btn effect-btn">Rainbow Effect</button>
+                    <button id="bounce" class="color-btn effect-btn">Bounce Effect</button>
+                    <button id="off" class="color-btn effect-btn">Turn Off</button>
+                </div>
             </div>
             
             <!-- Bounce effect controls -->
-            <div id="bounceControls" class="bounce-controls">
+            <div id="bounceControls" class="panel bounce-controls">
                 <h3>Bounce Effect Settings</h3>
-                <div class="flex-row">
+                
+                <div class="control-row">
                     <div class="control-group">
                         <label for="bounceSize">Light Size</label>
                         <input type="range" min="1" max="10" value="3" class="slider" id="bounceSize">
+                        <div><span id="sizeValue">3</span> LEDs</div>
                     </div>
                     
                     <div class="control-group">
                         <label for="bounceSpeed">Speed</label>
                         <input type="range" min="1" max="50" value="10" class="slider" id="bounceSpeed">
-                        <span id="speedValue">10 ms</span>
+                        <div><span id="speedValue">10</span> ms</div>
                     </div>
                 </div>
                 
@@ -225,7 +261,7 @@
                     </div>
                 </div>
                 
-                <button id="applyBounce" style="background: #4CAF50; margin-top: 20px;">Apply Settings</button>
+                <button id="applyBounce">Apply Settings</button>
             </div>
         </div>
     </div>
@@ -235,9 +271,11 @@
         const connectBtn = document.getElementById('connectBtn');
         const controlsDiv = document.getElementById('controls');
         const brightnessSlider = document.getElementById('brightness');
+        const brightnessValue = document.getElementById('brightnessValue');
         const bounceControls = document.getElementById('bounceControls');
         const bounceSizeSlider = document.getElementById('bounceSize');
         const bounceSpeedSlider = document.getElementById('bounceSpeed');
+        const sizeValue = document.getElementById('sizeValue');
         const speedValue = document.getElementById('speedValue');
         const colorWheel = document.getElementById('colorWheel');
         const colorSelector = document.getElementById('colorSelector');
@@ -271,196 +309,6 @@
                 device = await navigator.bluetooth.requestDevice({
                     filters: [{ name: "ESP32-LED-Controller" }],
                     optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
-                <!DOCTYPE html>
-<html>
-<head>
-    <title>ESP32 LED Controller</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            margin-top: 30px; 
-            background: #000; 
-            color: #fff;
-            padding-bottom: 30px;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        button { 
-            padding: 15px 25px; 
-            margin: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 99px;
-            color: white;
-            cursor: pointer;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        #status { 
-            margin: 20px; 
-            font-weight: bold;
-            min-height: 24px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        #connectBtn {
-            background: #fff;
-            color: #333;
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-        .controls-container {
-            display: none;
-            background: #111;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px auto;
-        }
-        .color-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px auto;
-            max-width: 700px;
-        }
-        .color-btn {
-            height: 80px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-        #red { background: linear-gradient(to bottom right, #ff0000, #cc0000); }
-        #green { background: linear-gradient(to bottom right, #00ff00, #00cc00); }
-        #blue { background: linear-gradient(to bottom right, #0000ff, #0000cc); }
-        #yellow { background: linear-gradient(to bottom right, #ffff00, #cccc00); color: #333; }
-        #purple { background: linear-gradient(to bottom right, #800080, #660066); }
-        #orange { background: linear-gradient(to bottom right, #ffa500, #cc8400); }
-        #pink { background: linear-gradient(to bottom right, #ff69b4, #cc5490); }
-        #teal { background: linear-gradient(to bottom right, #008080, #006666); }
-        #white { background: linear-gradient(to bottom right, #ffffff, #dddddd); color: #333; }
-        #rainbow { 
-            background: linear-gradient(to right, 
-                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
-            );
-            color: white;
-            grid-column: span 3;
-            text-shadow: 0 0 5px rgba(0,0,0,0.7);
-            font-size: 1.2em;
-        }
-        #off {
-            background: #333;
-            grid-column: span 3;
-        }
-        .brightness-container {
-            margin: 20px auto;
-            max-width: 500px;
-        }
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 15px;
-            border-radius: 10px;
-            background: #333;
-            outline: none;
-            margin: 20px 0;
-        }
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #4CAF50;
-            cursor: pointer;
-        }
-        .slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #4CAF50;
-            cursor: pointer;
-        }
-        label {
-            display: block;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>ESP32 WS2812B Controller</h1>
-
-        <button id="connectBtn">Connect to LED Controller</button>
-        <div id="status">Press "Connect" to begin</div>
-        
-        <div id="controls" class="controls-container">
-            <div class="color-grid">
-                <button id="red" class="color-btn">Red</button>
-                <button id="green" class="color-btn">Green</button>
-                <button id="blue" class="color-btn">Blue</button>
-                <button id="yellow" class="color-btn">Yellow</button>
-                <button id="purple" class="color-btn">Purple</button>
-                <button id="orange" class="color-btn">Orange</button>
-                <button id="pink" class="color-btn">Pink</button>
-                <button id="teal" class="color-btn">Teal</button>
-                <button id="white" class="color-btn">White</button>
-                <button id="rainbow" class="color-btn">Rainbow Effect</button>
-                <button id="off" class="color-btn">Turn Off</button>
-            </div>
-            
-            <div class="brightness-container">
-                <label for="brightness">Brightness</label>
-                <input type="range" min="1" max="255" value="150" class="slider" id="brightness">
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const statusDiv = document.getElementById('status');
-        const connectBtn = document.getElementById('connectBtn');
-        const controlsDiv = document.getElementById('controls');
-        const brightnessSlider = document.getElementById('brightness');
-        
-        let device, ledCharacteristic;
-        
-        // Color definitions
-        const colors = {
-            red: [255, 0, 0],
-            green: [0, 255, 0],
-            blue: [0, 0, 255],
-            yellow: [255, 255, 0],
-            purple: [128, 0, 128],
-            orange: [255, 165, 0],
-            pink: [255, 105, 180],
-            teal: [0, 128, 128],
-            white: [255, 255, 255]
-        };
-
-        // Connect to ESP32
-        async function connectToDevice() {
-            try {
-                statusDiv.textContent = "Searching for device...";
-                statusDiv.style.color = "yellow";
-                
-                device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: "ESP32-LED-Controller" }],
-                    optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
                 });
                 
                 statusDiv.textContent = "Connecting...";
@@ -484,6 +332,7 @@
                     statusDiv.style.backgroundColor = "#440000";
                     connectBtn.style.display = 'block';
                     controlsDiv.style.display = 'none';
+                    bounceControls.style.display = 'none';
                 });
                 
                 // Default to rainbow effect
@@ -501,6 +350,8 @@
             if (!ledCharacteristic) return;
             ledCharacteristic.writeValue(new Uint8Array([r, g, b]));
             statusDiv.textContent = `Color set: RGB(${r}, ${g}, ${b})`;
+            // Hide bounce controls when switching to a solid color
+            bounceControls.style.display = 'none';
         }
         
         // Send command to ESP32
@@ -508,37 +359,165 @@
             if (!ledCharacteristic) return;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `Command sent: ${command}`;
+            
+            // Show or hide bounce controls based on the command
+            if (command === "BOUNCE") {
+                bounceControls.style.display = 'block';
+            } else {
+                bounceControls.style.display = 'none';
+            }
         }
         
-        // Set brightness (future implementation)
+        // Set brightness via BLE
         function setBrightness(value) {
-            // This will be implemented in the future
+            if (!ledCharacteristic) return;
+            const command = `B:${value}`;
+            ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `Brightness set to: ${value}`;
+        }
+        
+        // Update bounce parameters
+        function updateBounceParams() {
+            if (!ledCharacteristic) return;
+            
+            const size = bounceSizeSlider.value;
+            const speed = bounceSpeedSlider.value;
+            const hue = selectedHue;
+            
+            const command = `P:S${size},C${hue},V${speed}`;
+            ledCharacteristic.writeValue(new TextEncoder().encode(command));
+            statusDiv.textContent = `Bounce parameters updated`;
+        }
+        
+        // Convert polar coordinates to hue (0-255)
+        function polarToHue(x, y) {
+            // Calculate angle in radians from center of wheel
+            const angle = Math.atan2(y, x);
+            
+            // Convert to degrees and normalize to 0-360
+            let degrees = angle * (180 / Math.PI);
+            if (degrees < 0) degrees += 360;
+            
+            // Map 0-360 degrees to 0-255 hue value
+            return Math.floor((degrees * 255) / 360);
+        }
+        
+        // Update color wheel selector position
+        function updateColorWheelSelector(hue) {
+            // Convert hue (0-255) to angle (0-360)
+            const angle = (hue * 360) / 255;
+            const radians = angle * (Math.PI / 180);
+            
+            // Calculate position on circle (80% of radius to stay within the color wheel)
+            const radius = colorWheel.offsetWidth / 2;
+            const x = radius + Math.cos(radians) * radius * 0.8;
+            const y = radius + Math.sin(radians) * radius * 0.8;
+            
+            // Update selector position
+            colorSelector.style.left = `${x}px`;
+            colorSelector.style.top = `${y}px`;
+            
+            // Store the selected hue
+            selectedHue = hue;
         }
 
         // Event listeners
         connectBtn.addEventListener('click', connectToDevice);
         
         // Color buttons
-        document.querySelectorAll('.color-btn').forEach(button => {
+        document.querySelectorAll('.color-btn:not(.effect-btn)').forEach(button => {
             button.addEventListener('click', () => {
                 const colorId = button.id;
-                
-                if (colorId === 'rainbow') {
-                    sendCommand("RAINBOW");
-                } else if (colorId === 'off') {
-                    sendCommand("OFF");
-                } else if (colors[colorId]) {
+                if (colors[colorId]) {
                     const color = colors[colorId];
                     sendColor(color[0], color[1], color[2]);
                 }
             });
         });
         
+        // Effect buttons
+        document.getElementById('rainbow').addEventListener('click', () => {
+            sendCommand("RAINBOW");
+        });
+        
+        document.getElementById('bounce').addEventListener('click', () => {
+            sendCommand("BOUNCE");
+        });
+        
+        document.getElementById('off').addEventListener('click', () => {
+            sendCommand("OFF");
+        });
+        
         // Brightness slider
+        brightnessSlider.addEventListener('input', () => {
+            // Update visual feedback while dragging
+            brightnessValue.textContent = brightnessSlider.value;
+        });
+        
         brightnessSlider.addEventListener('change', () => {
             setBrightness(brightnessSlider.value);
         });
+        
+        // Bounce size slider
+        bounceSizeSlider.addEventListener('input', () => {
+            sizeValue.textContent = bounceSizeSlider.value;
+        });
+        
+        // Bounce speed slider
+        bounceSpeedSlider.addEventListener('input', () => {
+            speedValue.textContent = bounceSpeedSlider.value;
+        });
+        
+        // Apply bounce settings button
+        document.getElementById('applyBounce').addEventListener('click', updateBounceParams);
+        
+        // Color wheel interaction
+        colorWheel.addEventListener('mousedown', (e) => {
+            colorWheelActive = true;
+            updateColorFromWheel(e);
+        });
+        
+        colorWheel.addEventListener('mousemove', (e) => {
+            if (colorWheelActive) {
+                updateColorFromWheel(e);
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            colorWheelActive = false;
+        });
+        
+        colorWheel.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            updateColorFromWheel(e.touches[0]);
+        });
+        
+        colorWheel.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            updateColorFromWheel(e.touches[0]);
+        });
+        
+        function updateColorFromWheel(eventOrTouch) {
+            const rect = colorWheel.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // Get position relative to center of wheel
+            const x = eventOrTouch.clientX - rect.left - centerX;
+            const y = eventOrTouch.clientY - rect.top - centerY;
+            
+            // Calculate distance from center (for future use, could add saturation)
+            const distance = Math.sqrt(x*x + y*y);
+            const maxRadius = centerX;
+            
+            // Only update if within the wheel
+            if (distance <= maxRadius) {
+                // Calculate hue from polar coordinates
+                const hue = polarToHue(x, y);
+                updateColorWheelSelector(hue);
+            }
+        }
     </script>
+    v6
 </body>
 </html>
