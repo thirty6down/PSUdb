@@ -1,9 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ESP32 LED Control</title>
+    <title>ESP32 LED Controller</title>
     <style>
-        body { font-family: Arial; text-align: center; margin-top: 30px; background: #000; color: #fff}
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin-top: 30px; 
+            background: #000; 
+            color: #fff;
+            padding-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         button { 
             padding: 15px 25px; 
             margin: 10px;
@@ -12,81 +28,165 @@
             border-radius: 99px;
             color: white;
             cursor: pointer;
-            min-width: 400px;
-            display: block;
-            margin: 25px auto;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         #status { 
             margin: 20px; 
             font-weight: bold;
             min-height: 24px;
+            padding: 10px;
+            border-radius: 5px;
         }
         #connectBtn {
             background: #fff;
             color: #333;
             margin-bottom: 30px;
+            font-weight: bold;
         }
-        #red { background-color: #ff0000; }
-        #green { background-color: #00ff00; }
-        #blue { background-color: #0000ff; }
-        #yellow { background-color: #ffff00; color: black; }
-        #purple { background-color: #800080; }
-        #orange { background-color: #ffa500; }
+        .controls-container {
+            display: none;
+            background: #111;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 700px;
+        }
+        .color-btn {
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        #red { background: linear-gradient(to bottom right, #ff0000, #cc0000); }
+        #green { background: linear-gradient(to bottom right, #00ff00, #00cc00); }
+        #blue { background: linear-gradient(to bottom right, #0000ff, #0000cc); }
+        #yellow { background: linear-gradient(to bottom right, #ffff00, #cccc00); color: #333; }
+        #purple { background: linear-gradient(to bottom right, #800080, #660066); }
+        #orange { background: linear-gradient(to bottom right, #ffa500, #cc8400); }
+        #pink { background: linear-gradient(to bottom right, #ff69b4, #cc5490); }
+        #teal { background: linear-gradient(to bottom right, #008080, #006666); }
+        #white { background: linear-gradient(to bottom right, #ffffff, #dddddd); color: #333; }
         #rainbow { 
-            background: linear-gradient(to right, red, orange, yellow, green, blue, purple);
-            color: black;
+            background: linear-gradient(to right, 
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
+            );
+            color: white;
+            grid-column: span 3;
+            text-shadow: 0 0 5px rgba(0,0,0,0.7);
+            font-size: 1.2em;
         }
-        .color-buttons { display: none; }
+        #off {
+            background: #333;
+            grid-column: span 3;
+        }
+        .brightness-container {
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 10px;
+            background: #333;
+            outline: none;
+            margin: 20px 0;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        label {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>EMD<font color="#f00">R</font><font color="#0f0">G</font><font color="#00f">B</font></h1>
+    <div class="container">
+        <h1>ESP32 WS2812B Controller</h1>
 
-    
-    <button id="connectBtn">Connect to ESP32</button>
-    <div id="status">Press "Connect" to begin</div>
-    
-    <div class="color-buttons">
-        <div>
-            <button id="red">Red</button>
-            <button id="green">Green</button>
-            <button id="blue">Blue</button>
-        </div>
-        <div>
-            <button id="yellow">Yellow</button>
-            <button id="purple">Purple</button>
-            <button id="orange">Orange</button>
-        </div>
-        <div>
-            <button id="rainbow">Party Mode</button>
+        <button id="connectBtn">Connect to LED Controller</button>
+        <div id="status">Press "Connect" to begin</div>
+        
+        <div id="controls" class="controls-container">
+            <div class="color-grid">
+                <button id="red" class="color-btn">Red</button>
+                <button id="green" class="color-btn">Green</button>
+                <button id="blue" class="color-btn">Blue</button>
+                <button id="yellow" class="color-btn">Yellow</button>
+                <button id="purple" class="color-btn">Purple</button>
+                <button id="orange" class="color-btn">Orange</button>
+                <button id="pink" class="color-btn">Pink</button>
+                <button id="teal" class="color-btn">Teal</button>
+                <button id="white" class="color-btn">White</button>
+                <button id="rainbow" class="color-btn">Rainbow Effect</button>
+                <button id="off" class="color-btn">Turn Off</button>
+            </div>
+            
+            <div class="brightness-container">
+                <label for="brightness">Brightness</label>
+                <input type="range" min="1" max="255" value="150" class="slider" id="brightness">
+            </div>
         </div>
     </div>
 
     <script>
         const statusDiv = document.getElementById('status');
         const connectBtn = document.getElementById('connectBtn');
-        const colorButtons = document.querySelector('.color-buttons');
-        let device, characteristic;
-        let rainbowInterval = null;
+        const controlsDiv = document.getElementById('controls');
+        const brightnessSlider = document.getElementById('brightness');
         
-        // Color definitions (R and G swapped to match ESP32)
+        let device, ledCharacteristic;
+        
+        // Color definitions
         const colors = {
             red: [255, 0, 0],
             green: [0, 255, 0],
             blue: [0, 0, 255],
             yellow: [255, 255, 0],
             purple: [128, 0, 128],
-            orange: [255, 165, 0]
+            orange: [255, 165, 0],
+            pink: [255, 105, 180],
+            teal: [0, 128, 128],
+            white: [255, 255, 255]
         };
 
-        // Connect to ESP32 - now triggered by button click
+        // Connect to ESP32
         async function connectToDevice() {
             try {
                 statusDiv.textContent = "Searching for device...";
-                statusDiv.style.color = "black";
+                statusDiv.style.color = "yellow";
                 
                 device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: "ESP32-LED-Control" }],
+                    filters: [{ name: "ESP32-LED-Controller" }],
                     optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
                 });
                 
@@ -97,70 +197,75 @@
                 const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
                 
                 statusDiv.textContent = "Accessing characteristic...";
-                characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+                ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
-                // Success - show color buttons
+                // Success - show controls
                 connectBtn.style.display = 'none';
-                colorButtons.style.display = 'block';
-                statusDiv.textContent = "Connected! Choose a color:";
-                statusDiv.style.color = "green";
+                controlsDiv.style.display = 'block';
+                statusDiv.textContent = "Connected! Select a color or effect";
+                statusDiv.style.backgroundColor = "#004400";
                 
-                // Set default color
-                sendColor(0, 0, 255); // Blue
+                // Listen for disconnections
+                device.addEventListener('gattserverdisconnected', () => {
+                    statusDiv.textContent = "Device disconnected";
+                    statusDiv.style.backgroundColor = "#440000";
+                    connectBtn.style.display = 'block';
+                    controlsDiv.style.display = 'none';
+                });
+                
+                // Default to rainbow effect
+                sendCommand("RAINBOW");
                 
             } catch (error) {
                 statusDiv.textContent = `Error: ${error.message}`;
-                statusDiv.style.color = "red";
+                statusDiv.style.backgroundColor = "#440000";
                 console.error(error);
             }
         }
 
-        // Send color to ESP32 (with R and G swapped)
+        // Send color to ESP32
         function sendColor(r, g, b) {
-            if (!characteristic) return;
-            stopRainbow();
-            characteristic.writeValue(new Uint8Array([g, r, b])); // SWAPPED R and G
+            if (!ledCharacteristic) return;
+            ledCharacteristic.writeValue(new Uint8Array([r, g, b]));
+            statusDiv.textContent = `Color set: RGB(${r}, ${g}, ${b})`;
         }
-
-        // Rainbow effect
-        function startRainbow() {
-            let hue = 0;
-            rainbowInterval = setInterval(() => {
-                const r = Math.floor(Math.sin(hue) * 127 + 128);
-                const g = Math.floor(Math.sin(hue + 2) * 127 + 128);
-                const b = Math.floor(Math.sin(hue + 4) * 127 + 128);
-                characteristic.writeValue(new Uint8Array([g, r, b])); // SWAPPED R and G
-                hue += 0.05;
-            }, 50);
+        
+        // Send command to ESP32
+        function sendCommand(command) {
+            if (!ledCharacteristic) return;
+            ledCharacteristic.writeValue(new TextEncoder().encode(command));
+            statusDiv.textContent = `Command sent: ${command}`;
         }
-
-        function stopRainbow() {
-            if (rainbowInterval) {
-                clearInterval(rainbowInterval);
-                rainbowInterval = null;
-                document.getElementById('rainbow').textContent = "Rainbow Mode";
-            }
+        
+        // Set brightness (future implementation)
+        function setBrightness(value) {
+            // This will be implemented in the future
+            statusDiv.textContent = `Brightness set to: ${value}`;
         }
 
         // Event listeners
         connectBtn.addEventListener('click', connectToDevice);
         
-        document.querySelectorAll('button:not(#connectBtn):not(#rainbow)').forEach(button => {
+        // Color buttons
+        document.querySelectorAll('.color-btn').forEach(button => {
             button.addEventListener('click', () => {
-                const color = colors[button.id];
-                sendColor(color[0], color[1], color[2]);
+                const colorId = button.id;
+                
+                if (colorId === 'rainbow') {
+                    sendCommand("RAINBOW");
+                } else if (colorId === 'off') {
+                    sendCommand("OFF");
+                } else if (colors[colorId]) {
+                    const color = colors[colorId];
+                    sendColor(color[0], color[1], color[2]);
+                }
             });
         });
-
-        document.getElementById('rainbow').addEventListener('click', function() {
-            if (rainbowInterval) {
-                stopRainbow();
-            } else {
-                startRainbow();
-                this.textContent = "Stop Rainbow";
-            }
+        
+        // Brightness slider
+        brightnessSlider.addEventListener('change', () => {
+            setBrightness(brightnessSlider.value);
         });
     </script>
-    v4
 </body>
 </html>
