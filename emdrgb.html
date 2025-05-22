@@ -182,30 +182,44 @@
             box-shadow: 0 0 8px rgba(0,0,0,0.5);
         }
         
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
+        .color-selection-section {
+            margin: 30px 0;
+        }
+        
+        .color-selection-section h4 {
+            margin: 20px 0 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 15px auto;
+            max-width: 300px;
+        }
+        
+        .color-selector {
+            padding: 12px 8px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
             font-size: 0.9em;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+            transition: all 0.2s ease;
+            min-width: 80px;
         }
         
-        .value-display {
-            display: inline-block;
-            min-width: 60px;
-            font-size: 0.9em;
-            color: #aaa;
+        .color-selector:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
-        .color-row {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .color-group {
-            text-align: center;
-            margin: 10px;
+        .color-selector.active {
+            border-color: #fff;
+            box-shadow: 0 0 12px rgba(255,255,255,0.8);
         }
         
         #applyPulse {
@@ -278,23 +292,33 @@
                     </div>
                 </div>
                 
-                <div class="color-row">
-                    <div class="color-group">
-                        <label>Pulse Color</label>
-                        <div class="color-wheel" id="pulseColorWheel">
-                            <div class="color-wheel-selector" id="pulseColorSelector"></div>
-                        </div>
+                <div class="color-selection-section">
+                    <h4>Pulse Color</h4>
+                    <div class="color-palette">
+                        <button class="color-selector pulse-color active" data-hue="0" style="background: #ff0000;">Red</button>
+                        <button class="color-selector pulse-color" data-hue="21" style="background: #ff6600;">Orange</button>
+                        <button class="color-selector pulse-color" data-hue="43" style="background: #ffff00;">Yellow</button>
+                        <button class="color-selector pulse-color" data-hue="85" style="background: #00ff00;">Green</button>
+                        <button class="color-selector pulse-color" data-hue="128" style="background: #00ff80;">Cyan</button>
+                        <button class="color-selector pulse-color" data-hue="170" style="background: #0080ff;">Blue</button>
+                        <button class="color-selector pulse-color" data-hue="213" style="background: #8000ff;">Purple</button>
+                        <button class="color-selector pulse-color" data-hue="234" style="background: #ff00ff;">Pink</button>
+                        <button class="color-selector pulse-color" data-hue="255" style="background: #ff0080;">Magenta</button>
                     </div>
                     
-                    <div class="color-group">
-                        <label>Trail Color</label>
-                        <div class="color-wheel" id="trailColorWheel">
-                            <div class="color-wheel-selector" id="trailColorSelector"></div>
-                        </div>
+                    <h4>Trail Color</h4>
+                    <div class="color-palette">
+                        <button class="color-selector trail-color" data-hue="0" style="background: #ff0000;">Red</button>
+                        <button class="color-selector trail-color" data-hue="21" style="background: #ff6600;">Orange</button>
+                        <button class="color-selector trail-color" data-hue="43" style="background: #ffff00;">Yellow</button>
+                        <button class="color-selector trail-color active" data-hue="85" style="background: #00ff00;">Green</button>
+                        <button class="color-selector trail-color" data-hue="128" style="background: #00ff80;">Cyan</button>
+                        <button class="color-selector trail-color" data-hue="170" style="background: #0080ff;">Blue</button>
+                        <button class="color-selector trail-color" data-hue="213" style="background: #8000ff;">Purple</button>
+                        <button class="color-selector trail-color" data-hue="234" style="background: #ff00ff;">Pink</button>
+                        <button class="color-selector trail-color" data-hue="255" style="background: #ff0080;">Magenta</button>
                     </div>
                 </div>
-                
-                <button id="applyPulse">Apply Settings</button>
             </div>
         </div>
     </div>
@@ -325,22 +349,14 @@
         const areaValue = document.getElementById('areaValue');
         const trailValue = document.getElementById('trailValue');
         
-        // Color wheels
-        const pulseColorWheel = document.getElementById('pulseColorWheel');
-        const trailColorWheel = document.getElementById('trailColorWheel');
-        const pulseColorSelector = document.getElementById('pulseColorSelector');
-        const trailColorSelector = document.getElementById('trailColorSelector');
-        
         let device, ledCharacteristic;
-        let pulseHue = 0;    // Blue
-        let trailHue = 85;   // Green
+        let pulseHue = 0;    // Red (default)
+        let trailHue = 85;   // Green (default)
         let isPulsing = false;
         let isPaused = false;
-        let colorWheelActive = null;
         
-        // Initialize color wheel positions
-        updateColorWheelSelector(pulseColorWheel, pulseColorSelector, pulseHue);
-        updateColorWheelSelector(trailColorWheel, trailColorSelector, trailHue);
+        // Initialize default color selections
+        updateColorSelection();
 
         // Connect to ESP32
         async function connectToDevice() {
@@ -415,7 +431,7 @@
             }, 100); // 100ms debounce
         }
         
-        // Update pulse parameters
+        // Update pulse parameters instantly
         function updatePulseParams() {
             if (!ledCharacteristic) return;
             
@@ -426,7 +442,23 @@
             
             const command = `P:W${width},C${pulseHue},S${speed},A${area},T${trail},H${trailHue}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
-            statusDiv.textContent = `Pulse parameters updated`;
+            statusDiv.textContent = `Settings updated`;
+        }
+        
+        // Update individual parameters instantly
+        function updateSingleParam(param, value) {
+            if (!ledCharacteristic) return;
+            
+            // Get current values for all parameters
+            const width = pulseWidthSlider.value;
+            const speed = pulseSpeedSlider.value;
+            const area = activeAreaSlider.value;
+            const trail = trailLengthSlider.value;
+            
+            // Build command with all current values
+            const command = `P:W${width},C${pulseHue},S${speed},A${area},T${trail},H${trailHue}`;
+            ledCharacteristic.writeValue(new TextEncoder().encode(command));
+            statusDiv.textContent = `${param} updated`;
         }
         
         // Update button states
@@ -435,70 +467,23 @@
             pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
         }
         
-        // Convert polar coordinates to hue (0-255)
-        function polarToHue(x, y) {
-            const angle = Math.atan2(y, x);
-            let degrees = angle * (180 / Math.PI);
-            if (degrees < 0) degrees += 360;
-            return Math.floor((degrees * 255) / 360);
-        }
-        
-        // Update color wheel selector position
-        function updateColorWheelSelector(wheel, selector, hue) {
-            const angle = (hue * 360) / 255;
-            const radians = angle * (Math.PI / 180);
-            
-            const radius = wheel.offsetWidth / 2;
-            const x = radius + Math.cos(radians) * radius * 0.75;
-            const y = radius + Math.sin(radians) * radius * 0.75;
-            
-            selector.style.left = `${x}px`;
-            selector.style.top = `${y}px`;
-        }
-        
-        // Handle color wheel interaction
-        function setupColorWheel(wheel, selector, callback) {
-            wheel.addEventListener('mousedown', (e) => {
-                colorWheelActive = wheel;
-                updateColorFromWheel(e, wheel, selector, callback);
-            });
-            
-            wheel.addEventListener('mousemove', (e) => {
-                if (colorWheelActive === wheel) {
-                    updateColorFromWheel(e, wheel, selector, callback);
+        // Update color selection display
+        function updateColorSelection() {
+            // Update pulse color selection
+            document.querySelectorAll('.pulse-color').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.hue) === pulseHue) {
+                    btn.classList.add('active');
                 }
             });
             
-            wheel.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                colorWheelActive = wheel;
-                updateColorFromWheel(e.touches[0], wheel, selector, callback);
-            });
-            
-            wheel.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                if (colorWheelActive === wheel) {
-                    updateColorFromWheel(e.touches[0], wheel, selector, callback);
+            // Update trail color selection
+            document.querySelectorAll('.trail-color').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.hue) === trailHue) {
+                    btn.classList.add('active');
                 }
             });
-        }
-        
-        function updateColorFromWheel(eventOrTouch, wheel, selector, callback) {
-            const rect = wheel.getBoundingClientRect();
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const x = eventOrTouch.clientX - rect.left - centerX;
-            const y = eventOrTouch.clientY - rect.top - centerY;
-            
-            const distance = Math.sqrt(x*x + y*y);
-            const maxRadius = centerX;
-            
-            if (distance <= maxRadius) {
-                const hue = polarToHue(x, y);
-                updateColorWheelSelector(wheel, selector, hue);
-                callback(hue);
-            }
         }
 
         // Event listeners
@@ -546,43 +531,56 @@
             setBrightness(brightnessSlider.value);
         });
         
-        // Pulse control sliders - update displays in real time
+        // Pulse control sliders - update displays in real time and send instantly
         pulseWidthSlider.addEventListener('input', () => {
             widthValue.textContent = pulseWidthSlider.value;
+        });
+        
+        pulseWidthSlider.addEventListener('change', () => {
+            updateSingleParam('Width', pulseWidthSlider.value);
         });
         
         pulseSpeedSlider.addEventListener('input', () => {
             speedValue.textContent = pulseSpeedSlider.value;
         });
         
+        pulseSpeedSlider.addEventListener('change', () => {
+            updateSingleParam('Speed', pulseSpeedSlider.value);
+        });
+        
         activeAreaSlider.addEventListener('input', () => {
             areaValue.textContent = activeAreaSlider.value;
+        });
+        
+        activeAreaSlider.addEventListener('change', () => {
+            updateSingleParam('Active Area', activeAreaSlider.value);
         });
         
         trailLengthSlider.addEventListener('input', () => {
             trailValue.textContent = trailLengthSlider.value;
         });
         
-        // Apply pulse settings button
-        document.getElementById('applyPulse').addEventListener('click', updatePulseParams);
-        
-        // Setup color wheels
-        setupColorWheel(pulseColorWheel, pulseColorSelector, (hue) => {
-            pulseHue = hue;
+        trailLengthSlider.addEventListener('change', () => {
+            updateSingleParam('Trail Length', trailLengthSlider.value);
         });
         
-        setupColorWheel(trailColorWheel, trailColorSelector, (hue) => {
-            trailHue = hue;
+        // Color selection buttons - instant updates
+        document.querySelectorAll('.pulse-color').forEach(button => {
+            button.addEventListener('click', () => {
+                pulseHue = parseInt(button.dataset.hue);
+                updateColorSelection();
+                updateSingleParam('Pulse Color', pulseHue);
+            });
         });
         
-        // Global mouse up to stop color wheel interaction
-        document.addEventListener('mouseup', () => {
-            colorWheelActive = null;
-        });
-        
-        document.addEventListener('touchend', () => {
-            colorWheelActive = null;
+        document.querySelectorAll('.trail-color').forEach(button => {
+            button.addEventListener('click', () => {
+                trailHue = parseInt(button.dataset.hue);
+                updateColorSelection();
+                updateSingleParam('Trail Color', trailHue);
+            });
         });
     </script>
+    v8
 </body>
 </html>
