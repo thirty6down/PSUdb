@@ -272,9 +272,9 @@
                     </div>
                     
                     <div class="control-group">
-                        <label for="pulseSpeed">Pulse Speed</label>
-                        <input type="range" min="1" max="50" value="10" class="slider" id="pulseSpeed">
-                        <div><span id="speedValue">10</span> ms</div>
+                        <label for="pulseFrequency">Pulse Frequency</label>
+                        <input type="range" min="0.1" max="3.0" step="0.1" value="0.5" class="slider" id="pulseFrequency">
+                        <div><span id="frequencyValue">0.5</span> Hz</div>
                     </div>
                 </div>
                 
@@ -286,9 +286,9 @@
                     </div>
                     
                     <div class="control-group">
-                        <label for="trailLength">Trail Length</label>
-                        <input type="range" min="0" max="30" value="10" class="slider" id="trailLength">
-                        <div><span id="trailValue">10</span> LEDs</div>
+                        <label for="trailLifespan">Trail Lifespan</label>
+                        <input type="range" min="0.5" max="10.0" step="0.5" value="2.0" class="slider" id="trailLifespan">
+                        <div><span id="lifespanValue">2.0</span> seconds</div>
                     </div>
                 </div>
                 
@@ -339,15 +339,15 @@
         
         // Pulse control sliders
         const pulseWidthSlider = document.getElementById('pulseWidth');
-        const pulseSpeedSlider = document.getElementById('pulseSpeed');
+        const pulseFrequencySlider = document.getElementById('pulseFrequency');
         const activeAreaSlider = document.getElementById('activeArea');
-        const trailLengthSlider = document.getElementById('trailLength');
+        const trailLifespanSlider = document.getElementById('trailLifespan');
         
         // Value displays
         const widthValue = document.getElementById('widthValue');
-        const speedValue = document.getElementById('speedValue');
+        const frequencyValue = document.getElementById('frequencyValue');
         const areaValue = document.getElementById('areaValue');
-        const trailValue = document.getElementById('trailValue');
+        const lifespanValue = document.getElementById('lifespanValue');
         
         let device, ledCharacteristic;
         let pulseHue = 0;    // Red (default)
@@ -436,11 +436,11 @@
             if (!ledCharacteristic) return;
             
             const width = pulseWidthSlider.value;
-            const speed = pulseSpeedSlider.value;
+            const frequency = pulseFrequencySlider.value;
             const area = activeAreaSlider.value;
-            const trail = trailLengthSlider.value;
+            const lifespan = trailLifespanSlider.value;
             
-            const command = `P:W${width},C${pulseHue},S${speed},A${area},T${trail},H${trailHue}`;
+            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `Settings updated`;
         }
@@ -451,12 +451,12 @@
             
             // Get current values for all parameters
             const width = pulseWidthSlider.value;
-            const speed = pulseSpeedSlider.value;
+            const frequency = pulseFrequencySlider.value;
             const area = activeAreaSlider.value;
-            const trail = trailLengthSlider.value;
+            const lifespan = trailLifespanSlider.value;
             
             // Build command with all current values
-            const command = `P:W${width},C${pulseHue},S${speed},A${area},T${trail},H${trailHue}`;
+            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `${param} updated`;
         }
@@ -540,12 +540,12 @@
             updateSingleParam('Width', pulseWidthSlider.value);
         });
         
-        pulseSpeedSlider.addEventListener('input', () => {
-            speedValue.textContent = pulseSpeedSlider.value;
+        pulseFrequencySlider.addEventListener('input', () => {
+            frequencyValue.textContent = pulseFrequencySlider.value;
         });
         
-        pulseSpeedSlider.addEventListener('change', () => {
-            updateSingleParam('Speed', pulseSpeedSlider.value);
+        pulseFrequencySlider.addEventListener('change', () => {
+            updateSingleParam('Frequency', pulseFrequencySlider.value);
         });
         
         activeAreaSlider.addEventListener('input', () => {
@@ -556,12 +556,12 @@
             updateSingleParam('Active Area', activeAreaSlider.value);
         });
         
-        trailLengthSlider.addEventListener('input', () => {
-            trailValue.textContent = trailLengthSlider.value;
+        trailLifespanSlider.addEventListener('input', () => {
+            lifespanValue.textContent = trailLifespanSlider.value;
         });
         
-        trailLengthSlider.addEventListener('change', () => {
-            updateSingleParam('Trail Length', trailLengthSlider.value);
+        trailLifespanSlider.addEventListener('change', () => {
+            updateSingleParam('Trail Lifespan', trailLifespanSlider.value);
         });
         
         // Color selection buttons - instant updates
@@ -581,6 +581,6 @@
             });
         });
     </script>
-    v8
+    v9
 </body>
 </html>
