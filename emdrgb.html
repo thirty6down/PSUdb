@@ -432,7 +432,11 @@
 
         // Update cycle display
         function updateCycleDisplay() {
-            cycleCountDisplay.textContent = realCycleCount.toString();
+            if (cycleCharacteristic) {
+                cycleCountDisplay.textContent = realCycleCount.toString();
+            } else {
+                cycleCountDisplay.textContent = "--";
+            }
         }
 
         // Connect to ESP32
@@ -455,21 +459,31 @@
                 statusDiv.textContent = "Accessing characteristic...";
                 ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
-                statusDiv.textContent = "Accessing cycle counter...";
-                cycleCharacteristic = await service.getCharacteristic('550e8400-e29b-41d4-a716-446655440001');
-                
-                // Subscribe to cycle count notifications
-                await cycleCharacteristic.startNotifications();
-                cycleCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
-                    const value = event.target.value;
-                    realCycleCount = value.getUint32(0, true); // little endian
+                // Try to access cycle counter (optional - may not be available on older firmware)
+                try {
+                    statusDiv.textContent = "Accessing cycle counter...";
+                    cycleCharacteristic = await service.getCharacteristic('550e8400-e29b-41d4-a716-446655440001');
+                    
+                    // Subscribe to cycle count notifications
+                    await cycleCharacteristic.startNotifications();
+                    cycleCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
+                        const value = event.target.value;
+                        realCycleCount = value.getUint32(0, true); // little endian
+                        updateCycleDisplay();
+                    });
+                    
+                    // Read initial cycle count
+                    const initialCycleValue = await cycleCharacteristic.readValue();
+                    realCycleCount = initialCycleValue.getUint32(0, true);
                     updateCycleDisplay();
-                });
-                
-                // Read initial cycle count
-                const initialCycleValue = await cycleCharacteristic.readValue();
-                realCycleCount = initialCycleValue.getUint32(0, true);
-                updateCycleDisplay();
+                    
+                    console.log("Cycle counter connected successfully");
+                } catch (cycleError) {
+                    console.warn("Cycle counter not available:", cycleError.message);
+                    cycleCharacteristic = null;
+                    // Set cycle display to show "N/A" or hide it
+                    cycleCountDisplay.textContent = "--";
+                }
                 
                 // Success - show controls
                 connectBtn.style.display = 'none';
@@ -705,6 +719,6 @@
             });
         });
     </script>
-    v15
+    v16
 </body>
 </html>
