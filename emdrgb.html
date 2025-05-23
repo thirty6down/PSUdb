@@ -287,8 +287,16 @@
                     
                     <div class="control-group">
                         <label for="trailLifespan">Trail Lifespan</label>
-                        <input type="range" min="0.0" max="10.0" step="0.5" value="2.0" class="slider" id="trailLifespan">
+                        <input type="range" min="0.5" max="10.0" step="0.5" value="2.0" class="slider" id="trailLifespan">
                         <div><span id="lifespanValue">2.0</span> seconds</div>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-group">
+                        <label for="trailEnabled">Enable Trail</label>
+                        <input type="checkbox" id="trailEnabled" checked style="transform: scale(1.5); margin: 20px;">
+                        <div>Trail <span id="trailStatus">enabled</span></div>
                     </div>
                 </div>
                 
@@ -342,16 +350,19 @@
         const pulseFrequencySlider = document.getElementById('pulseFrequency');
         const activeAreaSlider = document.getElementById('activeArea');
         const trailLifespanSlider = document.getElementById('trailLifespan');
+        const trailEnabledCheckbox = document.getElementById('trailEnabled');
         
         // Value displays
         const widthValue = document.getElementById('widthValue');
         const frequencyValue = document.getElementById('frequencyValue');
         const areaValue = document.getElementById('areaValue');
         const lifespanValue = document.getElementById('lifespanValue');
+        const trailStatus = document.getElementById('trailStatus');
         
         let device, ledCharacteristic;
         let pulseHue = 0;    // Red (default)
         let trailHue = 85;   // Green (default)
+        let trailEnabled = true; // Trail enabled by default
         let isPulsing = false;
         let isPaused = false;
         
@@ -439,8 +450,9 @@
             const frequency = pulseFrequencySlider.value;
             const area = activeAreaSlider.value;
             const lifespan = trailLifespanSlider.value;
+            const enabled = trailEnabled ? 1 : 0;
             
-            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue}`;
+            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue},E${enabled}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `Settings updated`;
         }
@@ -454,9 +466,10 @@
             const frequency = pulseFrequencySlider.value;
             const area = activeAreaSlider.value;
             const lifespan = trailLifespanSlider.value;
+            const enabled = trailEnabled ? 1 : 0;
             
             // Build command with all current values
-            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue}`;
+            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue},E${enabled}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `${param} updated`;
         }
@@ -564,6 +577,13 @@
             updateSingleParam('Trail Lifespan', trailLifespanSlider.value);
         });
         
+        // Trail enabled checkbox
+        trailEnabledCheckbox.addEventListener('change', () => {
+            trailEnabled = trailEnabledCheckbox.checked;
+            trailStatus.textContent = trailEnabled ? 'enabled' : 'disabled';
+            updateSingleParam('Trail Enable', trailEnabled);
+        });
+        
         // Color selection buttons - instant updates
         document.querySelectorAll('.pulse-color').forEach(button => {
             button.addEventListener('click', () => {
@@ -581,6 +601,6 @@
             });
         });
     </script>
-    v10
+    v11
 </body>
 </html>
