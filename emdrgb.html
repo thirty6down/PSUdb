@@ -721,9 +721,35 @@
                     return;
                 }
                 
+                // Handle preferences page - start pulse preview
+                if (pageId === 'preferences' && isConnected) {
+                    startPreferencesPreview();
+                } else if (pageId !== 'preferences' && isConnected) {
+                    stopPreferencesPreview();
+                }
+                
                 showPage(pageId);
             });
         });
+        
+        // Preferences preview management
+        let preferencesPreviewActive = false;
+        
+        function startPreferencesPreview() {
+            if (!preferencesPreviewActive) {
+                preferencesPreviewActive = true;
+                sendCommand('PULSE');
+                console.log('Started preferences preview');
+            }
+        }
+        
+        function stopPreferencesPreview() {
+            if (preferencesPreviewActive) {
+                preferencesPreviewActive = false;
+                sendCommand('OFF');
+                console.log('Stopped preferences preview');
+            }
+        }
         
         // Connect functionality
         document.getElementById('connectBtn').addEventListener('click', async () => {
@@ -755,9 +781,14 @@
                 // Send initial settings
                 applyAllSettings();
                 
+                // Start cycle count polling
+                startCyclePolling();
+                
                 device.addEventListener('gattserverdisconnected', () => {
                     isConnected = false;
                     isPlaying = false;
+                    preferencesPreviewActive = false;
+                    stopCyclePolling();
                     updateStatus('Device disconnected', 'error');
                     showPage('connect');
                 });
@@ -782,12 +813,40 @@
         
         function handleNotification(event) {
             const value = new TextDecoder().decode(event.target.value);
+            console.log('Received notification:', value);
             if (value.startsWith('CYCLES:')) {
                 const count = parseInt(value.substring(7));
                 if (!isNaN(count)) {
                     currentCycles = count;
                     updateSessionDisplay();
+                    console.log('Updated cycle count to:', count);
                 }
+            }
+        }
+        
+        // Polling fallback for cycle count
+        let cyclePollingInterval = null;
+        
+        function startCyclePolling() {
+            if (cyclePollingInterval) clearInterval(cyclePollingInterval);
+            
+            cyclePollingInterval = setInterval(async () => {
+                if (isPlaying && ledCharacteristic) {
+                    try {
+                        const value = await ledCharacteristic.readValue();
+                        const message = new TextDecoder().decode(value);
+                        handleNotification({ target: { value } });
+                    } catch (error) {
+                        // Silently fail - polling is best effort
+                    }
+                }
+            }, 500);
+        }
+        
+        function stopCyclePolling() {
+            if (cyclePollingInterval) {
+                clearInterval(cyclePollingInterval);
+                cyclePollingInterval = null;
             }
         }
         
@@ -832,7 +891,7 @@
             if (isPlaying) {
                 sendCommand('PAUSE');
                 isPlaying = false;
-                document.getElementById('playPauseBtn').textContent = 'Play';
+                document.getElementById('playPauseBtn').textContent = 'Resume';
             } else {
                 sendCommand('PULSE');
                 isPlaying = true;
@@ -840,6 +899,7 @@
                 if (sessionStartTime === 0) {
                     sessionStartTime = Date.now();
                 }
+                startCyclePolling();
             }
         });
         
@@ -861,6 +921,7 @@
             // Stop current session
             sendCommand('OFF');
             isPlaying = false;
+            stopCyclePolling();
             sessionStartTime = 0;
             currentCycles = 0;
             elapsedSeconds = 0;
@@ -919,8 +980,9 @@
                         // Session complete
                         sendCommand('PAUSE');
                         isPlaying = false;
-                        document.getElementById('playPauseBtn').textContent = 'Play';
-                        progressText.textContent = `Complete! ${targetCycles} / ${targetCycles} cycles`;
+                        stopCyclePolling();
+                        document.getElementById('playPauseBtn').textContent = 'Continue';
+                        progressText.textContent = `Complete! ${targetCycles} cycles - Continue or go back`;
                     }
                     break;
                     
@@ -932,8 +994,9 @@
                         // Session complete
                         sendCommand('PAUSE');
                         isPlaying = false;
-                        document.getElementById('playPauseBtn').textContent = 'Play';
-                        progressText.textContent = `Complete! ${formatTime(targetTimeSeconds)} / ${formatTime(targetTimeSeconds)}`;
+                        stopCyclePolling();
+                        document.getElementById('playPauseBtn').textContent = 'Continue';
+                        progressText.textContent = `Complete! ${formatTime(targetTimeSeconds)} - Continue or go back`;
                     }
                     break;
                     
@@ -1047,6 +1110,10 @@
                 applyPulseSettings();
             });
             
+            // Initialize trail toggle state
+            trailEnabled.checked = settings.trailEnabled;
+            trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
+            
             // Trail duration
             const trailDurationSlider = document.getElementById('trailDurationSlider');
             trailDurationSlider.addEventListener('input', () => {
@@ -1121,6 +1188,13 @@
             
             const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
             sendCommand(command);
+            
+            // If we're in preferences preview mode, ensure pulse is running
+            if (preferencesPreviewActive) {
+                setTimeout(() => {
+                    sendCommand('PULSE');
+                }, 100);
+            }
         }
         
         // Update displays every second
