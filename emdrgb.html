@@ -298,6 +298,12 @@
                         <input type="checkbox" id="trailEnabled" checked style="transform: scale(1.5); margin: 20px;">
                         <div>Trail <span id="trailStatus">enabled</span></div>
                     </div>
+                    
+                    <div class="control-group">
+                        <label for="rainbowTrail">Rainbow Trail</label>
+                        <input type="checkbox" id="rainbowTrail" style="transform: scale(1.5); margin: 20px;">
+                        <div>Rainbow <span id="rainbowStatus">disabled</span></div>
+                    </div>
                 </div>
                 
                 <div class="color-selection-section">
@@ -351,6 +357,7 @@
         const activeAreaSlider = document.getElementById('activeArea');
         const trailLifespanSlider = document.getElementById('trailLifespan');
         const trailEnabledCheckbox = document.getElementById('trailEnabled');
+        const rainbowTrailCheckbox = document.getElementById('rainbowTrail');
         
         // Value displays
         const widthValue = document.getElementById('widthValue');
@@ -358,11 +365,13 @@
         const areaValue = document.getElementById('areaValue');
         const lifespanValue = document.getElementById('lifespanValue');
         const trailStatus = document.getElementById('trailStatus');
+        const rainbowStatus = document.getElementById('rainbowStatus');
         
         let device, ledCharacteristic;
         let pulseHue = 0;    // Red (default)
         let trailHue = 85;   // Green (default)
         let trailEnabled = true; // Trail enabled by default
+        let rainbowTrail = false; // Rainbow trail disabled by default
         let isPulsing = false;
         let isPaused = false;
         
@@ -451,8 +460,9 @@
             const area = activeAreaSlider.value;
             const lifespan = trailLifespanSlider.value;
             const enabled = trailEnabled ? 1 : 0;
+            const rainbow = rainbowTrail ? 1 : 0;
             
-            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue},E${enabled}`;
+            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue},E${enabled},R${rainbow}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `Settings updated`;
         }
@@ -467,9 +477,10 @@
             const area = activeAreaSlider.value;
             const lifespan = trailLifespanSlider.value;
             const enabled = trailEnabled ? 1 : 0;
+            const rainbow = rainbowTrail ? 1 : 0;
             
             // Build command with all current values
-            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue},E${enabled}`;
+            const command = `P:W${width},C${pulseHue},F${frequency},A${area},L${lifespan},H${trailHue},E${enabled},R${rainbow}`;
             ledCharacteristic.writeValue(new TextEncoder().encode(command));
             statusDiv.textContent = `${param} updated`;
         }
@@ -584,6 +595,13 @@
             updateSingleParam('Trail Enable', trailEnabled);
         });
         
+        // Rainbow trail checkbox
+        rainbowTrailCheckbox.addEventListener('change', () => {
+            rainbowTrail = rainbowTrailCheckbox.checked;
+            rainbowStatus.textContent = rainbowTrail ? 'enabled' : 'disabled';
+            updateSingleParam('Rainbow Trail', rainbowTrail);
+        });
+        
         // Color selection buttons - instant updates
         document.querySelectorAll('.pulse-color').forEach(button => {
             button.addEventListener('click', () => {
@@ -601,6 +619,6 @@
             });
         });
     </script>
-    v11
+    v12
 </body>
 </html>
