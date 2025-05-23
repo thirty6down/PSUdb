@@ -416,7 +416,7 @@
         const trailStatus = document.getElementById('trailStatus');
         const rainbowStatus = document.getElementById('rainbowStatus');
         
-        let device, ledCharacteristic;
+        let device, ledCharacteristic, cycleCharacteristic;
         let pulseHue = 0;    // Red (default)
         let trailHue = 85;   // Green (default)
         let trailEnabled = true; // Trail enabled by default
@@ -424,83 +424,15 @@
         let isPulsing = false;
         let isPaused = false;
         
-        // Cycle tracking variables
-        let cycleCount = 0;
-        let simulatedPosition = 0; // Simulated pulse position (0-100)
-        let simulatedDirection = 1; // 1 = forward, -1 = backward
-        let lastCycleUpdate = 0;
-        let cycleInterval = null;
+        // Real cycle count from ESP32
+        let realCycleCount = 0;
         
         // Initialize default color selections
         updateColorSelection();
 
-        // Simulate pulse cycles based on frequency
-        function startCycleSimulation() {
-            if (cycleInterval) {
-                clearInterval(cycleInterval);
-            }
-            
-            // Reset cycle tracking
-            cycleCount = 0;
-            simulatedPosition = 0;
-            simulatedDirection = 1;
-            updateCycleDisplay();
-            
-            // Calculate update interval based on frequency
-            // At 0.5 Hz, one complete cycle takes 2 seconds
-            // We'll update position 50 times per second for smooth tracking
-            const updateRate = 50; // Updates per second
-            const updateInterval = 1000 / updateRate; // ms between updates
-            
-            cycleInterval = setInterval(() => {
-                if (isPulsing && !isPaused) {
-                    updateCycleSimulation();
-                }
-            }, updateInterval);
-        }
-        
-        function updateCycleSimulation() {
-            const frequency = parseFloat(pulseFrequencySlider.value);
-            
-            // Calculate how much to move per update
-            // One complete cycle = position goes 0->100->0
-            // At frequency Hz, this takes (1/frequency) seconds
-            // With 50 updates per second, we need to move (200 * frequency / 50) units per update
-            const positionIncrement = (200 * frequency) / 50;
-            
-            // Update position
-            simulatedPosition += positionIncrement * simulatedDirection;
-            
-            // Check for bounces and cycle completion
-            if (simulatedPosition >= 100) {
-                simulatedPosition = 100;
-                simulatedDirection = -1;
-            } else if (simulatedPosition <= 0) {
-                simulatedPosition = 0;
-                simulatedDirection = 1;
-                
-                // Completed a full cycle (start -> end -> start)
-                cycleCount++;
-                updateCycleDisplay();
-            }
-        }
-        
+        // Update cycle display
         function updateCycleDisplay() {
-            cycleCountDisplay.textContent = cycleCount.toString();
-        }
-        
-        function stopCycleSimulation() {
-            if (cycleInterval) {
-                clearInterval(cycleInterval);
-                cycleInterval = null;
-            }
-        }
-        
-        function resetCycleCounter() {
-            cycleCount = 0;
-            simulatedPosition = 0;
-            simulatedDirection = 1;
-            updateCycleDisplay();
+            cycleCountDisplay.textContent = realCycleCount.toString();
         }
 
         // Connect to ESP32
@@ -523,6 +455,22 @@
                 statusDiv.textContent = "Accessing characteristic...";
                 ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
+                statusDiv.textContent = "Accessing cycle counter...";
+                cycleCharacteristic = await service.getCharacteristic('550e8400-e29b-41d4-a716-446655440001');
+                
+                // Subscribe to cycle count notifications
+                await cycleCharacteristic.startNotifications();
+                cycleCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
+                    const value = event.target.value;
+                    realCycleCount = value.getUint32(0, true); // little endian
+                    updateCycleDisplay();
+                });
+                
+                // Read initial cycle count
+                const initialCycleValue = await cycleCharacteristic.readValue();
+                realCycleCount = initialCycleValue.getUint32(0, true);
+                updateCycleDisplay();
+                
                 // Success - show controls
                 connectBtn.style.display = 'none';
                 controlsDiv.style.display = 'block';
@@ -538,7 +486,6 @@
                     pulseControls.style.display = 'none';
                     isPulsing = false;
                     isPaused = false;
-                    stopCycleSimulation();
                     updateButtonStates();
                 });
                 
@@ -646,7 +593,6 @@
             isPulsing = true;
             isPaused = false;
             pulseControls.style.display = 'block';
-            startCycleSimulation();
             updateButtonStates();
         });
         
@@ -655,7 +601,6 @@
             isPulsing = false;
             isPaused = false;
             pulseControls.style.display = 'none';
-            stopCycleSimulation();
             updateButtonStates();
         });
         
@@ -663,12 +608,6 @@
             if (isPulsing && !pauseBtn.classList.contains('disabled')) {
                 sendCommand("PAUSE");
                 isPaused = !isPaused;
-                
-                // Reset cycle counter when resuming from pause
-                if (!isPaused) {
-                    resetCycleCounter();
-                }
-                
                 updateButtonStates();
             }
         });
@@ -690,7 +629,6 @@
             isPulsing = false;
             isPaused = false;
             pulseControls.style.display = 'none';
-            stopCycleSimulation();
             updateButtonStates();
         });
         
@@ -718,10 +656,6 @@
         
         pulseFrequencySlider.addEventListener('change', () => {
             updateSingleParam('Frequency', pulseFrequencySlider.value);
-            // Update cycle simulation rate when frequency changes
-            if (isPulsing && !isPaused) {
-                startCycleSimulation();
-            }
         });
         
         activeAreaSlider.addEventListener('input', () => {
@@ -771,6 +705,6 @@
             });
         });
     </script>
-    v13
+    v14
 </body>
 </html>
