@@ -1060,7 +1060,7 @@
             
             // Update settings and send to device
             settings.speed = currentSpeed;
-            applySpeedSetting();
+            applySinglePulseSetting('frequency', settings.speed);
         }
         
         function formatTime(seconds) {
@@ -1089,7 +1089,10 @@
                 currentSpeed = settings.speed;
                 document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
                 updateSpeedDisplay();
-                applySpeedSetting();
+            });
+            
+            speedSlider.addEventListener('change', () => {
+                applySinglePulseSetting('frequency', settings.speed);
             });
             
             // Brightness
@@ -1110,12 +1113,13 @@
                         // Trail color
                         settings.trailHue = parseInt(option.dataset.hue);
                         updateTrailColorSelection();
+                        applySinglePulseSetting('trailHue', settings.trailHue);
                     } else {
                         // Pulse color
                         settings.pulseHue = parseInt(option.dataset.hue);
                         updatePulseColorSelection();
+                        applySinglePulseSetting('color', settings.pulseHue);
                     }
-                    applyPulseSettings();
                 });
             });
             
@@ -1129,7 +1133,7 @@
             });
             
             pulseSizeSlider.addEventListener('change', () => {
-                applyPulseSettings();
+                applySinglePulseSetting('width', settings.pulseSize);
             });
             
             // Active area
@@ -1140,7 +1144,7 @@
             });
             
             activeAreaSlider.addEventListener('change', () => {
-                applyPulseSettings();
+                applySinglePulseSetting('area', settings.activeArea);
             });
             
             // Trail settings - complete rewrite
@@ -1164,7 +1168,7 @@
             function toggleTrail() {
                 settings.trailEnabled = !settings.trailEnabled;
                 updateTrailDisplay();
-                applyPulseSettings();
+                applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
                 console.log('Trail toggled to:', settings.trailEnabled);
             }
             
@@ -1172,7 +1176,7 @@
             trailEnabled.addEventListener('change', () => {
                 settings.trailEnabled = trailEnabled.checked;
                 updateTrailDisplay();
-                applyPulseSettings();
+                applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
             });
             
             // Listen for clicks on the toggle container
@@ -1192,7 +1196,7 @@
             });
             
             trailDurationSlider.addEventListener('change', () => {
-                applyPulseSettings();
+                applySinglePulseSetting('trailLifespan', settings.trailDuration);
             });
         }
         
@@ -1234,7 +1238,7 @@
             document.getElementById('playPauseBtn').textContent = 'Play';
         });
         
-        // Settings application
+        // Settings application - optimized to avoid position resets
         function applyAllSettings() {
             applyBrightnessSetting();
             applyPulseSettings();
@@ -1247,7 +1251,53 @@
         
         function applySpeedSetting() {
             if (!ledCharacteristic) return;
-            applyPulseSettings(); // Speed is part of pulse settings
+            // Send only frequency update to avoid position reset
+            const command = `P:F${settings.speed}`;
+            console.log('Applying speed setting only:', settings.speed);
+            sendCommand(command);
+        }
+        
+        function applySinglePulseSetting(param, value) {
+            if (!ledCharacteristic) return;
+            
+            let command;
+            switch(param) {
+                case 'width':
+                    command = `P:W${value}`;
+                    break;
+                case 'color':
+                    command = `P:C${value}`;
+                    break;
+                case 'frequency':
+                    command = `P:F${value}`;
+                    break;
+                case 'area':
+                    command = `P:A${value}`;
+                    break;
+                case 'trailLifespan':
+                    command = `P:L${value}`;
+                    break;
+                case 'trailHue':
+                    command = `P:H${value}`;
+                    break;
+                case 'trailEnabled':
+                    command = `P:E${value}`;
+                    break;
+                default:
+                    // Fallback to full settings
+                    applyPulseSettings();
+                    return;
+            }
+            
+            console.log(`Applying single setting - ${param}:`, value);
+            sendCommand(command);
+            
+            // If we're in preferences preview mode, ensure pulse is running
+            if (preferencesPreviewActive) {
+                setTimeout(() => {
+                    sendCommand('PULSE');
+                }, 50);
+            }
         }
         
         function applyPulseSettings() {
@@ -1258,7 +1308,7 @@
             
             const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
             
-            console.log('Applying pulse settings:', {
+            console.log('Applying full pulse settings:', {
                 width: settings.pulseSize,
                 hue: settings.pulseHue,
                 frequency: settings.speed,
