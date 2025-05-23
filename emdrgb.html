@@ -416,7 +416,7 @@
         const trailStatus = document.getElementById('trailStatus');
         const rainbowStatus = document.getElementById('rainbowStatus');
         
-        let device, ledCharacteristic, cycleCharacteristic;
+        let device, ledCharacteristic;
         let pulseHue = 0;    // Red (default)
         let trailHue = 85;   // Green (default)
         let trailEnabled = true; // Trail enabled by default
@@ -432,10 +432,18 @@
 
         // Update cycle display
         function updateCycleDisplay() {
-            if (cycleCharacteristic) {
-                cycleCountDisplay.textContent = realCycleCount.toString();
-            } else {
-                cycleCountDisplay.textContent = "--";
+            cycleCountDisplay.textContent = realCycleCount.toString();
+        }
+        
+        // Parse status messages from ESP32
+        function parseStatusMessage(message) {
+            if (message.startsWith('CYCLES:')) {
+                const count = parseInt(message.substring(7));
+                if (!isNaN(count)) {
+                    realCycleCount = count;
+                    updateCycleDisplay();
+                    console.log('Received cycle count:', count);
+                }
             }
         }
 
@@ -459,30 +467,22 @@
                 statusDiv.textContent = "Accessing characteristic...";
                 ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
-                // Try to access cycle counter (optional - may not be available on older firmware)
+                // Subscribe to notifications for status messages (including cycle count)
+                await ledCharacteristic.startNotifications();
+                ledCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
+                    const value = new TextDecoder().decode(event.target.value);
+                    parseStatusMessage(value);
+                });
+                
+                // Read initial status to get current cycle count
                 try {
-                    statusDiv.textContent = "Accessing cycle counter...";
-                    cycleCharacteristic = await service.getCharacteristic('550e8400-e29b-41d4-a716-446655440001');
-                    
-                    // Subscribe to cycle count notifications
-                    await cycleCharacteristic.startNotifications();
-                    cycleCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
-                        const value = event.target.value;
-                        realCycleCount = value.getUint32(0, true); // little endian
-                        updateCycleDisplay();
-                    });
-                    
-                    // Read initial cycle count
-                    const initialCycleValue = await cycleCharacteristic.readValue();
-                    realCycleCount = initialCycleValue.getUint32(0, true);
+                    const initialValue = await ledCharacteristic.readValue();
+                    const initialMessage = new TextDecoder().decode(initialValue);
+                    parseStatusMessage(initialMessage);
+                } catch (readError) {
+                    console.log('Initial read failed (normal):', readError.message);
+                    realCycleCount = 0;
                     updateCycleDisplay();
-                    
-                    console.log("Cycle counter connected successfully");
-                } catch (cycleError) {
-                    console.warn("Cycle counter not available:", cycleError.message);
-                    cycleCharacteristic = null;
-                    // Set cycle display to show "N/A" or hide it
-                    cycleCountDisplay.textContent = "--";
                 }
                 
                 // Success - show controls
@@ -719,6 +719,6 @@
             });
         });
     </script>
-    v16
+    v17
 </body>
 </html>
