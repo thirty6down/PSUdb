@@ -377,7 +377,7 @@
             transform: translateX(25px);
         }
         
-        .toggle input:checked ~ .toggle {
+        .toggle.checked {
             background: #4CAF50;
         }
         
@@ -603,7 +603,7 @@
                     <div class="pref-title">Trail Settings</div>
                     <div class="toggle-switch">
                         <label>Enable Trail</label>
-                        <div class="toggle">
+                        <div class="toggle" id="trailToggle">
                             <input type="checkbox" id="trailEnabled">
                             <div class="toggle-slider"></div>
                         </div>
@@ -893,19 +893,41 @@
                 isPlaying = false;
                 document.getElementById('playPauseBtn').textContent = 'Resume';
             } else {
-                sendCommand('PULSE');
-                isPlaying = true;
-                document.getElementById('playPauseBtn').textContent = 'Pause';
-                if (sessionStartTime === 0) {
-                    sessionStartTime = Date.now();
+                // When continuing after completion, don't reset the session
+                const playPauseBtn = document.getElementById('playPauseBtn');
+                if (playPauseBtn.textContent === 'Continue') {
+                    // This is a continue after completion - just resume the pulse
+                    sendCommand('PULSE');
+                    isPlaying = true;
+                    playPauseBtn.textContent = 'Pause';
+                    startCyclePolling();
+                } else {
+                    // Normal play/resume
+                    sendCommand('PULSE');
+                    isPlaying = true;
+                    playPauseBtn.textContent = 'Pause';
+                    if (sessionStartTime === 0) {
+                        sessionStartTime = Date.now();
+                    }
+                    startCyclePolling();
                 }
-                startCyclePolling();
             }
         });
         
         document.getElementById('focusBtn').addEventListener('click', () => {
-            if (isPlaying) {
+            if (isPlaying || preferencesPreviewActive) {
                 sendCommand('FOCUS');
+                
+                // Visual feedback on button
+                const focusBtn = document.getElementById('focusBtn');
+                focusBtn.style.transform = 'scale(0.95)';
+                focusBtn.style.opacity = '0.7';
+                setTimeout(() => {
+                    focusBtn.style.transform = '';
+                    focusBtn.style.opacity = '';
+                }, 300);
+                
+                console.log('Focus command sent');
             }
         });
         
@@ -1102,17 +1124,39 @@
             
             // Trail settings
             const trailEnabled = document.getElementById('trailEnabled');
+            const trailToggle = document.getElementById('trailToggle');
             const trailOptions = document.getElementById('trailOptions');
             
-            trailEnabled.addEventListener('change', () => {
+            // Handle toggle click (both checkbox and toggle container)
+            const handleTrailToggle = () => {
                 settings.trailEnabled = trailEnabled.checked;
                 trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
+                
+                // Update toggle appearance
+                if (settings.trailEnabled) {
+                    trailToggle.classList.add('checked');
+                } else {
+                    trailToggle.classList.remove('checked');
+                }
+                
                 applyPulseSettings();
+                console.log('Trail enabled:', settings.trailEnabled);
+            };
+            
+            trailEnabled.addEventListener('change', handleTrailToggle);
+            
+            // Also handle clicks on the toggle container
+            trailToggle.addEventListener('click', () => {
+                trailEnabled.checked = !trailEnabled.checked;
+                handleTrailToggle();
             });
             
             // Initialize trail toggle state
             trailEnabled.checked = settings.trailEnabled;
             trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
+            if (settings.trailEnabled) {
+                trailToggle.classList.add('checked');
+            }
             
             // Trail duration
             const trailDurationSlider = document.getElementById('trailDurationSlider');
