@@ -426,6 +426,7 @@
         
         // Real cycle count from ESP32
         let realCycleCount = 0;
+        let cyclePollingInterval = null;
         
         // Initialize default color selections
         updateColorSelection();
@@ -444,6 +445,34 @@
                     updateCycleDisplay();
                     console.log('Received cycle count:', count);
                 }
+            }
+        }
+        
+        // Poll cycle count from ESP32 (fallback if notifications don't work)
+        function startCyclePolling() {
+            // Clear any existing polling
+            if (cyclePollingInterval) {
+                clearInterval(cyclePollingInterval);
+            }
+            
+            // Poll every 500ms when pulsing
+            cyclePollingInterval = setInterval(async () => {
+                if (isPulsing && !isPaused && ledCharacteristic) {
+                    try {
+                        const value = await ledCharacteristic.readValue();
+                        const message = new TextDecoder().decode(value);
+                        parseStatusMessage(message);
+                    } catch (error) {
+                        // Silently fail - polling is best effort
+                    }
+                }
+            }, 500);
+        }
+        
+        function stopCyclePolling() {
+            if (cyclePollingInterval) {
+                clearInterval(cyclePollingInterval);
+                cyclePollingInterval = null;
             }
         }
 
@@ -467,23 +496,20 @@
                 statusDiv.textContent = "Accessing characteristic...";
                 ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
                 
-                // Subscribe to notifications for status messages (including cycle count)
-                await ledCharacteristic.startNotifications();
-                ledCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
-                    const value = new TextDecoder().decode(event.target.value);
-                    parseStatusMessage(value);
-                });
-                
-                // Read initial status to get current cycle count
+                // Try to subscribe to notifications for cycle count updates (optional)
                 try {
-                    const initialValue = await ledCharacteristic.readValue();
-                    const initialMessage = new TextDecoder().decode(initialValue);
-                    parseStatusMessage(initialMessage);
-                } catch (readError) {
-                    console.log('Initial read failed (normal):', readError.message);
-                    realCycleCount = 0;
-                    updateCycleDisplay();
+                    await ledCharacteristic.startNotifications();
+                    ledCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
+                        const value = new TextDecoder().decode(event.target.value);
+                        parseStatusMessage(value);
+                    });
+                    console.log("Notifications enabled for cycle counting");
+                } catch (notifyError) {
+                    console.log("Notifications not supported, will poll instead:", notifyError.message);
                 }
+                
+                // Start polling for cycle count if notifications don't work
+                startCyclePolling();
                 
                 // Success - show controls
                 connectBtn.style.display = 'none';
@@ -500,6 +526,7 @@
                     pulseControls.style.display = 'none';
                     isPulsing = false;
                     isPaused = false;
+                    stopCyclePolling();
                     updateButtonStates();
                 });
                 
@@ -643,6 +670,7 @@
             isPulsing = false;
             isPaused = false;
             pulseControls.style.display = 'none';
+            stopCyclePolling();
             updateButtonStates();
         });
         
@@ -719,6 +747,6 @@
             });
         });
     </script>
-    v17
+    v20
 </body>
 </html>
