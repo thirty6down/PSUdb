@@ -806,9 +806,17 @@
         
         // BLE communication
         function sendCommand(command) {
-            if (!ledCharacteristic) return;
-            ledCharacteristic.writeValue(new TextEncoder().encode(command));
-            console.log('Sent:', command);
+            if (!ledCharacteristic) {
+                console.log('Cannot send command - no BLE connection');
+                return;
+            }
+            
+            try {
+                ledCharacteristic.writeValue(new TextEncoder().encode(command));
+                console.log('✓ Sent command:', command);
+            } catch (error) {
+                console.error('Failed to send command:', command, error);
+            }
         }
         
         function handleNotification(event) {
@@ -888,46 +896,59 @@
         
         // Session controls
         document.getElementById('playPauseBtn').addEventListener('click', () => {
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            
             if (isPlaying) {
                 sendCommand('PAUSE');
                 isPlaying = false;
-                document.getElementById('playPauseBtn').textContent = 'Resume';
+                playPauseBtn.textContent = 'Resume';
+                stopCyclePolling();
             } else {
-                // When continuing after completion, don't reset the session
-                const playPauseBtn = document.getElementById('playPauseBtn');
+                // Check if this is a continue after completion
                 if (playPauseBtn.textContent === 'Continue') {
-                    // This is a continue after completion - just resume the pulse
-                    sendCommand('PULSE');
-                    isPlaying = true;
-                    playPauseBtn.textContent = 'Pause';
-                    startCyclePolling();
-                } else {
-                    // Normal play/resume
-                    sendCommand('PULSE');
-                    isPlaying = true;
-                    playPauseBtn.textContent = 'Pause';
-                    if (sessionStartTime === 0) {
-                        sessionStartTime = Date.now();
+                    // Session was completed - we need to reset targets and continue
+                    if (sessionType === 'cycles') {
+                        targetCycles += targetCycles; // Double the target to allow continuation
+                    } else if (sessionType === 'time') {
+                        targetTimeSeconds += targetTimeSeconds; // Double the target time
                     }
-                    startCyclePolling();
+                    playPauseBtn.textContent = 'Pause';
+                } else {
+                    playPauseBtn.textContent = 'Pause';
                 }
+                
+                // Always send PULSE command to resume from current position
+                sendCommand('PULSE');
+                isPlaying = true;
+                
+                if (sessionStartTime === 0) {
+                    sessionStartTime = Date.now();
+                }
+                startCyclePolling();
             }
         });
         
         document.getElementById('focusBtn').addEventListener('click', () => {
-            if (isPlaying || preferencesPreviewActive) {
+            // Focus should work in ANY scenario where we have a connection
+            // - During active pulse (isPlaying = true)
+            // - When paused (isPlaying = false but in session)
+            // - During preferences preview (preferencesPreviewActive = true)
+            if (ledCharacteristic && isConnected) {
                 sendCommand('FOCUS');
+                console.log('FOCUS command sent - Connection active');
                 
-                // Visual feedback on button
+                // Visual feedback
                 const focusBtn = document.getElementById('focusBtn');
+                const originalBg = focusBtn.style.background;
+                focusBtn.style.background = '#ffff00';
                 focusBtn.style.transform = 'scale(0.95)';
-                focusBtn.style.opacity = '0.7';
-                setTimeout(() => {
-                    focusBtn.style.transform = '';
-                    focusBtn.style.opacity = '';
-                }, 300);
                 
-                console.log('Focus command sent');
+                setTimeout(() => {
+                    focusBtn.style.background = originalBg;
+                    focusBtn.style.transform = '';
+                }, 300);
+            } else {
+                console.log('Focus button pressed but no BLE connection available');
             }
         });
         
@@ -1122,41 +1143,46 @@
                 applyPulseSettings();
             });
             
-            // Trail settings
+            // Trail settings - complete rewrite
             const trailEnabled = document.getElementById('trailEnabled');
             const trailToggle = document.getElementById('trailToggle');
             const trailOptions = document.getElementById('trailOptions');
             
-            // Handle toggle click (both checkbox and toggle container)
-            const handleTrailToggle = () => {
-                settings.trailEnabled = trailEnabled.checked;
+            function updateTrailDisplay() {
                 trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
+                trailEnabled.checked = settings.trailEnabled;
                 
-                // Update toggle appearance
                 if (settings.trailEnabled) {
                     trailToggle.classList.add('checked');
                 } else {
                     trailToggle.classList.remove('checked');
                 }
                 
+                console.log('Trail display updated - enabled:', settings.trailEnabled);
+            }
+            
+            function toggleTrail() {
+                settings.trailEnabled = !settings.trailEnabled;
+                updateTrailDisplay();
                 applyPulseSettings();
-                console.log('Trail enabled:', settings.trailEnabled);
-            };
+                console.log('Trail toggled to:', settings.trailEnabled);
+            }
             
-            trailEnabled.addEventListener('change', handleTrailToggle);
-            
-            // Also handle clicks on the toggle container
-            trailToggle.addEventListener('click', () => {
-                trailEnabled.checked = !trailEnabled.checked;
-                handleTrailToggle();
+            // Listen for checkbox changes
+            trailEnabled.addEventListener('change', () => {
+                settings.trailEnabled = trailEnabled.checked;
+                updateTrailDisplay();
+                applyPulseSettings();
             });
             
-            // Initialize trail toggle state
-            trailEnabled.checked = settings.trailEnabled;
-            trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
-            if (settings.trailEnabled) {
-                trailToggle.classList.add('checked');
-            }
+            // Listen for clicks on the toggle container
+            trailToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleTrail();
+            });
+            
+            // Initialize trail state
+            updateTrailDisplay();
             
             // Trail duration
             const trailDurationSlider = document.getElementById('trailDurationSlider');
@@ -1231,13 +1257,25 @@
             const rainbow = 0; // Not implemented yet
             
             const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
+            
+            console.log('Applying pulse settings:', {
+                width: settings.pulseSize,
+                hue: settings.pulseHue,
+                frequency: settings.speed,
+                area: settings.activeArea,
+                trailLifespan: settings.trailDuration,
+                trailHue: settings.trailHue,
+                trailEnabled: enabled,
+                rainbow: rainbow
+            });
+            
             sendCommand(command);
             
             // If we're in preferences preview mode, ensure pulse is running
             if (preferencesPreviewActive) {
                 setTimeout(() => {
                     sendCommand('PULSE');
-                }, 100);
+                }, 150);
             }
         }
         
