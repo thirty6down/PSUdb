@@ -65,6 +65,36 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
+        /* Cycle counter display */
+        .cycle-counter {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px auto;
+            max-width: 300px;
+            border: 2px solid #4CAF50;
+        }
+        
+        .cycle-counter h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+            font-size: 1em;
+        }
+        
+        .cycle-count {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .cycle-label {
+            font-size: 0.9em;
+            color: #aaa;
+            margin: 5px 0;
+        }
+        
         /* Main control buttons */
         .main-controls {
             display: grid;
@@ -93,7 +123,16 @@
         
         #pauseBtn {
             background: #ff6b35;
-            grid-column: span 2;
+        }
+        
+        #focusBtn {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            animation: focusPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes focusPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.8); }
         }
         
         #offBtn {
@@ -256,6 +295,7 @@
                     <button id="pulseBtn" class="main-btn">Pulse Mode</button>
                     <button id="partyBtn" class="main-btn">Party Mode</button>
                     <button id="pauseBtn" class="main-btn">Pause</button>
+                    <button id="focusBtn" class="main-btn">Focus</button>
                     <button id="offBtn" class="main-btn">Turn Off</button>
                 </div>
             </div>
@@ -263,6 +303,13 @@
             <!-- Pulse effect controls -->
             <div id="pulseControls" class="panel pulse-controls">
                 <h3>Pulse Settings</h3>
+                
+                <!-- Cycle Counter -->
+                <div class="cycle-counter">
+                    <h4>Pulse Cycles Completed</h4>
+                    <div class="cycle-count" id="cycleCount">0</div>
+                    <div class="cycle-label">Complete round trips</div>
+                </div>
                 
                 <div class="control-row">
                     <div class="control-group">
@@ -344,11 +391,13 @@
         const brightnessSlider = document.getElementById('brightness');
         const brightnessValue = document.getElementById('brightnessValue');
         const pulseControls = document.getElementById('pulseControls');
+        const cycleCountDisplay = document.getElementById('cycleCount');
         
         // Control elements
         const pulseBtn = document.getElementById('pulseBtn');
         const partyBtn = document.getElementById('partyBtn');
         const pauseBtn = document.getElementById('pauseBtn');
+        const focusBtn = document.getElementById('focusBtn');
         const offBtn = document.getElementById('offBtn');
         
         // Pulse control sliders
@@ -375,8 +424,84 @@
         let isPulsing = false;
         let isPaused = false;
         
+        // Cycle tracking variables
+        let cycleCount = 0;
+        let simulatedPosition = 0; // Simulated pulse position (0-100)
+        let simulatedDirection = 1; // 1 = forward, -1 = backward
+        let lastCycleUpdate = 0;
+        let cycleInterval = null;
+        
         // Initialize default color selections
         updateColorSelection();
+
+        // Simulate pulse cycles based on frequency
+        function startCycleSimulation() {
+            if (cycleInterval) {
+                clearInterval(cycleInterval);
+            }
+            
+            // Reset cycle tracking
+            cycleCount = 0;
+            simulatedPosition = 0;
+            simulatedDirection = 1;
+            updateCycleDisplay();
+            
+            // Calculate update interval based on frequency
+            // At 0.5 Hz, one complete cycle takes 2 seconds
+            // We'll update position 50 times per second for smooth tracking
+            const updateRate = 50; // Updates per second
+            const updateInterval = 1000 / updateRate; // ms between updates
+            
+            cycleInterval = setInterval(() => {
+                if (isPulsing && !isPaused) {
+                    updateCycleSimulation();
+                }
+            }, updateInterval);
+        }
+        
+        function updateCycleSimulation() {
+            const frequency = parseFloat(pulseFrequencySlider.value);
+            
+            // Calculate how much to move per update
+            // One complete cycle = position goes 0->100->0
+            // At frequency Hz, this takes (1/frequency) seconds
+            // With 50 updates per second, we need to move (200 * frequency / 50) units per update
+            const positionIncrement = (200 * frequency) / 50;
+            
+            // Update position
+            simulatedPosition += positionIncrement * simulatedDirection;
+            
+            // Check for bounces and cycle completion
+            if (simulatedPosition >= 100) {
+                simulatedPosition = 100;
+                simulatedDirection = -1;
+            } else if (simulatedPosition <= 0) {
+                simulatedPosition = 0;
+                simulatedDirection = 1;
+                
+                // Completed a full cycle (start -> end -> start)
+                cycleCount++;
+                updateCycleDisplay();
+            }
+        }
+        
+        function updateCycleDisplay() {
+            cycleCountDisplay.textContent = cycleCount.toString();
+        }
+        
+        function stopCycleSimulation() {
+            if (cycleInterval) {
+                clearInterval(cycleInterval);
+                cycleInterval = null;
+            }
+        }
+        
+        function resetCycleCounter() {
+            cycleCount = 0;
+            simulatedPosition = 0;
+            simulatedDirection = 1;
+            updateCycleDisplay();
+        }
 
         // Connect to ESP32
         async function connectToDevice() {
@@ -413,6 +538,7 @@
                     pulseControls.style.display = 'none';
                     isPulsing = false;
                     isPaused = false;
+                    stopCycleSimulation();
                     updateButtonStates();
                 });
                 
@@ -489,6 +615,7 @@
         function updateButtonStates() {
             pauseBtn.classList.toggle('disabled', !isPulsing);
             pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+            focusBtn.classList.toggle('disabled', !isPulsing);
         }
         
         // Update color selection display
@@ -519,6 +646,7 @@
             isPulsing = true;
             isPaused = false;
             pulseControls.style.display = 'block';
+            startCycleSimulation();
             updateButtonStates();
         });
         
@@ -527,6 +655,7 @@
             isPulsing = false;
             isPaused = false;
             pulseControls.style.display = 'none';
+            stopCycleSimulation();
             updateButtonStates();
         });
         
@@ -534,7 +663,25 @@
             if (isPulsing && !pauseBtn.classList.contains('disabled')) {
                 sendCommand("PAUSE");
                 isPaused = !isPaused;
+                
+                // Reset cycle counter when resuming from pause
+                if (!isPaused) {
+                    resetCycleCounter();
+                }
+                
                 updateButtonStates();
+            }
+        });
+        
+        focusBtn.addEventListener('click', () => {
+            if (isPulsing && !focusBtn.classList.contains('disabled')) {
+                sendCommand("FOCUS");
+                
+                // Visual feedback on button
+                focusBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    focusBtn.style.transform = '';
+                }, 150);
             }
         });
         
@@ -543,6 +690,7 @@
             isPulsing = false;
             isPaused = false;
             pulseControls.style.display = 'none';
+            stopCycleSimulation();
             updateButtonStates();
         });
         
@@ -570,6 +718,10 @@
         
         pulseFrequencySlider.addEventListener('change', () => {
             updateSingleParam('Frequency', pulseFrequencySlider.value);
+            // Update cycle simulation rate when frequency changes
+            if (isPulsing && !isPaused) {
+                startCycleSimulation();
+            }
         });
         
         activeAreaSlider.addEventListener('input', () => {
@@ -619,6 +771,6 @@
             });
         });
     </script>
-    v12
+    v13
 </body>
 </html>
