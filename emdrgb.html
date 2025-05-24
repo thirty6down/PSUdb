@@ -114,6 +114,64 @@
             background: #2196F3;
         }
         
+        .btn.orange {
+            background: #FF9800;
+        }
+        
+        /* Tapper section */
+        .tapper-section {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .tapper-section.show {
+            display: block;
+        }
+        
+        .tapper-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #4CAF50;
+            text-align: center;
+        }
+        
+        .tapper-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .tapper-status {
+            background: #333;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .tapper-status.connected {
+            background: #1b4332;
+            border: 2px solid #4CAF50;
+        }
+        
+        .tapper-status.syncing {
+            background: #4a4a1b;
+            border: 2px solid #FFC107;
+        }
+        
+        .tapper-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .tapper-state {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
         /* Counter Controls */
         .counter-control {
             display: flex;
@@ -462,6 +520,28 @@
                 <h1>EMDRbar</h1>
                 <div id="status" class="status">Press "Connect" to begin</div>
                 <button id="connectBtn" class="btn">Connect to EMDRbar</button>
+                
+                <div id="tapperSection" class="tapper-section">
+                    <div class="tapper-title">Tapper Devices</div>
+                    
+                    <div class="tapper-grid">
+                        <div id="leftTapperStatus" class="tapper-status">
+                            <div class="tapper-label">Left Tapper</div>
+                            <div class="tapper-state">Not Connected</div>
+                        </div>
+                        <div id="rightTapperStatus" class="tapper-status">
+                            <div class="tapper-label">Right Tapper</div>
+                            <div class="tapper-state">Not Connected</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tapper-grid">
+                        <button id="syncLeftBtn" class="btn orange">Sync Left Tapper</button>
+                        <button id="syncRightBtn" class="btn orange">Sync Right Tapper</button>
+                    </div>
+                    
+                    <button id="forgetTappersBtn" class="btn secondary">Forget All Tappers</button>
+                </div>
             </div>
 
             <!-- Setup Page -->
@@ -685,6 +765,12 @@
         let sessionStartTime = 0;
         let elapsedSeconds = 0;
         
+        // Tapper state
+        let tapperState = {
+            left: { connected: false, syncing: false },
+            right: { connected: false, syncing: false }
+        };
+        
         // Settings
         let settings = {
             speed: 0.4,
@@ -775,8 +861,10 @@
                 }
                 
                 isConnected = true;
-                updateStatus('Connected! Choose your session type', 'connected');
-                showPage('setup');
+                updateStatus('Connected! Set up tappers or choose session type', 'connected');
+                
+                // Show tapper section
+                document.getElementById('tapperSection').classList.add('show');
                 
                 // Send initial settings
                 applyAllSettings();
@@ -789,6 +877,13 @@
                     isPlaying = false;
                     preferencesPreviewActive = false;
                     stopCyclePolling();
+                    
+                    // Hide tapper section and reset tapper states
+                    document.getElementById('tapperSection').classList.remove('show');
+                    tapperState.left = { connected: false, syncing: false };
+                    tapperState.right = { connected: false, syncing: false };
+                    updateTapperDisplay();
+                    
                     updateStatus('Device disconnected', 'error');
                     showPage('connect');
                 });
@@ -797,6 +892,80 @@
                 updateStatus(`Error: ${error.message}`, 'error');
             }
         });
+        
+        // Tapper sync buttons
+        document.getElementById('syncLeftBtn').addEventListener('click', () => {
+            if (tapperState.left.syncing) return;
+            
+            tapperState.left.syncing = true;
+            updateTapperDisplay();
+            sendCommand('SYNC_LEFT');
+            
+            // Set timeout for sync attempt
+            setTimeout(() => {
+                if (tapperState.left.syncing) {
+                    tapperState.left.syncing = false;
+                    updateTapperDisplay();
+                    updateStatus('Left tapper sync timeout - make sure tapper is in sync mode', 'warning');
+                }
+            }, 10000);
+        });
+        
+        document.getElementById('syncRightBtn').addEventListener('click', () => {
+            if (tapperState.right.syncing) return;
+            
+            tapperState.right.syncing = true;
+            updateTapperDisplay();
+            sendCommand('SYNC_RIGHT');
+            
+            // Set timeout for sync attempt
+            setTimeout(() => {
+                if (tapperState.right.syncing) {
+                    tapperState.right.syncing = false;
+                    updateTapperDisplay();
+                    updateStatus('Right tapper sync timeout - make sure tapper is in sync mode', 'warning');
+                }
+            }, 10000);
+        });
+        
+        document.getElementById('forgetTappersBtn').addEventListener('click', () => {
+            sendCommand('FORGET_TAPPERS');
+            tapperState.left = { connected: false, syncing: false };
+            tapperState.right = { connected: false, syncing: false };
+            updateTapperDisplay();
+            updateStatus('All tappers forgotten', 'connected');
+        });
+        
+        function updateTapperDisplay() {
+            const leftStatus = document.getElementById('leftTapperStatus');
+            const rightStatus = document.getElementById('rightTapperStatus');
+            const leftState = leftStatus.querySelector('.tapper-state');
+            const rightState = rightStatus.querySelector('.tapper-state');
+            
+            // Update left tapper
+            leftStatus.className = 'tapper-status';
+            if (tapperState.left.connected) {
+                leftStatus.classList.add('connected');
+                leftState.textContent = 'Connected';
+            } else if (tapperState.left.syncing) {
+                leftStatus.classList.add('syncing');
+                leftState.textContent = 'Syncing...';
+            } else {
+                leftState.textContent = 'Not Connected';
+            }
+            
+            // Update right tapper
+            rightStatus.className = 'tapper-status';
+            if (tapperState.right.connected) {
+                rightStatus.classList.add('connected');
+                rightState.textContent = 'Connected';
+            } else if (tapperState.right.syncing) {
+                rightStatus.classList.add('syncing');
+                rightState.textContent = 'Syncing...';
+            } else {
+                rightState.textContent = 'Not Connected';
+            }
+        }
         
         // Status updates
         function updateStatus(message, type = '') {
@@ -822,6 +991,7 @@
         function handleNotification(event) {
             const value = new TextDecoder().decode(event.target.value);
             console.log('Received notification:', value);
+            
             if (value.startsWith('CYCLES:')) {
                 const count = parseInt(value.substring(7));
                 if (!isNaN(count)) {
@@ -830,16 +1000,41 @@
                     console.log('Updated cycle count to:', count);
                 }
             }
+            
+            // Parse tapper status updates
+            const parts = value.split(',');
+            for (const part of parts) {
+                if (part.startsWith('LEFT_TAPPER:')) {
+                    const status = part.split(':')[1];
+                    if (status === 'CONNECTED') {
+                        tapperState.left.connected = true;
+                        tapperState.left.syncing = false;
+                        updateTapperDisplay();
+                        updateStatus('Left tapper connected successfully!', 'connected');
+                    }
+                } else if (part.startsWith('RIGHT_TAPPER:')) {
+                    const status = part.split(':')[1];
+                    if (status === 'CONNECTED') {
+                        tapperState.right.connected = true;
+                        tapperState.right.syncing = false;
+                        updateTapperDisplay();
+                        updateStatus('Right tapper connected successfully!', 'connected');
+                    }
+                } else if (part.startsWith('SYNC_MODE:')) {
+                    const syncSide = part.split(':')[1];
+                    console.log('Sync mode active for:', syncSide);
+                }
+            }
         }
         
-        // Polling fallback for cycle count
+        // Polling fallback for cycle count and tapper status
         let cyclePollingInterval = null;
         
         function startCyclePolling() {
             if (cyclePollingInterval) clearInterval(cyclePollingInterval);
             
             cyclePollingInterval = setInterval(async () => {
-                if (isPlaying && ledCharacteristic) {
+                if (ledCharacteristic) {
                     try {
                         const value = await ledCharacteristic.readValue();
                         const message = new TextDecoder().decode(value);
@@ -848,7 +1043,7 @@
                         // Silently fail - polling is best effort
                     }
                 }
-            }, 500);
+            }, 1000); // Poll every second for tapper status
         }
         
         function stopCyclePolling() {
@@ -930,9 +1125,6 @@
         
         document.getElementById('focusBtn').addEventListener('click', () => {
             // Focus should work in ANY scenario where we have a connection
-            // - During active pulse (isPlaying = true)
-            // - When paused (isPlaying = false but in session)
-            // - During preferences preview (preferencesPreviewActive = true)
             if (ledCharacteristic && isConnected) {
                 sendCommand('FOCUS');
                 console.log('FOCUS command sent - Connection active');
@@ -1147,7 +1339,7 @@
                 applySinglePulseSetting('area', settings.activeArea);
             });
             
-            // Trail settings - complete rewrite
+            // Trail settings
             const trailEnabled = document.getElementById('trailEnabled');
             const trailToggle = document.getElementById('trailToggle');
             const trailOptions = document.getElementById('trailOptions');
@@ -1161,31 +1353,25 @@
                 } else {
                     trailToggle.classList.remove('checked');
                 }
-                
-                console.log('Trail display updated - enabled:', settings.trailEnabled);
             }
             
             function toggleTrail() {
                 settings.trailEnabled = !settings.trailEnabled;
                 updateTrailDisplay();
                 applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
-                console.log('Trail toggled to:', settings.trailEnabled);
             }
             
-            // Listen for checkbox changes
             trailEnabled.addEventListener('change', () => {
                 settings.trailEnabled = trailEnabled.checked;
                 updateTrailDisplay();
                 applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
             });
             
-            // Listen for clicks on the toggle container
             trailToggle.addEventListener('click', (e) => {
                 e.preventDefault();
                 toggleTrail();
             });
             
-            // Initialize trail state
             updateTrailDisplay();
             
             // Trail duration
@@ -1238,7 +1424,7 @@
             document.getElementById('playPauseBtn').textContent = 'Play';
         });
         
-        // Settings application - optimized to avoid position resets
+        // Settings application
         function applyAllSettings() {
             applyBrightnessSetting();
             applyPulseSettings();
@@ -1251,9 +1437,7 @@
         
         function applySpeedSetting() {
             if (!ledCharacteristic) return;
-            // Send only frequency update to avoid position reset
             const command = `P:F${settings.speed}`;
-            console.log('Applying speed setting only:', settings.speed);
             sendCommand(command);
         }
         
@@ -1284,15 +1468,12 @@
                     command = `P:E${value}`;
                     break;
                 default:
-                    // Fallback to full settings
                     applyPulseSettings();
                     return;
             }
             
-            console.log(`Applying single setting - ${param}:`, value);
             sendCommand(command);
             
-            // If we're in preferences preview mode, ensure pulse is running
             if (preferencesPreviewActive) {
                 setTimeout(() => {
                     sendCommand('PULSE');
@@ -1304,24 +1485,12 @@
             if (!ledCharacteristic) return;
             
             const enabled = settings.trailEnabled ? 1 : 0;
-            const rainbow = 0; // Not implemented yet
+            const rainbow = 0;
             
             const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
             
-            console.log('Applying full pulse settings:', {
-                width: settings.pulseSize,
-                hue: settings.pulseHue,
-                frequency: settings.speed,
-                area: settings.activeArea,
-                trailLifespan: settings.trailDuration,
-                trailHue: settings.trailHue,
-                trailEnabled: enabled,
-                rainbow: rainbow
-            });
-            
             sendCommand(command);
             
-            // If we're in preferences preview mode, ensure pulse is running
             if (preferencesPreviewActive) {
                 setTimeout(() => {
                     sendCommand('PULSE');
@@ -1336,11 +1505,12 @@
             }
         }, 1000);
         
-        // Initialize preferences
+        // Initialize everything
         setupPreferences();
         updateSpeedDisplay();
         updatePulseColorSelection();
         updateTrailColorSelection();
+        updateTapperDisplay();
         
         // Initialize displays
         cyclesValue.textContent = targetCycles;
