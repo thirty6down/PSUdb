@@ -131,64 +131,6 @@
             background: #2196F3;
         }
 
-        .btn.orange {
-            background: #FF9800;
-        }
-
-        /* Tapper section */
-        .tapper-section {
-            background: #1e1e1e;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .tapper-section.show {
-            display: block;
-        }
-
-        .tapper-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #4CAF50;
-            text-align: center;
-        }
-
-        .tapper-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .tapper-status {
-            background: #333;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .tapper-status.connected {
-            background: #1b4332;
-            border: 2px solid #4CAF50;
-        }
-
-        .tapper-status.syncing {
-            background: #4a4a1b;
-            border: 2px solid #FFC107;
-        }
-
-        .tapper-label {
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .tapper-state {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
         /* Counter Controls */
         .counter-control {
             display: flex;
@@ -535,86 +477,6 @@
             padding: 10px 20px;
             margin-bottom: 20px;
         }
-
-        .movement-modes {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .movement-mode {
-            background: #444;
-            border: 2px solid transparent;
-            color: white;
-            padding: 15px 8px;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .movement-mode:hover {
-            background: #555;
-            transform: translateY(-2px);
-        }
-
-        .movement-mode.active {
-            border-color: #4CAF50;
-            background: #2a4a2a;
-            box-shadow: 0 0 12px rgba(76, 175, 80, 0.3);
-        }
-
-        .mode-name {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .mode-desc {
-            font-size: 11px;
-            color: #aaa;
-        }
-
-        .smoothness-presets {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .smoothness-preset {
-            background: #444;
-            border: 2px solid transparent;
-            color: white;
-            padding: 10px 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .smoothness-preset:hover {
-            background: #555;
-        }
-
-        .smoothness-preset.active {
-            border-color: #4CAF50;
-            background: #2a4a2a;
-        }
-
-        #smoothnessControl {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #333;
-        }
-
-        /* Animation for smooth appearance */
-        #smoothnessControl {
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
     </style>
 </head>
 
@@ -626,28 +488,6 @@
                 <h1>EMDRbar</h1>
                 <div id="status" class="status">Press "Connect" to begin</div>
                 <button id="connectBtn" class="btn">Connect to EMDRbar</button>
-
-                <div id="tapperSection" class="tapper-section">
-                    <div class="tapper-title">Tapper Devices</div>
-
-                    <div class="tapper-grid">
-                        <div id="leftTapperStatus" class="tapper-status">
-                            <div class="tapper-label">Left Tapper</div>
-                            <div class="tapper-state">Not Connected</div>
-                        </div>
-                        <div id="rightTapperStatus" class="tapper-status">
-                            <div class="tapper-label">Right Tapper</div>
-                            <div class="tapper-state">Not Connected</div>
-                        </div>
-                    </div>
-
-                    <div class="tapper-grid">
-                        <button id="syncLeftBtn" class="btn orange">Sync Left Tapper</button>
-                        <button id="syncRightBtn" class="btn orange">Sync Right Tapper</button>
-                    </div>
-
-                    <button id="forgetTappersBtn" class="btn secondary">Forget All Tappers</button>
-                </div>
             </div>
 
             <!-- Setup Page -->
@@ -738,42 +578,6 @@
                 </div>
 
                 <div class="pref-section">
-                    <div class="pref-title">Movement Style</div>
-
-                    <!-- Movement Mode Selection -->
-                    <div class="movement-modes">
-                        <button class="movement-mode active" data-mode="0">
-                            <div class="mode-name">Constant</div>
-                            <div class="mode-desc">Steady speed</div>
-                        </button>
-                        <button class="movement-mode" data-mode="1">
-                            <div class="mode-name">Smooth</div>
-                            <div class="mode-desc">Slower at edges</div>
-                        </button>
-                        <button class="movement-mode" data-mode="2">
-                            <div class="mode-name">Elastic</div>
-                            <div class="mode-desc">Pronounced easing</div>
-                        </button>
-                    </div>
-
-                    <!-- Smoothness Intensity (only shown for smooth/elastic modes) -->
-                    <div id="smoothnessControl" style="display: none;">
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>Smoothness Intensity</span>
-                                <span id="smoothnessValue">70%</span>
-                            </div>
-                            <input type="range" class="slider" id="smoothnessSlider" min="0" max="100" value="70">
-                        </div>
-                        <div class="smoothness-presets">
-                            <button class="smoothness-preset" data-intensity="0.3">Subtle</button>
-                            <button class="smoothness-preset active" data-intensity="0.7">Medium</button>
-                            <button class="smoothness-preset" data-intensity="1.0">Strong</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pref-section">
                     <div class="pref-title">Brightness</div>
                     <div class="slider-container">
                         <div class="slider-label">
@@ -823,22 +627,73 @@
 
                 <div class="pref-section">
                     <div class="pref-title">Trail Settings</div>
-                    <div class="toggle-switch">
-                        <label>Enable Trail</label>
-                        <div class="toggle" id="trailToggle">
-                            <input type="checkbox" id="trailEnabled">
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
-                    <div class="toggle-switch">
-                        <label>Enhanced Effects</label>
-                        <div class="toggle" id="enhancedToggle">
-                            <input type="checkbox" id="enhancedEnabled">
+
+                    <!-- Trail Enable/Disable Toggle - PROMINENT PLACEMENT -->
+                    <div class="toggle-switch"
+                        style="background: #2a4a2a; border: 2px solid #4CAF50; margin-bottom: 20px;">
+                        <label style="font-size: 16px; font-weight: bold;">Enable Trail</label>
+                        <div class="toggle checked" id="trailMasterToggle">
+                            <input type="checkbox" id="trailMasterEnabled" checked>
                             <div class="toggle-slider"></div>
                         </div>
                     </div>
 
-                    <div id="trailOptions" style="display: none;">
+                    <!-- Trail Style Presets - Only visible when trails enabled -->
+                    <div id="trailStyleSection">
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 14px; margin-bottom: 8px; color: #aaa;">Trail Style</div>
+                            <div class="preset-buttons">
+                                <button class="preset-btn active" data-trail-style="classic">Classic</button>
+                                <button class="preset-btn" data-trail-style="comet">Comet</button>
+                                <button class="preset-btn" data-trail-style="firefly">Firefly</button>
+                                <button class="preset-btn" data-trail-style="sparkle">Sparkle</button>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Controls - Only visible when trails enabled -->
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>🌊 Breathing Effect</span>
+                                <span id="breathingValue">30%</span>
+                            </div>
+                            <input type="range" class="slider" id="breathingSlider" min="0" max="100" value="30">
+                        </div>
+
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>✨ Shimmer Amount</span>
+                                <span id="shimmerValue">20%</span>
+                            </div>
+                            <input type="range" class="slider" id="shimmerSlider" min="0" max="100" value="20">
+                        </div>
+
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>⚡ Speed Response</span>
+                                <span id="velocityResponseValue">80%</span>
+                            </div>
+                            <input type="range" class="slider" id="velocityResponseSlider" min="0" max="200" value="80">
+                        </div>
+
+                        <!-- Existing trail controls -->
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Trail Duration</span>
+                                <span id="trailDurationValue">2.0s</span>
+                            </div>
+                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5"
+                                value="2.0">
+                        </div>
+
+                        <div class="toggle-switch">
+                            <label>💫 Enable Sparkles</label>
+                            <div class="toggle checked" id="sparklesToggle">
+                                <input type="checkbox" id="sparklesEnabled" checked>
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+
+                        <!-- Trail Color Grid (existing) -->
                         <div class="pref-title" style="margin-top: 20px;">Trail Color</div>
                         <div class="color-grid" id="trailColorGrid">
                             <div class="color-option" data-hue="0" style="background: #ff0000;">Red</div>
@@ -851,1185 +706,942 @@
                             <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
                             <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
                         </div>
+                    </div>
 
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>Trail Duration</span>
-                                <span id="trailDurationValue">2.0s</span>
-                            </div>
-                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5"
-                                value="2.0">
+                    <!-- No Trail Message - Only visible when trails disabled -->
+                    <div id="noTrailMessage"
+                        style="display: none; text-align: center; padding: 40px 20px; background: #333; border-radius: 8px; margin: 20px 0;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">🎯</div>
+                        <div style="font-size: 18px; color: #4CAF50; margin-bottom: 10px;">Clean Pulse Mode</div>
+                        <div style="font-size: 14px; color: #aaa;">Trail effects disabled - showing pulse only</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 15px;">
+                            Perfect for focused sessions or minimal distraction
                         </div>
                     </div>
                 </div>
-                <!-- Enhanced Trail Effects -->
-                <div class="pref-section" id="enhancedTrailSection" style="display: none;">
-                    <div class="pref-title">✨ Enhanced Trail Effects</div>
 
-                    <!-- Style Presets -->
-                    <div style="margin-bottom: 20px;">
-                        <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Visual Style</div>
-                        <div class="speed-presets">
-                            <button class="speed-preset active" data-style="0">Classic</button>
-                            <button class="speed-preset" data-style="1">Comet</button>
-                            <button class="speed-preset" data-style="2">Firefly</button>
-                            <button class="speed-preset" data-style="3">Ethereal</button>
-                        </div>
+                <!-- Extra Page -->
+                <div id="extraPage" class="page">
+                    <h2>Extra Features</h2>
+
+                    <div class="pref-section">
+                        <div class="pref-title">Party Mode</div>
+                        <button class="btn party-btn" id="partyBtn">🌈 Rainbow Party Mode</button>
                     </div>
 
-                    <!-- Breathing Effect -->
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>🌊 Breathing Intensity</span>
-                            <span id="breathingValue">30%</span>
-                        </div>
-                        <input type="range" class="slider" id="breathingSlider" min="0" max="100" value="30">
-                    </div>
-
-                    <!-- Shimmer Effect -->
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>✨ Shimmer Amount</span>
-                            <span id="shimmerValue">20%</span>
-                        </div>
-                        <input type="range" class="slider" id="shimmerSlider" min="0" max="100" value="20">
-                    </div>
-
-                    <!-- Velocity Response -->
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>⚡ Speed Response</span>
-                            <span id="velocityValue">80%</span>
-                        </div>
-                        <input type="range" class="slider" id="velocitySlider" min="0" max="200" value="80">
-                    </div>
-
-                    <!-- Width Variation -->
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>📏 Width Variation</span>
-                            <span id="widthValue">20%</span>
-                        </div>
-                        <input type="range" class="slider" id="widthSlider" min="0" max="100" value="20">
-                    </div>
-
-                    <!-- Toggle Effects -->
-                    <div class="toggle-switch">
-                        <label>💫 Sparkles</label>
-                        <div class="toggle checked" id="sparklesToggle">
-                            <input type="checkbox" id="sparklesEnabled" checked>
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
-
-                    <!-- Fade Style -->
-                    <div style="margin-top: 20px;">
-                        <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Fade Style</div>
-                        <div class="speed-presets">
-                            <button class="speed-preset active" data-fade="0">Linear</button>
-                            <button class="speed-preset" data-fade="1">Comet</button>
-                            <button class="speed-preset" data-fade="2">Firefly</button>
-                            <button class="speed-preset" data-fade="3">Long Tail</button>
-                        </div>
-                    </div>
+                    <button class="btn danger" id="turnOffBtn">Turn Off LEDs</button>
                 </div>
             </div>
 
-            <!-- Extra Page -->
-            <div id="extraPage" class="page">
-                <h2>Extra Features</h2>
-
-                <div class="pref-section">
-                    <div class="pref-title">Party Mode</div>
-                    <button class="btn party-btn" id="partyBtn">🌈 Rainbow Party Mode</button>
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item" data-page="connect">
+                    <div class="nav-icon">🔗</div>
+                    <div class="nav-label">Connect</div>
                 </div>
-
-                <button class="btn danger" id="turnOffBtn">Turn Off LEDs</button>
+                <div class="nav-item" data-page="setup">
+                    <div class="nav-icon">⚙️</div>
+                    <div class="nav-label">Setup</div>
+                </div>
+                <div class="nav-item" data-page="session">
+                    <div class="nav-icon">▶️</div>
+                    <div class="nav-label">Session</div>
+                </div>
+                <div class="nav-item" data-page="preferences">
+                    <div class="nav-icon">🎛️</div>
+                    <div class="nav-label">Prefs</div>
+                </div>
+                <div class="nav-item" data-page="extra">
+                    <div class="nav-icon">✨</div>
+                    <div class="nav-label">Extra</div>
+                </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <div class="nav-item" data-page="connect">
-                <div class="nav-icon">🔗</div>
-                <div class="nav-label">Connect</div>
-            </div>
-            <div class="nav-item" data-page="setup">
-                <div class="nav-icon">⚙️</div>
-                <div class="nav-label">Setup</div>
-            </div>
-            <div class="nav-item" data-page="session">
-                <div class="nav-icon">▶️</div>
-                <div class="nav-label">Session</div>
-            </div>
-            <div class="nav-item" data-page="preferences">
-                <div class="nav-icon">🎛️</div>
-                <div class="nav-label">Prefs</div>
-            </div>
-            <div class="nav-item" data-page="extra">
-                <div class="nav-icon">✨</div>
-                <div class="nav-label">Extra</div>
-            </div>
-        </div>
-    </div>
+        <script>
+            // Global state
+            let device, ledCharacteristic;
+            let isConnected = false;
+            let isPlaying = false;
+            let sessionType = 'manual'; // 'manual', 'cycles', 'time'
+            let targetCycles = 5;
+            let targetTimeSeconds = 30;
+            let currentCycles = 0;
+            let currentSpeed = 0.4;
+            let sessionStartTime = 0;
+            let elapsedSeconds = 0;
 
-    <script>
-        // Global state
-        let device, ledCharacteristic;
-        let isConnected = false;
-        let isPlaying = false;
-        let sessionType = 'manual'; // 'manual', 'cycles', 'time'
-        let targetCycles = 5;
-        let targetTimeSeconds = 30;
-        let currentCycles = 0;
-        let currentSpeed = 0.4;
-        let sessionStartTime = 0;
-        let elapsedSeconds = 0;
+            // Settings
+            let settings = {
+                speed: 0.4,
+                brightness: 150,
+                pulseHue: 0, // Red
+                pulseSize: 3, // LEDs
+                activeArea: 100, // Percentage
+                trailEnabled: false,
+                trailHue: 85, // Green
+                trailDuration: 2.0
+            };
 
-        // Tapper state
-        let tapperState = {
-            left: { connected: false, syncing: false },
-            right: { connected: false, syncing: false }
-        };
+            // DOM elements
+            const pages = document.querySelectorAll('.page');
+            const navItems = document.querySelectorAll('.nav-item');
+            const status = document.getElementById('status');
 
-        // Settings
-        let settings = {
-            speed: 0.4,
-            brightness: 150,
-            pulseHue: 0, // Red
-            pulseSize: 3, // LEDs
-            activeArea: 100, // Percentage
-            trailEnabled: false,
-            trailHue: 85, // Green
-            trailDuration: 2.0
-        };
-        let movementSettings = {
-            mode: 0,        // 0=constant, 1=smooth, 2=elastic
-            intensity: 0.7  // 0.0-1.0
-        };
+            // Navigation
+            function showPage(pageId) {
+                pages.forEach(page => page.classList.remove('active'));
+                navItems.forEach(item => item.classList.remove('active'));
 
-        // DOM elements
-        const pages = document.querySelectorAll('.page');
-        const navItems = document.querySelectorAll('.nav-item');
-        const status = document.getElementById('status');
-
-        // Navigation
-        function showPage(pageId) {
-            pages.forEach(page => page.classList.remove('active'));
-            navItems.forEach(item => item.classList.remove('active'));
-
-            document.getElementById(pageId + 'Page').classList.add('active');
-            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
-        }
-
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const pageId = item.dataset.page;
-
-                // Don't allow navigation to session/setup/preferences without connection
-                if (!isConnected && ['setup', 'session', 'preferences', 'extra'].includes(pageId)) {
-                    updateStatus('Please connect to device first', 'warning');
-                    return;
-                }
-
-                // Handle preferences page - start pulse preview
-                if (pageId === 'preferences' && isConnected) {
-                    startPreferencesPreview();
-                } else if (pageId !== 'preferences' && isConnected) {
-                    stopPreferencesPreview();
-                }
-
-                showPage(pageId);
-            });
-        });
-
-        // Preferences preview management
-        let preferencesPreviewActive = false;
-
-        function startPreferencesPreview() {
-            if (!preferencesPreviewActive) {
-                preferencesPreviewActive = true;
-                sendCommand('PULSE');
-                console.log('Started preferences preview');
+                document.getElementById(pageId + 'Page').classList.add('active');
+                document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
             }
-        }
 
-        function stopPreferencesPreview() {
-            if (preferencesPreviewActive) {
-                preferencesPreviewActive = false;
-                sendCommand('OFF');
-                console.log('Stopped preferences preview');
-            }
-        }
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const pageId = item.dataset.page;
 
-        // Connect functionality
-        document.getElementById('connectBtn').addEventListener('click', async () => {
-            try {
-                updateStatus('Searching for device...', 'warning');
+                    // Don't allow navigation to session/setup/preferences without connection
+                    if (!isConnected && ['setup', 'session', 'preferences', 'extra'].includes(pageId)) {
+                        updateStatus('Please connect to device first', 'warning');
+                        return;
+                    }
 
-                device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: "EMDRbar" }],
-                    optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
+                    // Handle preferences page - start pulse preview
+                    if (pageId === 'preferences' && isConnected) {
+                        startPreferencesPreview();
+                    } else if (pageId !== 'preferences' && isConnected) {
+                        stopPreferencesPreview();
+                    }
+
+                    showPage(pageId);
                 });
+            });
 
-                updateStatus('Connecting...', 'warning');
-                const server = await device.gatt.connect();
-                const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
-                ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+            // Preferences preview management
+            let preferencesPreviewActive = false;
 
-                // Try to enable notifications for cycle counting
-                try {
-                    await ledCharacteristic.startNotifications();
-                    ledCharacteristic.addEventListener('characteristicvaluechanged', handleNotification);
-                } catch (e) {
-                    console.log('Notifications not supported');
+            function startPreferencesPreview() {
+                if (!preferencesPreviewActive) {
+                    preferencesPreviewActive = true;
+                    sendCommand('PULSE');
+                    console.log('Started preferences preview');
                 }
+            }
 
-                isConnected = true;
-                updateStatus('Connected! Set up tappers or choose session type', 'connected');
-
-                // Show tapper section
-                document.getElementById('tapperSection').classList.add('show');
-
-                // Send initial settings
-                applyAllSettings();
-
-                // Start cycle count polling
-                startCyclePolling();
-
-                device.addEventListener('gattserverdisconnected', () => {
-                    isConnected = false;
-                    isPlaying = false;
+            function stopPreferencesPreview() {
+                if (preferencesPreviewActive) {
                     preferencesPreviewActive = false;
-                    stopCyclePolling();
-
-                    // Hide tapper section and reset tapper states
-                    document.getElementById('tapperSection').classList.remove('show');
-                    tapperState.left = { connected: false, syncing: false };
-                    tapperState.right = { connected: false, syncing: false };
-                    updateTapperDisplay();
-
-                    updateStatus('Device disconnected', 'error');
-                    showPage('connect');
-                });
-
-            } catch (error) {
-                updateStatus(`Error: ${error.message}`, 'error');
-            }
-        });
-
-        // Tapper sync buttons
-        document.getElementById('syncLeftBtn').addEventListener('click', () => {
-            if (tapperState.left.syncing) return;
-
-            tapperState.left.syncing = true;
-            updateTapperDisplay();
-            sendCommand('SYNC_LEFT');
-
-            // Set timeout for sync attempt
-            setTimeout(() => {
-                if (tapperState.left.syncing) {
-                    tapperState.left.syncing = false;
-                    updateTapperDisplay();
-                    updateStatus('Left tapper sync timeout - make sure tapper is in sync mode', 'warning');
-                }
-            }, 10000);
-        });
-
-        document.getElementById('syncRightBtn').addEventListener('click', () => {
-            if (tapperState.right.syncing) return;
-
-            tapperState.right.syncing = true;
-            updateTapperDisplay();
-            sendCommand('SYNC_RIGHT');
-
-            // Set timeout for sync attempt
-            setTimeout(() => {
-                if (tapperState.right.syncing) {
-                    tapperState.right.syncing = false;
-                    updateTapperDisplay();
-                    updateStatus('Right tapper sync timeout - make sure tapper is in sync mode', 'warning');
-                }
-            }, 10000);
-        });
-
-        document.getElementById('forgetTappersBtn').addEventListener('click', () => {
-            sendCommand('FORGET_TAPPERS');
-            tapperState.left = { connected: false, syncing: false };
-            tapperState.right = { connected: false, syncing: false };
-            updateTapperDisplay();
-            updateStatus('All tappers forgotten', 'connected');
-        });
-
-        function updateTapperDisplay() {
-            const leftStatus = document.getElementById('leftTapperStatus');
-            const rightStatus = document.getElementById('rightTapperStatus');
-            const leftState = leftStatus.querySelector('.tapper-state');
-            const rightState = rightStatus.querySelector('.tapper-state');
-
-            // Update left tapper
-            leftStatus.className = 'tapper-status';
-            if (tapperState.left.connected) {
-                leftStatus.classList.add('connected');
-                leftState.textContent = 'Connected';
-            } else if (tapperState.left.syncing) {
-                leftStatus.classList.add('syncing');
-                leftState.textContent = 'Syncing...';
-            } else {
-                leftState.textContent = 'Not Connected';
-            }
-
-            // Update right tapper
-            rightStatus.className = 'tapper-status';
-            if (tapperState.right.connected) {
-                rightStatus.classList.add('connected');
-                rightState.textContent = 'Connected';
-            } else if (tapperState.right.syncing) {
-                rightStatus.classList.add('syncing');
-                rightState.textContent = 'Syncing...';
-            } else {
-                rightState.textContent = 'Not Connected';
-            }
-        }
-
-        // Status updates
-        function updateStatus(message, type = '') {
-            status.textContent = message;
-            status.className = 'status ' + type;
-        }
-
-        // BLE communication
-        function sendCommand(command) {
-            if (!ledCharacteristic) {
-                console.log('Cannot send command - no BLE connection');
-                return;
-            }
-
-            try {
-                ledCharacteristic.writeValue(new TextEncoder().encode(command));
-                console.log('✓ Sent command:', command);
-            } catch (error) {
-                console.error('Failed to send command:', command, error);
-            }
-        }
-
-        function handleNotification(event) {
-            const value = new TextDecoder().decode(event.target.value);
-            console.log('Received notification:', value);
-
-            if (value.startsWith('CYCLES:')) {
-                const count = parseInt(value.substring(7));
-                if (!isNaN(count)) {
-                    currentCycles = count;
-                    updateSessionDisplay();
-                    console.log('Updated cycle count to:', count);
+                    sendCommand('OFF');
+                    console.log('Stopped preferences preview');
                 }
             }
 
-            // Parse tapper status updates
-            const parts = value.split(',');
-            for (const part of parts) {
-                if (part.startsWith('LEFT_TAPPER:')) {
-                    const status = part.split(':')[1];
-                    if (status === 'CONNECTED') {
-                        tapperState.left.connected = true;
-                        tapperState.left.syncing = false;
-                        updateTapperDisplay();
-                        updateStatus('Left tapper connected successfully!', 'connected');
-                    }
-                } else if (part.startsWith('RIGHT_TAPPER:')) {
-                    const status = part.split(':')[1];
-                    if (status === 'CONNECTED') {
-                        tapperState.right.connected = true;
-                        tapperState.right.syncing = false;
-                        updateTapperDisplay();
-                        updateStatus('Right tapper connected successfully!', 'connected');
-                    }
-                } else if (part.startsWith('SYNC_MODE:')) {
-                    const syncSide = part.split(':')[1];
-                    console.log('Sync mode active for:', syncSide);
-                }
-            }
-        }
-
-        // Polling fallback for cycle count and tapper status
-        let cyclePollingInterval = null;
-
-        function startCyclePolling() {
-            if (cyclePollingInterval) clearInterval(cyclePollingInterval);
-
-            cyclePollingInterval = setInterval(async () => {
-                if (ledCharacteristic) {
-                    try {
-                        const value = await ledCharacteristic.readValue();
-                        const message = new TextDecoder().decode(value);
-                        handleNotification({ target: { value } });
-                    } catch (error) {
-                        // Silently fail - polling is best effort
-                    }
-                }
-            }, 1000); // Poll every second for tapper status
-        }
-
-        function stopCyclePolling() {
-            if (cyclePollingInterval) {
-                clearInterval(cyclePollingInterval);
-                cyclePollingInterval = null;
-            }
-        }
-
-        // Setup page controls
-        const cyclesValue = document.getElementById('cyclesValue');
-        const timeValue = document.getElementById('timeValue');
-
-        document.getElementById('cyclesDown').addEventListener('click', () => {
-            targetCycles = Math.max(1, targetCycles - 1);
-            cyclesValue.textContent = targetCycles;
-        });
-
-        document.getElementById('cyclesUp').addEventListener('click', () => {
-            targetCycles = Math.min(100, targetCycles + 1);
-            cyclesValue.textContent = targetCycles;
-        });
-
-        document.getElementById('timeDown').addEventListener('click', () => {
-            targetTimeSeconds = Math.max(5, targetTimeSeconds - 5);
-            timeValue.textContent = formatTime(targetTimeSeconds);
-        });
-
-        document.getElementById('timeUp').addEventListener('click', () => {
-            targetTimeSeconds = Math.min(3600, targetTimeSeconds + 5);
-            timeValue.textContent = formatTime(targetTimeSeconds);
-        });
-
-        document.getElementById('cyclesStart').addEventListener('click', () => {
-            startSession('cycles');
-        });
-
-        document.getElementById('timeStart').addEventListener('click', () => {
-            startSession('time');
-        });
-
-        document.getElementById('manualStart').addEventListener('click', () => {
-            startSession('manual');
-        });
-
-        // Session controls
-        document.getElementById('playPauseBtn').addEventListener('click', () => {
-            const playPauseBtn = document.getElementById('playPauseBtn');
-
-            if (isPlaying) {
-                sendCommand('PAUSE');
-                isPlaying = false;
-                playPauseBtn.textContent = 'Resume';
-                stopCyclePolling();
-            } else {
-                // Check if this is a continue after completion
-                if (playPauseBtn.textContent === 'Continue') {
-                    // Session was completed - we need to reset targets and continue
-                    if (sessionType === 'cycles') {
-                        targetCycles += targetCycles; // Double the target to allow continuation
-                    } else if (sessionType === 'time') {
-                        targetTimeSeconds += targetTimeSeconds; // Double the target time
-                    }
-                    playPauseBtn.textContent = 'Pause';
-                } else {
-                    playPauseBtn.textContent = 'Pause';
-                }
-
-                // Always send PULSE command to resume from current position
-                sendCommand('PULSE');
-                isPlaying = true;
-
-                if (sessionStartTime === 0) {
-                    sessionStartTime = Date.now();
-                }
-                startCyclePolling();
-            }
-        });
-
-        document.getElementById('focusBtn').addEventListener('click', () => {
-            // Focus should work in ANY scenario where we have a connection
-            if (ledCharacteristic && isConnected) {
-                sendCommand('FOCUS');
-                console.log('FOCUS command sent - Connection active');
-
-                // Visual feedback
-                const focusBtn = document.getElementById('focusBtn');
-                const originalBg = focusBtn.style.background;
-                focusBtn.style.background = '#ffff00';
-                focusBtn.style.transform = 'scale(0.95)';
-
-                setTimeout(() => {
-                    focusBtn.style.background = originalBg;
-                    focusBtn.style.transform = '';
-                }, 300);
-            } else {
-                console.log('Focus button pressed but no BLE connection available');
-            }
-        });
-
-        document.getElementById('speedDown').addEventListener('click', () => {
-            changeSpeed(-0.1);
-        });
-
-        document.getElementById('speedUp').addEventListener('click', () => {
-            changeSpeed(0.1);
-        });
-
-        document.getElementById('backBtn').addEventListener('click', () => {
-            // Stop current session
-            sendCommand('OFF');
-            isPlaying = false;
-            stopCyclePolling();
-            sessionStartTime = 0;
-            currentCycles = 0;
-            elapsedSeconds = 0;
-            updateSessionDisplay();
-            showPage('setup');
-        });
-
-        // Session management
-        function startSession(type) {
-            sessionType = type;
-            currentCycles = 0;
-            elapsedSeconds = 0;
-            sessionStartTime = 0;
-
-            const sessionMode = document.getElementById('sessionMode');
-            const progressText = document.getElementById('progressText');
-
-            switch (type) {
-                case 'cycles':
-                    sessionMode.textContent = `Target: ${targetCycles} cycles`;
-                    progressText.textContent = `0 / ${targetCycles} cycles`;
-                    break;
-                case 'time':
-                    sessionMode.textContent = `Target: ${formatTime(targetTimeSeconds)}`;
-                    progressText.textContent = `0:00 / ${formatTime(targetTimeSeconds)}`;
-                    break;
-                case 'manual':
-                    sessionMode.textContent = 'Manual Control';
-                    progressText.textContent = 'Ready to start';
-                    break;
-            }
-
-            showPage('session');
-            updateSessionDisplay();
-        }
-
-        function updateSessionDisplay() {
-            const progressText = document.getElementById('progressText');
-            const progressFill = document.getElementById('progressFill');
-            const cycleCount = document.getElementById('cycleCount');
-
-            cycleCount.textContent = currentCycles;
-
-            let progress = 0;
-
-            if (sessionStartTime > 0) {
-                elapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
-            }
-
-            switch (sessionType) {
-                case 'cycles':
-                    progress = Math.min(100, (currentCycles / targetCycles) * 100);
-                    progressText.textContent = `${currentCycles} / ${targetCycles} cycles`;
-
-                    if (currentCycles >= targetCycles && isPlaying) {
-                        // Session complete
-                        sendCommand('PAUSE');
-                        isPlaying = false;
-                        stopCyclePolling();
-                        document.getElementById('playPauseBtn').textContent = 'Continue';
-                        progressText.textContent = `Complete! ${targetCycles} cycles - Continue or go back`;
-                    }
-                    break;
-
-                case 'time':
-                    progress = Math.min(100, (elapsedSeconds / targetTimeSeconds) * 100);
-                    progressText.textContent = `${formatTime(elapsedSeconds)} / ${formatTime(targetTimeSeconds)}`;
-
-                    if (elapsedSeconds >= targetTimeSeconds && isPlaying) {
-                        // Session complete
-                        sendCommand('PAUSE');
-                        isPlaying = false;
-                        stopCyclePolling();
-                        document.getElementById('playPauseBtn').textContent = 'Continue';
-                        progressText.textContent = `Complete! ${formatTime(targetTimeSeconds)} - Continue or go back`;
-                    }
-                    break;
-
-                case 'manual':
-                    if (sessionStartTime > 0) {
-                        progressText.textContent = `Running for ${formatTime(elapsedSeconds)}`;
-                    }
-                    break;
-            }
-
-            progressFill.style.width = progress + '%';
-        }
-
-        function changeSpeed(delta) {
-            const newSpeed = Math.round((currentSpeed + delta) * 10) / 10;
-            currentSpeed = Math.max(0.1, Math.min(2.0, newSpeed));
-            document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
-
-            // Update settings and send to device
-            settings.speed = currentSpeed;
-            applySinglePulseSetting('frequency', settings.speed);
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // Preferences page
-        function setupPreferences() {
-            // Speed presets
-            document.querySelectorAll('.speed-preset').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const speed = parseFloat(btn.dataset.speed);
-                    settings.speed = speed;
-                    currentSpeed = speed;
-                    updateSpeedDisplay();
-                    applySpeedSetting();
-                });
-            });
-
-            // Speed slider
-            const speedSlider = document.getElementById('speedSlider');
-            speedSlider.addEventListener('input', () => {
-                settings.speed = parseFloat(speedSlider.value);
-                currentSpeed = settings.speed;
-                document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
-                updateSpeedDisplay();
-            });
-
-            speedSlider.addEventListener('change', () => {
-                applySinglePulseSetting('frequency', settings.speed);
-            });
-
-            // Brightness
-            const brightnessSlider = document.getElementById('brightnessSlider');
-            brightnessSlider.addEventListener('input', () => {
-                settings.brightness = parseInt(brightnessSlider.value);
-                document.getElementById('brightnessValue').textContent = settings.brightness;
-            });
-
-            brightnessSlider.addEventListener('change', () => {
-                applyBrightnessSetting();
-            });
-
-            // Pulse color
-            document.querySelectorAll('.color-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    if (option.closest('#trailColorGrid')) {
-                        // Trail color
-                        settings.trailHue = parseInt(option.dataset.hue);
-                        updateTrailColorSelection();
-                        applySinglePulseSetting('trailHue', settings.trailHue);
-                    } else {
-                        // Pulse color
-                        settings.pulseHue = parseInt(option.dataset.hue);
-                        updatePulseColorSelection();
-                        applySinglePulseSetting('color', settings.pulseHue);
-                    }
-                });
-            });
-
-            // Pulse size
-            const pulseSizeSlider = document.getElementById('pulseSizeSlider');
-            pulseSizeSlider.addEventListener('input', () => {
-                settings.pulseSize = parseInt(pulseSizeSlider.value);
-                // Convert LEDs to cm (60 LEDs per meter = 1.67cm per LED)
-                const cm = Math.round(settings.pulseSize * 1.67);
-                document.getElementById('pulseSizeValue').textContent = cm + ' cm';
-            });
-
-            pulseSizeSlider.addEventListener('change', () => {
-                applySinglePulseSetting('width', settings.pulseSize);
-            });
-
-            // Active area
-            const activeAreaSlider = document.getElementById('activeAreaSlider');
-            activeAreaSlider.addEventListener('input', () => {
-                settings.activeArea = parseInt(activeAreaSlider.value);
-                document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
-            });
-
-            activeAreaSlider.addEventListener('change', () => {
-                applySinglePulseSetting('area', settings.activeArea);
-            });
-
-            // Trail settings
-            const trailEnabled = document.getElementById('trailEnabled');
-            const trailToggle = document.getElementById('trailToggle');
-            const trailOptions = document.getElementById('trailOptions');
-
-            function updateTrailDisplay() {
-                trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
-                trailEnabled.checked = settings.trailEnabled;
-
-                if (settings.trailEnabled) {
-                    trailToggle.classList.add('checked');
-                } else {
-                    trailToggle.classList.remove('checked');
-                }
-            }
-
-            function toggleTrail() {
-                settings.trailEnabled = !settings.trailEnabled;
-                updateTrailDisplay();
-                applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
-            }
-
-            trailEnabled.addEventListener('change', () => {
-                settings.trailEnabled = trailEnabled.checked;
-                updateTrailDisplay();
-                applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
-            });
-
-            trailToggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleTrail();
-            });
-
-            updateTrailDisplay();
-
-            // Trail duration
-            const trailDurationSlider = document.getElementById('trailDurationSlider');
-            trailDurationSlider.addEventListener('input', () => {
-                settings.trailDuration = parseFloat(trailDurationSlider.value);
-                document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
-            });
-
-            trailDurationSlider.addEventListener('change', () => {
-                applySinglePulseSetting('trailLifespan', settings.trailDuration);
-            });
-        }
-
-        function updateSpeedDisplay() {
-            document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
-            document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
-            document.getElementById('speedSlider').value = settings.speed;
-
-            // Update preset buttons
-            document.querySelectorAll('.speed-preset').forEach(btn => {
-                btn.classList.toggle('active', parseFloat(btn.dataset.speed) === settings.speed);
-            });
-        }
-
-        function updatePulseColorSelection() {
-            document.querySelectorAll('.color-option').forEach(option => {
-                if (!option.closest('#trailColorGrid')) {
-                    option.classList.toggle('active', parseInt(option.dataset.hue) === settings.pulseHue);
-                }
-            });
-        }
-
-        function updateTrailColorSelection() {
-            document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
-                option.classList.toggle('active', parseInt(option.dataset.hue) === settings.trailHue);
-            });
-        }
-
-        // Extra page
-        document.getElementById('partyBtn').addEventListener('click', () => {
-            sendCommand('RAINBOW');
-            isPlaying = false;
-            document.getElementById('playPauseBtn').textContent = 'Play';
-        });
-
-        document.getElementById('turnOffBtn').addEventListener('click', () => {
-            sendCommand('OFF');
-            isPlaying = false;
-            document.getElementById('playPauseBtn').textContent = 'Play';
-        });
-
-        // Settings application
-        function applyAllSettings() {
-            applyBrightnessSetting();
-            applyPulseSettings();
-        }
-
-        function applyBrightnessSetting() {
-            if (!ledCharacteristic) return;
-            sendCommand(`B:${settings.brightness}`);
-        }
-
-        function applySpeedSetting() {
-            if (!ledCharacteristic) return;
-            const command = `P:F${settings.speed}`;
-            sendCommand(command);
-        }
-
-        function applySinglePulseSetting(param, value) {
-            if (!ledCharacteristic) return;
-
-            let command;
-            switch (param) {
-                case 'width':
-                    command = `P:W${value}`;
-                    break;
-                case 'color':
-                    command = `P:C${value}`;
-                    break;
-                case 'frequency':
-                    command = `P:F${value}`;
-                    break;
-                case 'area':
-                    command = `P:A${value}`;
-                    break;
-                case 'trailLifespan':
-                    command = `P:L${value}`;
-                    break;
-                case 'trailHue':
-                    command = `P:H${value}`;
-                    break;
-                case 'trailEnabled':
-                    command = `P:E${value}`;
-                    break;
-                default:
-                    applyPulseSettings();
-                    return;
-            }
-
-            sendCommand(command);
-
-            if (preferencesPreviewActive) {
-                setTimeout(() => {
-                    sendCommand('PULSE');
-                }, 50);
-            }
-        }
-
-        function applyPulseSettings() {
-            if (!ledCharacteristic) return;
-
-            const enabled = settings.trailEnabled ? 1 : 0;
-            const rainbow = 0;
-
-            const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
-
-            sendCommand(command);
-
-            if (preferencesPreviewActive) {
-                setTimeout(() => {
-                    sendCommand('PULSE');
-                }, 150);
-            }
-        }
-
-        // Update displays every second
-        setInterval(() => {
-            if (isPlaying) {
-                updateSessionDisplay();
-            }
-        }, 1000);
-        document.querySelectorAll('.movement-mode').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = parseInt(btn.dataset.mode);
-                movementSettings.mode = mode;
-
-                // Update UI
-                document.querySelectorAll('.movement-mode').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                // Show/hide smoothness control
-                const smoothnessControl = document.getElementById('smoothnessControl');
-                if (mode === 0) {
-                    smoothnessControl.style.display = 'none';
-                } else {
-                    smoothnessControl.style.display = 'block';
-                }
-
-                // Send to device
-                applyMovementSettings();
-
-                console.log('Movement mode changed to:', mode);
-            });
-        });
-
-        // Smoothness intensity slider
-        const smoothnessSlider = document.getElementById('smoothnessSlider');
-        smoothnessSlider.addEventListener('input', () => {
-            const value = parseInt(smoothnessSlider.value);
-            movementSettings.intensity = value / 100.0;
-            document.getElementById('smoothnessValue').textContent = value + '%';
-
-            // Update preset buttons
-            updateSmoothnessPresetSelection();
-        });
-
-        smoothnessSlider.addEventListener('change', () => {
-            applyMovementSettings();
-        });
-
-        // Smoothness presets
-        document.querySelectorAll('.smoothness-preset').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const intensity = parseFloat(btn.dataset.intensity);
-                movementSettings.intensity = intensity;
-
-                // Update UI
-                document.querySelectorAll('.smoothness-preset').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                // Update slider
-                smoothnessSlider.value = Math.round(intensity * 100);
-                document.getElementById('smoothnessValue').textContent = Math.round(intensity * 100) + '%';
-
-                // Send to device
-                applyMovementSettings();
-            });
-        });
-
-        function updateSmoothnessPresetSelection() {
-            const currentIntensity = movementSettings.intensity;
-
-            document.querySelectorAll('.smoothness-preset').forEach(btn => {
-                const intensity = parseFloat(btn.dataset.intensity);
-                const diff = Math.abs(intensity - currentIntensity);
-
-                if (diff < 0.15) { // Close enough to this preset
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        }
-
-        function applyMovementSettings() {
-            if (!ledCharacteristic) return;
-
-            // Format: "M:T1,I0.7" (T=type, I=intensity)
-            const command = `M:T${movementSettings.mode},I${movementSettings.intensity.toFixed(2)}`;
-
-            console.log('Applying movement settings:', {
-                mode: movementSettings.mode,
-                intensity: movementSettings.intensity,
-                command: command
-            });
-
-            sendCommand(command);
-
-            // If we're in preferences preview mode, ensure pulse is running
-            if (preferencesPreviewActive) {
-                setTimeout(() => {
-                    sendCommand('PULSE');
-                }, 100);
-            }
-        }
-
-        // Initialize movement settings display
-        function initializeMovementSettings() {
-            // Set initial smoothness value
-            document.getElementById('smoothnessValue').textContent = Math.round(movementSettings.intensity * 100) + '%';
-            smoothnessSlider.value = Math.round(movementSettings.intensity * 100);
-
-            // Hide smoothness control initially (constant mode is default)
-            document.getElementById('smoothnessControl').style.display = 'none';
-
-            // Set active preset
-            updateSmoothnessPresetSelection();
-        }
-
-        // Call this in your existing setupPreferences function
-        initializeMovementSettings();
-        // Initialize everything
-        setupPreferences();
-        updateSpeedDisplay();
-        updatePulseColorSelection();
-        updateTrailColorSelection();
-        updateTapperDisplay();
-        setupEnhancedTrailControls();
-
-        // Initialize displays
-        cyclesValue.textContent = targetCycles;
-        timeValue.textContent = formatTime(targetTimeSeconds);
-        document.getElementById('pulseSizeValue').textContent = Math.round(settings.pulseSize * 1.67) + ' cm';
-        document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
-        document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
-        // Enhanced trail settings
-        let enhancedTrailSettings = {
-            breathingIntensity: 0.3,
-            shimmerAmount: 0.2,
-            velocityResponse: 0.8,
-            widthVariation: 0.2,
-            fadeStyle: 0,
-            enableSparkles: true
-        };
-
-        // Style presets
-        const trailPresets = {
-            0: { name: "Classic", breathing: 0.1, shimmer: 0.0, velocity: 0.5, width: 0.0, fade: 0, sparkles: false },
-            1: { name: "Comet", breathing: 0.2, shimmer: 0.1, velocity: 1.0, width: 0.4, fade: 1, sparkles: false },
-            2: { name: "Firefly", breathing: 0.4, shimmer: 0.6, velocity: 0.3, width: 0.1, fade: 2, sparkles: true },
-            3: { name: "Ethereal", breathing: 0.6, shimmer: 0.3, velocity: 0.2, width: 0.3, fade: 2, sparkles: true }
-        };
-
-        // Send enhanced trail settings to device
-        function sendEnhancedTrailSettings() {
-            if (!ledCharacteristic) return;
-
-            // CRITICAL: Only send ET: commands, never P: commands from trail system
-            const command = `ET:B${enhancedTrailSettings.breathingIntensity.toFixed(2)},` +
-                `S${enhancedTrailSettings.shimmerAmount.toFixed(2)},` +
-                `V${enhancedTrailSettings.velocityResponse.toFixed(2)},` +
-                `W${enhancedTrailSettings.widthVariation.toFixed(2)},` +
-                `F${enhancedTrailSettings.fadeStyle},` +
-                `P${enhancedTrailSettings.enableSparkles ? 1 : 0}`;
-
-            sendCommand(command);
-            console.log('Enhanced trail settings sent:', command);
-        }
-
-        function applyTrailPreset(presetId) {
-            const preset = trailPresets[presetId];
-            if (!preset) return;
-
-            console.log('Applying trail preset:', preset.name);
-
-            // Update settings (no frequency involved)
-            enhancedTrailSettings.breathingIntensity = preset.breathing;
-            enhancedTrailSettings.shimmerAmount = preset.shimmer;
-            enhancedTrailSettings.velocityResponse = preset.velocity;
-            enhancedTrailSettings.widthVariation = preset.width;
-            enhancedTrailSettings.fadeStyle = preset.fade;
-            enhancedTrailSettings.enableSparkles = preset.sparkles;
-
-            // Update UI sliders if they exist
-            if (document.getElementById('breathingSlider')) {
-                document.getElementById('breathingSlider').value = preset.breathing * 100;
-                document.getElementById('breathingValue').textContent = Math.round(preset.breathing * 100) + '%';
-            }
-
-            if (document.getElementById('shimmerSlider')) {
-                document.getElementById('shimmerSlider').value = preset.shimmer * 100;
-                document.getElementById('shimmerValue').textContent = Math.round(preset.shimmer * 100) + '%';
-            }
-
-            if (document.getElementById('velocitySlider')) {
-                document.getElementById('velocitySlider').value = preset.velocity * 100;
-                document.getElementById('velocityValue').textContent = Math.round(preset.velocity * 100) + '%';
-            }
-
-            if (document.getElementById('widthSlider')) {
-                document.getElementById('widthSlider').value = preset.width * 100;
-                document.getElementById('widthValue').textContent = Math.round(preset.width * 100) + '%';
-            }
-
-            if (document.getElementById('sparklesEnabled')) {
-                document.getElementById('sparklesEnabled').checked = preset.sparkles;
-                document.getElementById('sparklesToggle').classList.toggle('checked', preset.sparkles);
-            }
-
-            // Update preset buttons
-            document.querySelectorAll('[data-style]').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.style) === presetId);
-            });
-
-            // Update fade style buttons
-            document.querySelectorAll('[data-fade]').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.fade) === preset.fade);
-            });
-
-            // Send ONLY trail settings
-            sendEnhancedTrailSettings();
-        }
-
-        // Update slider displays
-        function updateSliderDisplay(sliderId, valueId, value, suffix = '%') {
-            document.getElementById(valueId).textContent = Math.round(value) + suffix;
-        }
-
-        // Setup enhanced trail event listeners
-        function setupEnhancedTrailControls() {
-            // Style preset buttons - FIXED to not send frequency
-            document.querySelectorAll('[data-style]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const style = parseInt(btn.dataset.style);
-                    applyTrailPreset(style);
-                });
-            });
-
-            // Individual control sliders
-            if (document.getElementById('breathingSlider')) {
-                document.getElementById('breathingSlider').addEventListener('input', (e) => {
-                    const value = parseInt(e.target.value);
-                    enhancedTrailSettings.breathingIntensity = value / 100.0;
-                    document.getElementById('breathingValue').textContent = value + '%';
-                });
-
-                document.getElementById('breathingSlider').addEventListener('change', sendEnhancedTrailSettings);
-            }
-
-            if (document.getElementById('shimmerSlider')) {
-                document.getElementById('shimmerSlider').addEventListener('input', (e) => {
-                    const value = parseInt(e.target.value);
-                    enhancedTrailSettings.shimmerAmount = value / 100.0;
-                    document.getElementById('shimmerValue').textContent = value + '%';
-                });
-
-                document.getElementById('shimmerSlider').addEventListener('change', sendEnhancedTrailSettings);
-            }
-
-            if (document.getElementById('velocitySlider')) {
-                document.getElementById('velocitySlider').addEventListener('input', (e) => {
-                    const value = parseInt(e.target.value);
-                    enhancedTrailSettings.velocityResponse = value / 100.0;
-                    document.getElementById('velocityValue').textContent = value + '%';
-                });
-
-                document.getElementById('velocitySlider').addEventListener('change', sendEnhancedTrailSettings);
-            }
-
-            if (document.getElementById('widthSlider')) {
-                document.getElementById('widthSlider').addEventListener('input', (e) => {
-                    const value = parseInt(e.target.value);
-                    enhancedTrailSettings.widthVariation = value / 100.0;
-                    document.getElementById('widthValue').textContent = value + '%';
-                });
-
-                document.getElementById('widthSlider').addEventListener('change', sendEnhancedTrailSettings);
-            }
-
-            // Fade style buttons
-            document.querySelectorAll('[data-fade]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    enhancedTrailSettings.fadeStyle = parseInt(btn.dataset.fade);
-
-                    document.querySelectorAll('[data-fade]').forEach(fadeBtn => {
-                        fadeBtn.classList.toggle('active', parseInt(fadeBtn.dataset.fade) === enhancedTrailSettings.fadeStyle);
+            // Connect functionality
+            document.getElementById('connectBtn').addEventListener('click', async () => {
+                try {
+                    updateStatus('Searching for device...', 'warning');
+
+                    device = await navigator.bluetooth.requestDevice({
+                        filters: [{ name: "EMDRbar" }],
+                        optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
                     });
 
+                    updateStatus('Connecting...', 'warning');
+                    const server = await device.gatt.connect();
+                    const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+                    ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+
+                    // Try to enable notifications for cycle counting
+                    try {
+                        await ledCharacteristic.startNotifications();
+                        ledCharacteristic.addEventListener('characteristicvaluechanged', handleNotification);
+                    } catch (e) {
+                        console.log('Notifications not supported');
+                    }
+
+                    isConnected = true;
+                    updateStatus('Connected! Choose your session type', 'connected');
+                    showPage('setup');
+
+                    // Send initial settings
+                    applyAllSettings();
+
+                    // Start cycle count polling
+                    startCyclePolling();
+
+                    device.addEventListener('gattserverdisconnected', () => {
+                        isConnected = false;
+                        isPlaying = false;
+                        preferencesPreviewActive = false;
+                        stopCyclePolling();
+                        updateStatus('Device disconnected', 'error');
+                        showPage('connect');
+                    });
+
+                } catch (error) {
+                    updateStatus(`Error: ${error.message}`, 'error');
+                }
+            });
+
+            // Status updates
+            function updateStatus(message, type = '') {
+                status.textContent = message;
+                status.className = 'status ' + type;
+            }
+
+            // BLE communication
+            function sendCommand(command) {
+                if (!ledCharacteristic) {
+                    console.log('Cannot send command - no BLE connection');
+                    return;
+                }
+
+                try {
+                    ledCharacteristic.writeValue(new TextEncoder().encode(command));
+                    console.log('✓ Sent command:', command);
+                } catch (error) {
+                    console.error('Failed to send command:', command, error);
+                }
+            }
+
+            function handleNotification(event) {
+                const value = new TextDecoder().decode(event.target.value);
+                console.log('Received notification:', value);
+                if (value.startsWith('CYCLES:')) {
+                    const count = parseInt(value.substring(7));
+                    if (!isNaN(count)) {
+                        currentCycles = count;
+                        updateSessionDisplay();
+                        console.log('Updated cycle count to:', count);
+                    }
+                }
+            }
+
+            // Polling fallback for cycle count
+            let cyclePollingInterval = null;
+
+            function startCyclePolling() {
+                if (cyclePollingInterval) clearInterval(cyclePollingInterval);
+
+                cyclePollingInterval = setInterval(async () => {
+                    if (isPlaying && ledCharacteristic) {
+                        try {
+                            const value = await ledCharacteristic.readValue();
+                            const message = new TextDecoder().decode(value);
+                            handleNotification({ target: { value } });
+                        } catch (error) {
+                            // Silently fail - polling is best effort
+                        }
+                    }
+                }, 500);
+            }
+
+            function stopCyclePolling() {
+                if (cyclePollingInterval) {
+                    clearInterval(cyclePollingInterval);
+                    cyclePollingInterval = null;
+                }
+            }
+
+            // Setup page controls
+            const cyclesValue = document.getElementById('cyclesValue');
+            const timeValue = document.getElementById('timeValue');
+
+            document.getElementById('cyclesDown').addEventListener('click', () => {
+                targetCycles = Math.max(1, targetCycles - 1);
+                cyclesValue.textContent = targetCycles;
+            });
+
+            document.getElementById('cyclesUp').addEventListener('click', () => {
+                targetCycles = Math.min(100, targetCycles + 1);
+                cyclesValue.textContent = targetCycles;
+            });
+
+            document.getElementById('timeDown').addEventListener('click', () => {
+                targetTimeSeconds = Math.max(5, targetTimeSeconds - 5);
+                timeValue.textContent = formatTime(targetTimeSeconds);
+            });
+
+            document.getElementById('timeUp').addEventListener('click', () => {
+                targetTimeSeconds = Math.min(3600, targetTimeSeconds + 5);
+                timeValue.textContent = formatTime(targetTimeSeconds);
+            });
+
+            document.getElementById('cyclesStart').addEventListener('click', () => {
+                startSession('cycles');
+            });
+
+            document.getElementById('timeStart').addEventListener('click', () => {
+                startSession('time');
+            });
+
+            document.getElementById('manualStart').addEventListener('click', () => {
+                startSession('manual');
+            });
+
+            // Session controls
+            document.getElementById('playPauseBtn').addEventListener('click', () => {
+                const playPauseBtn = document.getElementById('playPauseBtn');
+
+                if (isPlaying) {
+                    sendCommand('PAUSE');
+                    isPlaying = false;
+                    playPauseBtn.textContent = 'Resume';
+                    stopCyclePolling();
+                } else {
+                    // Check if this is a continue after completion
+                    if (playPauseBtn.textContent === 'Continue') {
+                        // Session was completed - we need to reset targets and continue
+                        if (sessionType === 'cycles') {
+                            targetCycles += targetCycles; // Double the target to allow continuation
+                        } else if (sessionType === 'time') {
+                            targetTimeSeconds += targetTimeSeconds; // Double the target time
+                        }
+                        playPauseBtn.textContent = 'Pause';
+                    } else {
+                        playPauseBtn.textContent = 'Pause';
+                    }
+
+                    // Always send PULSE command to resume from current position
+                    sendCommand('PULSE');
+                    isPlaying = true;
+
+                    if (sessionStartTime === 0) {
+                        sessionStartTime = Date.now();
+                    }
+                    startCyclePolling();
+                }
+            });
+
+            document.getElementById('focusBtn').addEventListener('click', () => {
+                // Focus should work in ANY scenario where we have a connection
+                // - During active pulse (isPlaying = true)
+                // - When paused (isPlaying = false but in session)
+                // - During preferences preview (preferencesPreviewActive = true)
+                if (ledCharacteristic && isConnected) {
+                    sendCommand('FOCUS');
+                    console.log('FOCUS command sent - Connection active');
+
+                    // Visual feedback
+                    const focusBtn = document.getElementById('focusBtn');
+                    const originalBg = focusBtn.style.background;
+                    focusBtn.style.background = '#ffff00';
+                    focusBtn.style.transform = 'scale(0.95)';
+
+                    setTimeout(() => {
+                        focusBtn.style.background = originalBg;
+                        focusBtn.style.transform = '';
+                    }, 300);
+                } else {
+                    console.log('Focus button pressed but no BLE connection available');
+                }
+            });
+
+            document.getElementById('speedDown').addEventListener('click', () => {
+                changeSpeed(-0.1);
+            });
+
+            document.getElementById('speedUp').addEventListener('click', () => {
+                changeSpeed(0.1);
+            });
+
+            document.getElementById('backBtn').addEventListener('click', () => {
+                // Stop current session
+                sendCommand('OFF');
+                isPlaying = false;
+                stopCyclePolling();
+                sessionStartTime = 0;
+                currentCycles = 0;
+                elapsedSeconds = 0;
+                updateSessionDisplay();
+                showPage('setup');
+            });
+
+            // Session management
+            function startSession(type) {
+                sessionType = type;
+                currentCycles = 0;
+                elapsedSeconds = 0;
+                sessionStartTime = 0;
+
+                const sessionMode = document.getElementById('sessionMode');
+                const progressText = document.getElementById('progressText');
+
+                switch (type) {
+                    case 'cycles':
+                        sessionMode.textContent = `Target: ${targetCycles} cycles`;
+                        progressText.textContent = `0 / ${targetCycles} cycles`;
+                        break;
+                    case 'time':
+                        sessionMode.textContent = `Target: ${formatTime(targetTimeSeconds)}`;
+                        progressText.textContent = `0:00 / ${formatTime(targetTimeSeconds)}`;
+                        break;
+                    case 'manual':
+                        sessionMode.textContent = 'Manual Control';
+                        progressText.textContent = 'Ready to start';
+                        break;
+                }
+
+                showPage('session');
+                updateSessionDisplay();
+            }
+
+            function updateSessionDisplay() {
+                const progressText = document.getElementById('progressText');
+                const progressFill = document.getElementById('progressFill');
+                const cycleCount = document.getElementById('cycleCount');
+
+                cycleCount.textContent = currentCycles;
+
+                let progress = 0;
+
+                if (sessionStartTime > 0) {
+                    elapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+                }
+
+                switch (sessionType) {
+                    case 'cycles':
+                        progress = Math.min(100, (currentCycles / targetCycles) * 100);
+                        progressText.textContent = `${currentCycles} / ${targetCycles} cycles`;
+
+                        if (currentCycles >= targetCycles && isPlaying) {
+                            // Session complete
+                            sendCommand('PAUSE');
+                            isPlaying = false;
+                            stopCyclePolling();
+                            document.getElementById('playPauseBtn').textContent = 'Continue';
+                            progressText.textContent = `Complete! ${targetCycles} cycles - Continue or go back`;
+                        }
+                        break;
+
+                    case 'time':
+                        progress = Math.min(100, (elapsedSeconds / targetTimeSeconds) * 100);
+                        progressText.textContent = `${formatTime(elapsedSeconds)} / ${formatTime(targetTimeSeconds)}`;
+
+                        if (elapsedSeconds >= targetTimeSeconds && isPlaying) {
+                            // Session complete
+                            sendCommand('PAUSE');
+                            isPlaying = false;
+                            stopCyclePolling();
+                            document.getElementById('playPauseBtn').textContent = 'Continue';
+                            progressText.textContent = `Complete! ${formatTime(targetTimeSeconds)} - Continue or go back`;
+                        }
+                        break;
+
+                    case 'manual':
+                        if (sessionStartTime > 0) {
+                            progressText.textContent = `Running for ${formatTime(elapsedSeconds)}`;
+                        }
+                        break;
+                }
+
+                progressFill.style.width = progress + '%';
+            }
+
+            function changeSpeed(delta) {
+                const newSpeed = Math.round((currentSpeed + delta) * 10) / 10;
+                currentSpeed = Math.max(0.1, Math.min(2.0, newSpeed));
+                document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
+
+                // Update settings and send to device
+                settings.speed = currentSpeed;
+                applySinglePulseSetting('frequency', settings.speed);
+            }
+
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            // Preferences page
+            function setupPreferences() {
+                // Speed presets
+                document.querySelectorAll('.speed-preset').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const speed = parseFloat(btn.dataset.speed);
+                        settings.speed = speed;
+                        currentSpeed = speed;
+                        updateSpeedDisplay();
+                        applySpeedSetting();
+                    });
+                });
+
+                // Speed slider
+                const speedSlider = document.getElementById('speedSlider');
+                speedSlider.addEventListener('input', () => {
+                    settings.speed = parseFloat(speedSlider.value);
+                    currentSpeed = settings.speed;
+                    document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
+                    updateSpeedDisplay();
+                });
+
+                speedSlider.addEventListener('change', () => {
+                    applySinglePulseSetting('frequency', settings.speed);
+                });
+
+                // Brightness
+                const brightnessSlider = document.getElementById('brightnessSlider');
+                brightnessSlider.addEventListener('input', () => {
+                    settings.brightness = parseInt(brightnessSlider.value);
+                    document.getElementById('brightnessValue').textContent = settings.brightness;
+                });
+
+                brightnessSlider.addEventListener('change', () => {
+                    applyBrightnessSetting();
+                });
+
+                // Pulse color
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (option.closest('#trailColorGrid')) {
+                            // Trail color
+                            settings.trailHue = parseInt(option.dataset.hue);
+                            updateTrailColorSelection();
+                            applySinglePulseSetting('trailHue', settings.trailHue);
+                        } else {
+                            // Pulse color
+                            settings.pulseHue = parseInt(option.dataset.hue);
+                            updatePulseColorSelection();
+                            applySinglePulseSetting('color', settings.pulseHue);
+                        }
+                    });
+                });
+
+                // Pulse size
+                const pulseSizeSlider = document.getElementById('pulseSizeSlider');
+                pulseSizeSlider.addEventListener('input', () => {
+                    settings.pulseSize = parseInt(pulseSizeSlider.value);
+                    // Convert LEDs to cm (60 LEDs per meter = 1.67cm per LED)
+                    const cm = Math.round(settings.pulseSize * 1.67);
+                    document.getElementById('pulseSizeValue').textContent = cm + ' cm';
+                });
+
+                pulseSizeSlider.addEventListener('change', () => {
+                    applySinglePulseSetting('width', settings.pulseSize);
+                });
+
+                // Active area
+                const activeAreaSlider = document.getElementById('activeAreaSlider');
+                activeAreaSlider.addEventListener('input', () => {
+                    settings.activeArea = parseInt(activeAreaSlider.value);
+                    document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
+                });
+
+                activeAreaSlider.addEventListener('change', () => {
+                    applySinglePulseSetting('area', settings.activeArea);
+                });
+
+                // Trail settings - complete rewrite
+                const trailEnabled = document.getElementById('trailEnabled');
+                const trailToggle = document.getElementById('trailToggle');
+                const trailOptions = document.getElementById('trailOptions');
+
+                function updateTrailDisplay() {
+                    trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
+                    trailEnabled.checked = settings.trailEnabled;
+
+                    if (settings.trailEnabled) {
+                        trailToggle.classList.add('checked');
+                    } else {
+                        trailToggle.classList.remove('checked');
+                    }
+
+                    console.log('Trail display updated - enabled:', settings.trailEnabled);
+                }
+
+                function toggleTrail() {
+                    settings.trailEnabled = !settings.trailEnabled;
+                    updateTrailDisplay();
+                    applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
+                    console.log('Trail toggled to:', settings.trailEnabled);
+                }
+
+                // Listen for checkbox changes
+                trailEnabled.addEventListener('change', () => {
+                    settings.trailEnabled = trailEnabled.checked;
+                    updateTrailDisplay();
+                    applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
+                });
+
+                // Listen for clicks on the toggle container
+                trailToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    toggleTrail();
+                });
+
+                // Initialize trail state
+                updateTrailDisplay();
+
+                // Trail duration
+                const trailDurationSlider = document.getElementById('trailDurationSlider');
+                trailDurationSlider.addEventListener('input', () => {
+                    settings.trailDuration = parseFloat(trailDurationSlider.value);
+                    document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
+                });
+
+                trailDurationSlider.addEventListener('change', () => {
+                    applySinglePulseSetting('trailLifespan', settings.trailDuration);
+                });
+            }
+
+            function updateSpeedDisplay() {
+                document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
+                document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
+                document.getElementById('speedSlider').value = settings.speed;
+
+                // Update preset buttons
+                document.querySelectorAll('.speed-preset').forEach(btn => {
+                    btn.classList.toggle('active', parseFloat(btn.dataset.speed) === settings.speed);
+                });
+            }
+
+            function updatePulseColorSelection() {
+                document.querySelectorAll('.color-option').forEach(option => {
+                    if (!option.closest('#trailColorGrid')) {
+                        option.classList.toggle('active', parseInt(option.dataset.hue) === settings.pulseHue);
+                    }
+                });
+            }
+
+            function updateTrailColorSelection() {
+                document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
+                    option.classList.toggle('active', parseInt(option.dataset.hue) === settings.trailHue);
+                });
+            }
+
+            // Extra page
+            document.getElementById('partyBtn').addEventListener('click', () => {
+                sendCommand('RAINBOW');
+                isPlaying = false;
+                document.getElementById('playPauseBtn').textContent = 'Play';
+            });
+
+            document.getElementById('turnOffBtn').addEventListener('click', () => {
+                sendCommand('OFF');
+                isPlaying = false;
+                document.getElementById('playPauseBtn').textContent = 'Play';
+            });
+
+            // Settings application - optimized to avoid position resets
+            function applyAllSettings() {
+                applyBrightnessSetting();
+                applyPulseSettings();
+            }
+
+            function applyBrightnessSetting() {
+                if (!ledCharacteristic) return;
+                sendCommand(`B:${settings.brightness}`);
+            }
+
+            function applySpeedSetting() {
+                if (!ledCharacteristic) return;
+                // Send only frequency update to avoid position reset
+                const command = `P:F${settings.speed}`;
+                console.log('Applying speed setting only:', settings.speed);
+                sendCommand(command);
+            }
+
+            function applySinglePulseSetting(param, value) {
+                if (!ledCharacteristic) return;
+
+                let command;
+                switch (param) {
+                    case 'width':
+                        command = `P:W${value}`;
+                        break;
+                    case 'color':
+                        command = `P:C${value}`;
+                        break;
+                    case 'frequency':
+                        command = `P:F${value}`;
+                        break;
+                    case 'area':
+                        command = `P:A${value}`;
+                        break;
+                    case 'trailLifespan':
+                        command = `P:L${value}`;
+                        break;
+                    case 'trailHue':
+                        command = `P:H${value}`;
+                        break;
+                    case 'trailEnabled':
+                        command = `P:E${value}`;
+                        break;
+                    default:
+                        // Fallback to full settings
+                        applyPulseSettings();
+                        return;
+                }
+
+                console.log(`Applying single setting - ${param}:`, value);
+                sendCommand(command);
+
+                // If we're in preferences preview mode, ensure pulse is running
+                if (preferencesPreviewActive) {
+                    setTimeout(() => {
+                        sendCommand('PULSE');
+                    }, 50);
+                }
+            }
+
+            function applyPulseSettings() {
+                if (!ledCharacteristic) return;
+
+                const enabled = settings.trailEnabled ? 1 : 0;
+                const rainbow = 0; // Not implemented yet
+
+                const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
+
+                console.log('Applying full pulse settings:', {
+                    width: settings.pulseSize,
+                    hue: settings.pulseHue,
+                    frequency: settings.speed,
+                    area: settings.activeArea,
+                    trailLifespan: settings.trailDuration,
+                    trailHue: settings.trailHue,
+                    trailEnabled: enabled,
+                    rainbow: rainbow
+                });
+
+                sendCommand(command);
+
+                // If we're in preferences preview mode, ensure pulse is running
+                if (preferencesPreviewActive) {
+                    setTimeout(() => {
+                        sendCommand('PULSE');
+                    }, 150);
+                }
+            }
+
+            // Update displays every second
+            setInterval(() => {
+                if (isPlaying) {
+                    updateSessionDisplay();
+                }
+            }, 1000);
+
+            // Initialize preferences
+            setupPreferences();
+            updateSpeedDisplay();
+            updatePulseColorSelection();
+            updateTrailColorSelection();
+
+            // Initialize displays
+            cyclesValue.textContent = targetCycles;
+            timeValue.textContent = formatTime(targetTimeSeconds);
+            document.getElementById('pulseSizeValue').textContent = Math.round(settings.pulseSize * 1.67) + ' cm';
+            document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
+            document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
+            let enhancedTrailSettings = {
+                enabled: true,              // Master trail enable/disable
+                breathing: 0.3,
+                shimmer: 0.2,
+                velocityResponse: 0.8,
+                widthVariation: 0.2,
+                fadeStyle: 0,
+                sparkles: true,
+                duration: 2.0
+            };
+
+            // Preset configurations
+            const trailPresets = {
+                classic: { breathing: 0.1, shimmer: 0.0, velocityResponse: 0.5, fadeStyle: 0, sparkles: false },
+                comet: { breathing: 0.2, shimmer: 0.1, velocityResponse: 1.0, fadeStyle: 1, sparkles: false },
+                firefly: { breathing: 0.4, shimmer: 0.6, velocityResponse: 0.3, fadeStyle: 2, sparkles: true },
+                sparkle: { breathing: 0.3, shimmer: 0.8, velocityResponse: 0.8, fadeStyle: 1, sparkles: true }
+            };
+
+            // Update trail enable/disable UI
+            function updateTrailEnabledUI() {
+                const trailStyleSection = document.getElementById('trailStyleSection');
+                const noTrailMessage = document.getElementById('noTrailMessage');
+                const masterToggle = document.getElementById('trailMasterToggle');
+
+                if (enhancedTrailSettings.enabled) {
+                    // Trails enabled - show controls
+                    trailStyleSection.style.display = 'block';
+                    noTrailMessage.style.display = 'none';
+                    masterToggle.classList.add('checked');
+                    document.getElementById('trailMasterEnabled').checked = true;
+
+                    // Apply current enhanced trail settings
+                    sendEnhancedTrailSettings();
+
+                } else {
+                    // Trails disabled - show message
+                    trailStyleSection.style.display = 'none';
+                    noTrailMessage.style.display = 'block';
+                    masterToggle.classList.remove('checked');
+                    document.getElementById('trailMasterEnabled').checked = false;
+
+                    // Send trail disable command using existing system
+                    sendCommand('P:E0'); // Disable trails in existing trail system
+
+                    // Also send enhanced trail disable
+                    sendCommand('ET:DISABLED');
+                }
+            }
+
+            // Send enhanced trail settings (only if trails enabled)
+            function sendEnhancedTrailSettings() {
+                if (!ledCharacteristic) return;
+
+                if (!enhancedTrailSettings.enabled) {
+                    // Send disable command
+                    sendCommand('ET:DISABLED');
+                    return;
+                }
+
+                const command = `ET:B${enhancedTrailSettings.breathing.toFixed(2)},` +
+                    `S${enhancedTrailSettings.shimmer.toFixed(2)},` +
+                    `V${enhancedTrailSettings.velocityResponse.toFixed(2)},` +
+                    `W${enhancedTrailSettings.widthVariation.toFixed(2)},` +
+                    `F${enhancedTrailSettings.fadeStyle},` +
+                    `P${enhancedTrailSettings.sparkles ? 1 : 0}`;
+
+                sendCommand(command);
+                console.log('Enhanced trail settings:', command);
+
+                // Also update existing trail system
+                sendCommand(`P:L${enhancedTrailSettings.duration},E1`); // Enable trails with duration
+            }
+
+            // Master trail toggle event listener
+            document.getElementById('trailMasterToggle').addEventListener('click', () => {
+                enhancedTrailSettings.enabled = !enhancedTrailSettings.enabled;
+                updateTrailEnabledUI();
+                console.log('Trail enabled:', enhancedTrailSettings.enabled);
+            });
+
+            // Existing slider event listeners (unchanged)
+            document.getElementById('breathingSlider').addEventListener('input', (e) => {
+                enhancedTrailSettings.breathing = parseInt(e.target.value) / 100.0;
+                document.getElementById('breathingValue').textContent = e.target.value + '%';
+            });
+
+            document.getElementById('breathingSlider').addEventListener('change', () => {
+                if (enhancedTrailSettings.enabled) sendEnhancedTrailSettings();
+            });
+
+            document.getElementById('shimmerSlider').addEventListener('input', (e) => {
+                enhancedTrailSettings.shimmer = parseInt(e.target.value) / 100.0;
+                document.getElementById('shimmerValue').textContent = e.target.value + '%';
+            });
+
+            document.getElementById('shimmerSlider').addEventListener('change', () => {
+                if (enhancedTrailSettings.enabled) sendEnhancedTrailSettings();
+            });
+
+            document.getElementById('velocityResponseSlider').addEventListener('input', (e) => {
+                enhancedTrailSettings.velocityResponse = parseInt(e.target.value) / 100.0;
+                document.getElementById('velocityResponseValue').textContent = e.target.value + '%';
+            });
+
+            document.getElementById('velocityResponseSlider').addEventListener('change', () => {
+                if (enhancedTrailSettings.enabled) sendEnhancedTrailSettings();
+            });
+
+            // Duration slider (existing trail system)
+            document.getElementById('trailDurationSlider').addEventListener('input', (e) => {
+                enhancedTrailSettings.duration = parseFloat(e.target.value);
+                document.getElementById('trailDurationValue').textContent = e.target.value + 's';
+            });
+
+            document.getElementById('trailDurationSlider').addEventListener('change', () => {
+                if (enhancedTrailSettings.enabled) {
+                    sendCommand(`P:L${enhancedTrailSettings.duration}`);
+                }
+            });
+
+            // Preset buttons
+            document.querySelectorAll('[data-trail-style]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!enhancedTrailSettings.enabled) return; // Don't apply presets if trails disabled
+
+                    const style = btn.dataset.trailStyle;
+                    const preset = trailPresets[style];
+
+                    // Update settings
+                    Object.assign(enhancedTrailSettings, preset);
+
+                    // Update UI sliders
+                    document.getElementById('breathingSlider').value = preset.breathing * 100;
+                    document.getElementById('shimmerSlider').value = preset.shimmer * 100;
+                    document.getElementById('velocityResponseSlider').value = preset.velocityResponse * 100;
+                    document.getElementById('sparklesEnabled').checked = preset.sparkles;
+
+                    // Update displays
+                    document.getElementById('breathingValue').textContent = Math.round(preset.breathing * 100) + '%';
+                    document.getElementById('shimmerValue').textContent = Math.round(preset.shimmer * 100) + '%';
+                    document.getElementById('velocityResponseValue').textContent = Math.round(preset.velocityResponse * 100) + '%';
+
+                    // Update sparkles toggle
+                    document.getElementById('sparklesToggle').classList.toggle('checked', preset.sparkles);
+
+                    // Update active button
+                    document.querySelectorAll('[data-trail-style]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Send to device
                     sendEnhancedTrailSettings();
                 });
             });
 
             // Sparkles toggle
-            if (document.getElementById('sparklesToggle')) {
-                document.getElementById('sparklesToggle').addEventListener('click', () => {
-                    const checkbox = document.getElementById('sparklesEnabled');
-                    checkbox.checked = !checkbox.checked;
-                    enhancedTrailSettings.enableSparkles = checkbox.checked;
+            document.getElementById('sparklesToggle').addEventListener('click', () => {
+                if (!enhancedTrailSettings.enabled) return;
 
-                    document.getElementById('sparklesToggle').classList.toggle('checked', checkbox.checked);
-                    sendEnhancedTrailSettings();
+                const checkbox = document.getElementById('sparklesEnabled');
+                checkbox.checked = !checkbox.checked;
+                enhancedTrailSettings.sparkles = checkbox.checked;
+                document.getElementById('sparklesToggle').classList.toggle('checked', checkbox.checked);
+                sendEnhancedTrailSettings();
+            });
+
+            // Trail color selection (existing system integration)
+            document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    if (!enhancedTrailSettings.enabled) return;
+
+                    // Update existing trail system
+                    const hue = parseInt(option.dataset.hue);
+                    sendCommand(`P:H${hue}`);
+
+                    // Update UI
+                    document.querySelectorAll('#trailColorGrid .color-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    option.classList.add('active');
+                });
+            });
+
+            // Initialize UI state
+            updateTrailEnabledUI();
+
+            // Visual feedback for disabled state
+            function updateControlsVisualState() {
+                const controls = document.querySelectorAll('#trailStyleSection input, #trailStyleSection button');
+                controls.forEach(control => {
+                    if (enhancedTrailSettings.enabled) {
+                        control.style.opacity = '1';
+                        control.style.pointerEvents = 'auto';
+                    } else {
+                        control.style.opacity = '0.5';
+                        control.style.pointerEvents = 'none';
+                    }
                 });
             }
-        }
 
-        // Call setup function when page loads (add this to existing initialization)
-        window.oldApplyAllSettings = window.applyAllSettings || function () { };
-        window.applyAllSettings = function () {
-            console.log('applyAllSettings called - enhanced trails handle their own settings');
-            // Don't call original function that might send bad frequency commands
-        };
-    </script>
+            // Update visual state when trail enabled/disabled
+            document.getElementById('trailMasterToggle').addEventListener('click', () => {
+                setTimeout(updateControlsVisualState, 100); // Small delay for smooth transition
+            });
+
+            // Initialize visual state
+            updateControlsVisualState();
+        </script>
 </body>
 
 </html>
