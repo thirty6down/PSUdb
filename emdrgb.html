@@ -1875,6 +1875,7 @@
         function sendEnhancedTrailSettings() {
             if (!ledCharacteristic) return;
 
+            // CRITICAL: Only send ET: commands, never P: commands from trail system
             const command = `ET:B${enhancedTrailSettings.breathingIntensity.toFixed(2)},` +
                 `S${enhancedTrailSettings.shimmerAmount.toFixed(2)},` +
                 `V${enhancedTrailSettings.velocityResponse.toFixed(2)},` +
@@ -1886,6 +1887,60 @@
             console.log('Enhanced trail settings sent:', command);
         }
 
+        function applyTrailPreset(presetId) {
+            const preset = trailPresets[presetId];
+            if (!preset) return;
+
+            console.log('Applying trail preset:', preset.name);
+
+            // Update settings (no frequency involved)
+            enhancedTrailSettings.breathingIntensity = preset.breathing;
+            enhancedTrailSettings.shimmerAmount = preset.shimmer;
+            enhancedTrailSettings.velocityResponse = preset.velocity;
+            enhancedTrailSettings.widthVariation = preset.width;
+            enhancedTrailSettings.fadeStyle = preset.fade;
+            enhancedTrailSettings.enableSparkles = preset.sparkles;
+
+            // Update UI sliders if they exist
+            if (document.getElementById('breathingSlider')) {
+                document.getElementById('breathingSlider').value = preset.breathing * 100;
+                document.getElementById('breathingValue').textContent = Math.round(preset.breathing * 100) + '%';
+            }
+
+            if (document.getElementById('shimmerSlider')) {
+                document.getElementById('shimmerSlider').value = preset.shimmer * 100;
+                document.getElementById('shimmerValue').textContent = Math.round(preset.shimmer * 100) + '%';
+            }
+
+            if (document.getElementById('velocitySlider')) {
+                document.getElementById('velocitySlider').value = preset.velocity * 100;
+                document.getElementById('velocityValue').textContent = Math.round(preset.velocity * 100) + '%';
+            }
+
+            if (document.getElementById('widthSlider')) {
+                document.getElementById('widthSlider').value = preset.width * 100;
+                document.getElementById('widthValue').textContent = Math.round(preset.width * 100) + '%';
+            }
+
+            if (document.getElementById('sparklesEnabled')) {
+                document.getElementById('sparklesEnabled').checked = preset.sparkles;
+                document.getElementById('sparklesToggle').classList.toggle('checked', preset.sparkles);
+            }
+
+            // Update preset buttons
+            document.querySelectorAll('[data-style]').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.style) === presetId);
+            });
+
+            // Update fade style buttons
+            document.querySelectorAll('[data-fade]').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.fade) === preset.fade);
+            });
+
+            // Send ONLY trail settings
+            sendEnhancedTrailSettings();
+        }
+
         // Update slider displays
         function updateSliderDisplay(sliderId, valueId, value, suffix = '%') {
             document.getElementById(valueId).textContent = Math.round(value) + suffix;
@@ -1893,91 +1948,54 @@
 
         // Setup enhanced trail event listeners
         function setupEnhancedTrailControls() {
-            // Enhanced trail toggle
-            document.getElementById('enhancedToggle').addEventListener('click', () => {
-                const checkbox = document.getElementById('enhancedEnabled');
-                checkbox.checked = !checkbox.checked;
-
-                document.getElementById('enhancedToggle').classList.toggle('checked', checkbox.checked);
-                document.getElementById('enhancedTrailSection').style.display = checkbox.checked ? 'block' : 'none';
-
-                if (checkbox.checked) {
-                    sendEnhancedTrailSettings();
-                }
-            });
-
-            // Breathing slider
-            document.getElementById('breathingSlider').addEventListener('input', (e) => {
-                const value = parseInt(e.target.value);
-                enhancedTrailSettings.breathingIntensity = value / 100.0;
-                updateSliderDisplay('breathingSlider', 'breathingValue', value);
-            });
-            document.getElementById('breathingSlider').addEventListener('change', sendEnhancedTrailSettings);
-
-            // Shimmer slider
-            document.getElementById('shimmerSlider').addEventListener('input', (e) => {
-                const value = parseInt(e.target.value);
-                enhancedTrailSettings.shimmerAmount = value / 100.0;
-                updateSliderDisplay('shimmerSlider', 'shimmerValue', value);
-            });
-            document.getElementById('shimmerSlider').addEventListener('change', sendEnhancedTrailSettings);
-
-            // Velocity slider
-            document.getElementById('velocitySlider').addEventListener('input', (e) => {
-                const value = parseInt(e.target.value);
-                enhancedTrailSettings.velocityResponse = value / 100.0;
-                updateSliderDisplay('velocitySlider', 'velocityValue', value);
-            });
-            document.getElementById('velocitySlider').addEventListener('change', sendEnhancedTrailSettings);
-
-            // Width slider
-            document.getElementById('widthSlider').addEventListener('input', (e) => {
-                const value = parseInt(e.target.value);
-                enhancedTrailSettings.widthVariation = value / 100.0;
-                updateSliderDisplay('widthSlider', 'widthValue', value);
-            });
-            document.getElementById('widthSlider').addEventListener('change', sendEnhancedTrailSettings);
-
-            // Style preset buttons
+            // Style preset buttons - FIXED to not send frequency
             document.querySelectorAll('[data-style]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const style = parseInt(btn.dataset.style);
-                    const preset = trailPresets[style];
-
-                    // Update settings
-                    enhancedTrailSettings.breathingIntensity = preset.breathing;
-                    enhancedTrailSettings.shimmerAmount = preset.shimmer;
-                    enhancedTrailSettings.velocityResponse = preset.velocity;
-                    enhancedTrailSettings.widthVariation = preset.width;
-                    enhancedTrailSettings.fadeStyle = preset.fade;
-                    enhancedTrailSettings.enableSparkles = preset.sparkles;
-
-                    // Update UI
-                    document.getElementById('breathingSlider').value = preset.breathing * 100;
-                    document.getElementById('shimmerSlider').value = preset.shimmer * 100;
-                    document.getElementById('velocitySlider').value = preset.velocity * 100;
-                    document.getElementById('widthSlider').value = preset.width * 100;
-
-                    updateSliderDisplay('breathingSlider', 'breathingValue', preset.breathing * 100);
-                    updateSliderDisplay('shimmerSlider', 'shimmerValue', preset.shimmer * 100);
-                    updateSliderDisplay('velocitySlider', 'velocityValue', preset.velocity * 100);
-                    updateSliderDisplay('widthSlider', 'widthValue', preset.width * 100);
-
-                    document.getElementById('sparklesEnabled').checked = preset.sparkles;
-                    document.getElementById('sparklesToggle').classList.toggle('checked', preset.sparkles);
-
-                    // Update buttons
-                    document.querySelectorAll('[data-style]').forEach(styleBtn => {
-                        styleBtn.classList.toggle('active', parseInt(styleBtn.dataset.style) === style);
-                    });
-
-                    document.querySelectorAll('[data-fade]').forEach(fadeBtn => {
-                        fadeBtn.classList.toggle('active', parseInt(fadeBtn.dataset.fade) === preset.fade);
-                    });
-
-                    sendEnhancedTrailSettings();
+                    applyTrailPreset(style);
                 });
             });
+
+            // Individual control sliders
+            if (document.getElementById('breathingSlider')) {
+                document.getElementById('breathingSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    enhancedTrailSettings.breathingIntensity = value / 100.0;
+                    document.getElementById('breathingValue').textContent = value + '%';
+                });
+
+                document.getElementById('breathingSlider').addEventListener('change', sendEnhancedTrailSettings);
+            }
+
+            if (document.getElementById('shimmerSlider')) {
+                document.getElementById('shimmerSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    enhancedTrailSettings.shimmerAmount = value / 100.0;
+                    document.getElementById('shimmerValue').textContent = value + '%';
+                });
+
+                document.getElementById('shimmerSlider').addEventListener('change', sendEnhancedTrailSettings);
+            }
+
+            if (document.getElementById('velocitySlider')) {
+                document.getElementById('velocitySlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    enhancedTrailSettings.velocityResponse = value / 100.0;
+                    document.getElementById('velocityValue').textContent = value + '%';
+                });
+
+                document.getElementById('velocitySlider').addEventListener('change', sendEnhancedTrailSettings);
+            }
+
+            if (document.getElementById('widthSlider')) {
+                document.getElementById('widthSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    enhancedTrailSettings.widthVariation = value / 100.0;
+                    document.getElementById('widthValue').textContent = value + '%';
+                });
+
+                document.getElementById('widthSlider').addEventListener('change', sendEnhancedTrailSettings);
+            }
 
             // Fade style buttons
             document.querySelectorAll('[data-fade]').forEach(btn => {
@@ -1993,18 +2011,24 @@
             });
 
             // Sparkles toggle
-            document.getElementById('sparklesToggle').addEventListener('click', () => {
-                const checkbox = document.getElementById('sparklesEnabled');
-                checkbox.checked = !checkbox.checked;
-                enhancedTrailSettings.enableSparkles = checkbox.checked;
+            if (document.getElementById('sparklesToggle')) {
+                document.getElementById('sparklesToggle').addEventListener('click', () => {
+                    const checkbox = document.getElementById('sparklesEnabled');
+                    checkbox.checked = !checkbox.checked;
+                    enhancedTrailSettings.enableSparkles = checkbox.checked;
 
-                document.getElementById('sparklesToggle').classList.toggle('checked', checkbox.checked);
-                sendEnhancedTrailSettings();
-            });
+                    document.getElementById('sparklesToggle').classList.toggle('checked', checkbox.checked);
+                    sendEnhancedTrailSettings();
+                });
+            }
         }
 
         // Call setup function when page loads (add this to existing initialization)
-        
+        window.oldApplyAllSettings = window.applyAllSettings || function () { };
+        window.applyAllSettings = function () {
+            console.log('applyAllSettings called - enhanced trails handle their own settings');
+            // Don't call original function that might send bad frequency commands
+        };
     </script>
 </body>
 
