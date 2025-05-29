@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,56 +11,64 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body { 
+
+        body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #121212; 
+            background: #121212;
             color: #fff;
             height: 100vh;
             overflow: hidden;
             user-select: none;
         }
-        
+
         .app-container {
             height: 100vh;
             display: flex;
             flex-direction: column;
         }
-        
+
         .page-content {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 100px; /* Space for navigation */
+            padding-bottom: 100px;
+            /* Space for navigation */
         }
-        
+
         .page {
             display: none;
             animation: fadeIn 0.3s ease-in-out;
         }
-        
+
         .page.active {
             display: block;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         h1 {
             text-align: center;
             font-size: 2.2em;
             margin-bottom: 30px;
             color: #4CAF50;
         }
-        
+
         h2 {
             font-size: 1.5em;
             margin-bottom: 20px;
             text-align: center;
         }
-        
+
         .status {
             background: #2a2a2a;
             border-radius: 12px;
@@ -68,11 +77,19 @@
             text-align: center;
             font-weight: bold;
         }
-        
-        .status.connected { background: #1b4332; }
-        .status.error { background: #5d1a1a; }
-        .status.warning { background: #5d4e1a; }
-        
+
+        .status.connected {
+            background: #1b4332;
+        }
+
+        .status.error {
+            background: #5d1a1a;
+        }
+
+        .status.warning {
+            background: #5d4e1a;
+        }
+
         /* Buttons */
         .btn {
             background: #4CAF50;
@@ -87,37 +104,37 @@
             width: 100%;
             margin: 10px 0;
         }
-        
+
         .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
-        
+
         .btn:active {
             transform: translateY(0);
         }
-        
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .btn.secondary {
             background: #555;
         }
-        
+
         .btn.danger {
             background: #f44336;
         }
-        
+
         .btn.primary {
             background: #2196F3;
         }
-        
+
         .btn.orange {
             background: #FF9800;
         }
-        
+
         /* Tapper section */
         .tapper-section {
             background: #1e1e1e;
@@ -126,52 +143,52 @@
             margin: 20px 0;
             display: none;
         }
-        
+
         .tapper-section.show {
             display: block;
         }
-        
+
         .tapper-title {
             font-size: 18px;
             margin-bottom: 15px;
             color: #4CAF50;
             text-align: center;
         }
-        
+
         .tapper-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin: 15px 0;
         }
-        
+
         .tapper-status {
             background: #333;
             border-radius: 8px;
             padding: 15px;
             text-align: center;
         }
-        
+
         .tapper-status.connected {
             background: #1b4332;
             border: 2px solid #4CAF50;
         }
-        
+
         .tapper-status.syncing {
             background: #4a4a1b;
             border: 2px solid #FFC107;
         }
-        
+
         .tapper-label {
             font-weight: bold;
             margin-bottom: 8px;
         }
-        
+
         .tapper-state {
             font-size: 14px;
             opacity: 0.8;
         }
-        
+
         /* Counter Controls */
         .counter-control {
             display: flex;
@@ -181,7 +198,7 @@
             padding: 5px;
             margin: 15px 0;
         }
-        
+
         .counter-btn {
             background: #4CAF50;
             color: white;
@@ -193,7 +210,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        
+
         .counter-main {
             flex: 1;
             background: #4CAF50;
@@ -210,16 +227,16 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .counter-value {
             font-size: 20px;
         }
-        
+
         .counter-label {
             font-size: 12px;
             opacity: 0.8;
         }
-        
+
         /* Session Controls */
         .session-header {
             background: #2a2a2a;
@@ -228,17 +245,17 @@
             margin: 20px 0;
             text-align: center;
         }
-        
+
         .session-mode {
             color: #4CAF50;
             font-size: 14px;
             margin-bottom: 10px;
         }
-        
+
         .session-progress {
             margin: 20px 0;
         }
-        
+
         .progress-bar {
             background: #444;
             height: 8px;
@@ -246,30 +263,30 @@
             overflow: hidden;
             margin: 10px 0;
         }
-        
+
         .progress-fill {
             background: linear-gradient(90deg, #4CAF50, #81C784);
             height: 100%;
             width: 0%;
             transition: width 0.3s ease;
         }
-        
+
         .progress-text {
             font-size: 18px;
             font-weight: bold;
         }
-        
+
         .session-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin: 20px 0;
         }
-        
+
         .session-controls .btn {
             margin: 0;
         }
-        
+
         .speed-control {
             display: flex;
             align-items: center;
@@ -278,14 +295,14 @@
             padding: 15px;
             margin: 15px 0;
         }
-        
+
         .speed-display {
             flex: 1;
             text-align: center;
             font-size: 18px;
             font-weight: bold;
         }
-        
+
         .speed-btn {
             background: #4CAF50;
             color: white;
@@ -296,7 +313,7 @@
             font-size: 16px;
             cursor: pointer;
         }
-        
+
         /* Preferences */
         .pref-section {
             background: #1e1e1e;
@@ -304,23 +321,23 @@
             padding: 20px;
             margin: 20px 0;
         }
-        
+
         .pref-title {
             font-size: 18px;
             margin-bottom: 15px;
             color: #4CAF50;
         }
-        
+
         .slider-container {
             margin: 15px 0;
         }
-        
+
         .slider-label {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
         }
-        
+
         .slider {
             width: 100%;
             height: 6px;
@@ -329,7 +346,7 @@
             outline: none;
             -webkit-appearance: none;
         }
-        
+
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
@@ -338,7 +355,7 @@
             background: #4CAF50;
             cursor: pointer;
         }
-        
+
         .slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
@@ -347,14 +364,14 @@
             cursor: pointer;
             border: none;
         }
-        
+
         .speed-presets {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             margin: 15px 0;
         }
-        
+
         .speed-preset {
             background: #444;
             border: 2px solid transparent;
@@ -365,19 +382,19 @@
             cursor: pointer;
             text-align: center;
         }
-        
+
         .speed-preset.active {
             border-color: #4CAF50;
             background: #2a4a2a;
         }
-        
+
         .color-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin: 15px 0;
         }
-        
+
         .color-option {
             height: 50px;
             border: 3px solid transparent;
@@ -388,25 +405,25 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
             font-size: 14px;
         }
-        
+
         .color-option.active {
             border-color: #fff;
-            box-shadow: 0 0 12px rgba(255,255,255,0.6);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
         }
-        
+
         .toggle-switch {
             display: flex;
             align-items: center;
             margin: 15px 0;
         }
-        
+
         .toggle-switch label {
             flex: 1;
         }
-        
+
         .toggle {
             position: relative;
             width: 50px;
@@ -415,11 +432,11 @@
             border-radius: 25px;
             cursor: pointer;
         }
-        
+
         .toggle input {
             display: none;
         }
-        
+
         .toggle-slider {
             position: absolute;
             top: 2px;
@@ -430,15 +447,15 @@
             border-radius: 50%;
             transition: transform 0.2s ease;
         }
-        
-        .toggle input:checked + .toggle-slider {
+
+        .toggle input:checked+.toggle-slider {
             transform: translateX(25px);
         }
-        
+
         .toggle.checked {
             background: #4CAF50;
         }
-        
+
         /* Navigation */
         .bottom-nav {
             position: fixed;
@@ -450,7 +467,7 @@
             display: flex;
             padding: 10px 0;
         }
-        
+
         .nav-item {
             flex: 1;
             text-align: center;
@@ -459,35 +476,43 @@
             transition: color 0.2s ease;
             color: #888;
         }
-        
+
         .nav-item.active {
             color: #4CAF50;
         }
-        
+
         .nav-icon {
             font-size: 20px;
             margin-bottom: 4px;
         }
-        
+
         .nav-label {
             font-size: 12px;
         }
-        
+
         /* Party mode */
         .party-btn {
-            background: linear-gradient(45deg, 
-                #ff0000, #ff7f00, #ffff00, #00ff00, 
-                #0000ff, #4b0082, #9400d3, #ff0000);
+            background: linear-gradient(45deg,
+                    #ff0000, #ff7f00, #ffff00, #00ff00,
+                    #0000ff, #4b0082, #9400d3, #ff0000);
             background-size: 300% 300%;
             animation: rainbow 3s ease infinite;
         }
-        
+
         @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
-        
+
         .cycle-counter {
             background: #2a2a2a;
             border-radius: 12px;
@@ -496,22 +521,39 @@
             text-align: center;
             border: 2px solid #4CAF50;
         }
-        
+
         .cycle-count {
             font-size: 3em;
             font-weight: bold;
             color: #4CAF50;
             font-family: 'Courier New', monospace;
         }
-        
+
         .back-btn {
             background: #666;
             width: auto;
             padding: 10px 20px;
             margin-bottom: 20px;
         }
+
+        .movement-presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .movement-presets .speed-preset {
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+        }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <div class="page-content">
@@ -520,10 +562,10 @@
                 <h1>EMDRbar</h1>
                 <div id="status" class="status">Press "Connect" to begin</div>
                 <button id="connectBtn" class="btn">Connect to EMDRbar</button>
-                
+
                 <div id="tapperSection" class="tapper-section">
                     <div class="tapper-title">Tapper Devices</div>
-                    
+
                     <div class="tapper-grid">
                         <div id="leftTapperStatus" class="tapper-status">
                             <div class="tapper-label">Left Tapper</div>
@@ -534,12 +576,12 @@
                             <div class="tapper-state">Not Connected</div>
                         </div>
                     </div>
-                    
+
                     <div class="tapper-grid">
                         <button id="syncLeftBtn" class="btn orange">Sync Left Tapper</button>
                         <button id="syncRightBtn" class="btn orange">Sync Right Tapper</button>
                     </div>
-                    
+
                     <button id="forgetTappersBtn" class="btn secondary">Forget All Tappers</button>
                 </div>
             </div>
@@ -547,7 +589,7 @@
             <!-- Setup Page -->
             <div id="setupPage" class="page">
                 <h2>Session Setup</h2>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Run for Cycles</div>
                     <div class="counter-control">
@@ -559,7 +601,7 @@
                         <button class="counter-btn" id="cyclesUp">+</button>
                     </div>
                 </div>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Run for Time</div>
                     <div class="counter-control">
@@ -571,7 +613,7 @@
                         <button class="counter-btn" id="timeUp">+</button>
                     </div>
                 </div>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Manual Control</div>
                     <button class="btn" id="manualStart">Start Manual Session</button>
@@ -581,7 +623,7 @@
             <!-- Session Page -->
             <div id="sessionPage" class="page">
                 <button class="btn back-btn" id="backBtn">← Back to Setup</button>
-                
+
                 <div class="session-header">
                     <div class="session-mode" id="sessionMode">Manual Control</div>
                     <div class="progress-text" id="progressText">Ready</div>
@@ -589,17 +631,17 @@
                         <div class="progress-fill" id="progressFill"></div>
                     </div>
                 </div>
-                
+
                 <div class="cycle-counter">
                     <div class="cycle-count" id="cycleCount">0</div>
                     <div style="color: #aaa; margin-top: 10px;">Cycles Completed</div>
                 </div>
-                
+
                 <div class="session-controls">
                     <button class="btn" id="playPauseBtn">Play</button>
                     <button class="btn secondary" id="focusBtn">Focus</button>
                 </div>
-                
+
                 <div class="speed-control">
                     <button class="speed-btn" id="speedDown">-</button>
                     <div class="speed-display">
@@ -613,7 +655,7 @@
             <!-- Preferences Page -->
             <div id="preferencesPage" class="page">
                 <h2>Preferences</h2>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Speed</div>
                     <div class="speed-presets">
@@ -630,7 +672,23 @@
                         <input type="range" class="slider" id="speedSlider" min="0.1" max="2.0" step="0.1" value="0.4">
                     </div>
                 </div>
-                
+                <div class="pref-section">
+                    <div class="pref-title">Movement Type</div>
+                    <div class="movement-presets">
+                        <button class="speed-preset active" id="constantMovement" data-movement="constant">
+                            <div style="font-size: 12px; margin-bottom: 4px;">Constant</div>
+                            <div style="font-size: 10px; opacity: 0.8;">Linear speed</div>
+                        </button>
+                        <button class="speed-preset" id="smoothMovement" data-movement="smooth">
+                            <div style="font-size: 12px; margin-bottom: 4px;">Smooth</div>
+                            <div style="font-size: 10px; opacity: 0.8;">Eased motion</div>
+                        </button>
+                    </div>
+                    <div style="font-size: 11px; color: #aaa; margin-top: 10px; text-align: center;">
+                        Smooth movement slows near edges, speeds through center
+                    </div>
+                </div>
+
                 <div class="pref-section">
                     <div class="pref-title">Brightness</div>
                     <div class="slider-container">
@@ -641,7 +699,7 @@
                         <input type="range" class="slider" id="brightnessSlider" min="1" max="255" value="150">
                     </div>
                 </div>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Pulse Color</div>
                     <div class="color-grid">
@@ -656,7 +714,7 @@
                         <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
                     </div>
                 </div>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Pulse Size</div>
                     <div class="slider-container">
@@ -667,7 +725,7 @@
                         <input type="range" class="slider" id="pulseSizeSlider" min="1" max="15" value="3">
                     </div>
                 </div>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Active Area Size</div>
                     <div class="slider-container">
@@ -678,7 +736,7 @@
                         <input type="range" class="slider" id="activeAreaSlider" min="10" max="100" value="100">
                     </div>
                 </div>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Trail Settings</div>
                     <div class="toggle-switch">
@@ -688,7 +746,7 @@
                             <div class="toggle-slider"></div>
                         </div>
                     </div>
-                    
+
                     <div id="trailOptions" style="display: none;">
                         <div class="pref-title" style="margin-top: 20px;">Trail Color</div>
                         <div class="color-grid" id="trailColorGrid">
@@ -702,13 +760,14 @@
                             <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
                             <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
                         </div>
-                        
+
                         <div class="slider-container">
                             <div class="slider-label">
                                 <span>Trail Duration</span>
                                 <span id="trailDurationValue">2.0s</span>
                             </div>
-                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5" value="2.0">
+                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5"
+                                value="2.0">
                         </div>
                     </div>
                 </div>
@@ -717,12 +776,12 @@
             <!-- Extra Page -->
             <div id="extraPage" class="page">
                 <h2>Extra Features</h2>
-                
+
                 <div class="pref-section">
                     <div class="pref-title">Party Mode</div>
                     <button class="btn party-btn" id="partyBtn">🌈 Rainbow Party Mode</button>
                 </div>
-                
+
                 <button class="btn danger" id="turnOffBtn">Turn Off LEDs</button>
             </div>
         </div>
@@ -764,13 +823,13 @@
         let currentSpeed = 0.4;
         let sessionStartTime = 0;
         let elapsedSeconds = 0;
-        
+
         // Tapper state
         let tapperState = {
             left: { connected: false, syncing: false },
             right: { connected: false, syncing: false }
         };
-        
+
         // Settings
         let settings = {
             speed: 0.4,
@@ -778,49 +837,50 @@
             pulseHue: 0, // Red
             pulseSize: 3, // LEDs
             activeArea: 100, // Percentage
-            trailEnabled: false,
+            trailEnabled: false,  // Updated default
             trailHue: 85, // Green
-            trailDuration: 2.0
+            trailDuration: 2.0,
+            movementType: 'constant' // New setting
         };
-        
+
         // DOM elements
         const pages = document.querySelectorAll('.page');
         const navItems = document.querySelectorAll('.nav-item');
         const status = document.getElementById('status');
-        
+
         // Navigation
         function showPage(pageId) {
             pages.forEach(page => page.classList.remove('active'));
             navItems.forEach(item => item.classList.remove('active'));
-            
+
             document.getElementById(pageId + 'Page').classList.add('active');
             document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
         }
-        
+
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 const pageId = item.dataset.page;
-                
+
                 // Don't allow navigation to session/setup/preferences without connection
                 if (!isConnected && ['setup', 'session', 'preferences', 'extra'].includes(pageId)) {
                     updateStatus('Please connect to device first', 'warning');
                     return;
                 }
-                
+
                 // Handle preferences page - start pulse preview
                 if (pageId === 'preferences' && isConnected) {
                     startPreferencesPreview();
                 } else if (pageId !== 'preferences' && isConnected) {
                     stopPreferencesPreview();
                 }
-                
+
                 showPage(pageId);
             });
         });
-        
+
         // Preferences preview management
         let preferencesPreviewActive = false;
-        
+
         function startPreferencesPreview() {
             if (!preferencesPreviewActive) {
                 preferencesPreviewActive = true;
@@ -828,7 +888,7 @@
                 console.log('Started preferences preview');
             }
         }
-        
+
         function stopPreferencesPreview() {
             if (preferencesPreviewActive) {
                 preferencesPreviewActive = false;
@@ -836,22 +896,22 @@
                 console.log('Stopped preferences preview');
             }
         }
-        
+
         // Connect functionality
         document.getElementById('connectBtn').addEventListener('click', async () => {
             try {
                 updateStatus('Searching for device...', 'warning');
-                
+
                 device = await navigator.bluetooth.requestDevice({
                     filters: [{ name: "EMDRbar" }],
                     optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
                 });
-                
+
                 updateStatus('Connecting...', 'warning');
                 const server = await device.gatt.connect();
                 const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
                 ledCharacteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
-                
+
                 // Try to enable notifications for cycle counting
                 try {
                     await ledCharacteristic.startNotifications();
@@ -859,48 +919,48 @@
                 } catch (e) {
                     console.log('Notifications not supported');
                 }
-                
+
                 isConnected = true;
                 updateStatus('Connected! Set up tappers or choose session type', 'connected');
-                
+
                 // Show tapper section
                 document.getElementById('tapperSection').classList.add('show');
-                
+
                 // Send initial settings
                 applyAllSettings();
-                
+
                 // Start cycle count polling
                 startCyclePolling();
-                
+
                 device.addEventListener('gattserverdisconnected', () => {
                     isConnected = false;
                     isPlaying = false;
                     preferencesPreviewActive = false;
                     stopCyclePolling();
-                    
+
                     // Hide tapper section and reset tapper states
                     document.getElementById('tapperSection').classList.remove('show');
                     tapperState.left = { connected: false, syncing: false };
                     tapperState.right = { connected: false, syncing: false };
                     updateTapperDisplay();
-                    
+
                     updateStatus('Device disconnected', 'error');
                     showPage('connect');
                 });
-                
+
             } catch (error) {
                 updateStatus(`Error: ${error.message}`, 'error');
             }
         });
-        
+
         // Tapper sync buttons
         document.getElementById('syncLeftBtn').addEventListener('click', () => {
             if (tapperState.left.syncing) return;
-            
+
             tapperState.left.syncing = true;
             updateTapperDisplay();
             sendCommand('SYNC_LEFT');
-            
+
             // Set timeout for sync attempt
             setTimeout(() => {
                 if (tapperState.left.syncing) {
@@ -910,14 +970,14 @@
                 }
             }, 10000);
         });
-        
+
         document.getElementById('syncRightBtn').addEventListener('click', () => {
             if (tapperState.right.syncing) return;
-            
+
             tapperState.right.syncing = true;
             updateTapperDisplay();
             sendCommand('SYNC_RIGHT');
-            
+
             // Set timeout for sync attempt
             setTimeout(() => {
                 if (tapperState.right.syncing) {
@@ -927,7 +987,7 @@
                 }
             }, 10000);
         });
-        
+
         document.getElementById('forgetTappersBtn').addEventListener('click', () => {
             sendCommand('FORGET_TAPPERS');
             tapperState.left = { connected: false, syncing: false };
@@ -935,13 +995,13 @@
             updateTapperDisplay();
             updateStatus('All tappers forgotten', 'connected');
         });
-        
+
         function updateTapperDisplay() {
             const leftStatus = document.getElementById('leftTapperStatus');
             const rightStatus = document.getElementById('rightTapperStatus');
             const leftState = leftStatus.querySelector('.tapper-state');
             const rightState = rightStatus.querySelector('.tapper-state');
-            
+
             // Update left tapper
             leftStatus.className = 'tapper-status';
             if (tapperState.left.connected) {
@@ -953,7 +1013,7 @@
             } else {
                 leftState.textContent = 'Not Connected';
             }
-            
+
             // Update right tapper
             rightStatus.className = 'tapper-status';
             if (tapperState.right.connected) {
@@ -966,20 +1026,20 @@
                 rightState.textContent = 'Not Connected';
             }
         }
-        
+
         // Status updates
         function updateStatus(message, type = '') {
             status.textContent = message;
             status.className = 'status ' + type;
         }
-        
+
         // BLE communication
         function sendCommand(command) {
             if (!ledCharacteristic) {
                 console.log('Cannot send command - no BLE connection');
                 return;
             }
-            
+
             try {
                 ledCharacteristic.writeValue(new TextEncoder().encode(command));
                 console.log('✓ Sent command:', command);
@@ -987,11 +1047,11 @@
                 console.error('Failed to send command:', command, error);
             }
         }
-        
+
         function handleNotification(event) {
             const value = new TextDecoder().decode(event.target.value);
             console.log('Received notification:', value);
-            
+
             if (value.startsWith('CYCLES:')) {
                 const count = parseInt(value.substring(7));
                 if (!isNaN(count)) {
@@ -1000,7 +1060,7 @@
                     console.log('Updated cycle count to:', count);
                 }
             }
-            
+
             // Parse tapper status updates
             const parts = value.split(',');
             for (const part of parts) {
@@ -1026,13 +1086,13 @@
                 }
             }
         }
-        
+
         // Polling fallback for cycle count and tapper status
         let cyclePollingInterval = null;
-        
+
         function startCyclePolling() {
             if (cyclePollingInterval) clearInterval(cyclePollingInterval);
-            
+
             cyclePollingInterval = setInterval(async () => {
                 if (ledCharacteristic) {
                     try {
@@ -1045,54 +1105,54 @@
                 }
             }, 1000); // Poll every second for tapper status
         }
-        
+
         function stopCyclePolling() {
             if (cyclePollingInterval) {
                 clearInterval(cyclePollingInterval);
                 cyclePollingInterval = null;
             }
         }
-        
+
         // Setup page controls
         const cyclesValue = document.getElementById('cyclesValue');
         const timeValue = document.getElementById('timeValue');
-        
+
         document.getElementById('cyclesDown').addEventListener('click', () => {
             targetCycles = Math.max(1, targetCycles - 1);
             cyclesValue.textContent = targetCycles;
         });
-        
+
         document.getElementById('cyclesUp').addEventListener('click', () => {
             targetCycles = Math.min(100, targetCycles + 1);
             cyclesValue.textContent = targetCycles;
         });
-        
+
         document.getElementById('timeDown').addEventListener('click', () => {
             targetTimeSeconds = Math.max(5, targetTimeSeconds - 5);
             timeValue.textContent = formatTime(targetTimeSeconds);
         });
-        
+
         document.getElementById('timeUp').addEventListener('click', () => {
             targetTimeSeconds = Math.min(3600, targetTimeSeconds + 5);
             timeValue.textContent = formatTime(targetTimeSeconds);
         });
-        
+
         document.getElementById('cyclesStart').addEventListener('click', () => {
             startSession('cycles');
         });
-        
+
         document.getElementById('timeStart').addEventListener('click', () => {
             startSession('time');
         });
-        
+
         document.getElementById('manualStart').addEventListener('click', () => {
             startSession('manual');
         });
-        
+
         // Session controls
         document.getElementById('playPauseBtn').addEventListener('click', () => {
             const playPauseBtn = document.getElementById('playPauseBtn');
-            
+
             if (isPlaying) {
                 sendCommand('PAUSE');
                 isPlaying = false;
@@ -1111,30 +1171,30 @@
                 } else {
                     playPauseBtn.textContent = 'Pause';
                 }
-                
+
                 // Always send PULSE command to resume from current position
                 sendCommand('PULSE');
                 isPlaying = true;
-                
+
                 if (sessionStartTime === 0) {
                     sessionStartTime = Date.now();
                 }
                 startCyclePolling();
             }
         });
-        
+
         document.getElementById('focusBtn').addEventListener('click', () => {
             // Focus should work in ANY scenario where we have a connection
             if (ledCharacteristic && isConnected) {
                 sendCommand('FOCUS');
                 console.log('FOCUS command sent - Connection active');
-                
+
                 // Visual feedback
                 const focusBtn = document.getElementById('focusBtn');
                 const originalBg = focusBtn.style.background;
                 focusBtn.style.background = '#ffff00';
                 focusBtn.style.transform = 'scale(0.95)';
-                
+
                 setTimeout(() => {
                     focusBtn.style.background = originalBg;
                     focusBtn.style.transform = '';
@@ -1143,15 +1203,15 @@
                 console.log('Focus button pressed but no BLE connection available');
             }
         });
-        
+
         document.getElementById('speedDown').addEventListener('click', () => {
             changeSpeed(-0.1);
         });
-        
+
         document.getElementById('speedUp').addEventListener('click', () => {
             changeSpeed(0.1);
         });
-        
+
         document.getElementById('backBtn').addEventListener('click', () => {
             // Stop current session
             sendCommand('OFF');
@@ -1163,17 +1223,17 @@
             updateSessionDisplay();
             showPage('setup');
         });
-        
+
         // Session management
         function startSession(type) {
             sessionType = type;
             currentCycles = 0;
             elapsedSeconds = 0;
             sessionStartTime = 0;
-            
+
             const sessionMode = document.getElementById('sessionMode');
             const progressText = document.getElementById('progressText');
-            
+
             switch (type) {
                 case 'cycles':
                     sessionMode.textContent = `Target: ${targetCycles} cycles`;
@@ -1188,29 +1248,29 @@
                     progressText.textContent = 'Ready to start';
                     break;
             }
-            
+
             showPage('session');
             updateSessionDisplay();
         }
-        
+
         function updateSessionDisplay() {
             const progressText = document.getElementById('progressText');
             const progressFill = document.getElementById('progressFill');
             const cycleCount = document.getElementById('cycleCount');
-            
+
             cycleCount.textContent = currentCycles;
-            
+
             let progress = 0;
-            
+
             if (sessionStartTime > 0) {
                 elapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
             }
-            
+
             switch (sessionType) {
                 case 'cycles':
                     progress = Math.min(100, (currentCycles / targetCycles) * 100);
                     progressText.textContent = `${currentCycles} / ${targetCycles} cycles`;
-                    
+
                     if (currentCycles >= targetCycles && isPlaying) {
                         // Session complete
                         sendCommand('PAUSE');
@@ -1220,11 +1280,11 @@
                         progressText.textContent = `Complete! ${targetCycles} cycles - Continue or go back`;
                     }
                     break;
-                    
+
                 case 'time':
                     progress = Math.min(100, (elapsedSeconds / targetTimeSeconds) * 100);
                     progressText.textContent = `${formatTime(elapsedSeconds)} / ${formatTime(targetTimeSeconds)}`;
-                    
+
                     if (elapsedSeconds >= targetTimeSeconds && isPlaying) {
                         // Session complete
                         sendCommand('PAUSE');
@@ -1234,33 +1294,33 @@
                         progressText.textContent = `Complete! ${formatTime(targetTimeSeconds)} - Continue or go back`;
                     }
                     break;
-                    
+
                 case 'manual':
                     if (sessionStartTime > 0) {
                         progressText.textContent = `Running for ${formatTime(elapsedSeconds)}`;
                     }
                     break;
             }
-            
+
             progressFill.style.width = progress + '%';
         }
-        
+
         function changeSpeed(delta) {
             const newSpeed = Math.round((currentSpeed + delta) * 10) / 10;
             currentSpeed = Math.max(0.1, Math.min(2.0, newSpeed));
             document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
-            
+
             // Update settings and send to device
             settings.speed = currentSpeed;
             applySinglePulseSetting('frequency', settings.speed);
         }
-        
+
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
-        
+
         // Preferences page
         function setupPreferences() {
             // Speed presets
@@ -1273,7 +1333,7 @@
                     applySpeedSetting();
                 });
             });
-            
+
             // Speed slider
             const speedSlider = document.getElementById('speedSlider');
             speedSlider.addEventListener('input', () => {
@@ -1282,22 +1342,43 @@
                 document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
                 updateSpeedDisplay();
             });
-            
+
+            // Movement type presets
+            document.querySelectorAll('.movement-presets .speed-preset').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const movementType = btn.dataset.movement;
+
+                    // Update active state
+                    document.querySelectorAll('.movement-presets .speed-preset').forEach(b =>
+                        b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Send command to device
+                    if (movementType === 'constant') {
+                        sendCommand('MOVEMENT_CONSTANT');
+                    } else if (movementType === 'smooth') {
+                        sendCommand('MOVEMENT_SMOOTH');
+                    }
+
+                    console.log('Movement type changed to:', movementType);
+                });
+            });
+
             speedSlider.addEventListener('change', () => {
                 applySinglePulseSetting('frequency', settings.speed);
             });
-            
+
             // Brightness
             const brightnessSlider = document.getElementById('brightnessSlider');
             brightnessSlider.addEventListener('input', () => {
                 settings.brightness = parseInt(brightnessSlider.value);
                 document.getElementById('brightnessValue').textContent = settings.brightness;
             });
-            
+
             brightnessSlider.addEventListener('change', () => {
                 applyBrightnessSetting();
             });
-            
+
             // Pulse color
             document.querySelectorAll('.color-option').forEach(option => {
                 option.addEventListener('click', () => {
@@ -1314,7 +1395,7 @@
                     }
                 });
             });
-            
+
             // Pulse size
             const pulseSizeSlider = document.getElementById('pulseSizeSlider');
             pulseSizeSlider.addEventListener('input', () => {
@@ -1323,80 +1404,80 @@
                 const cm = Math.round(settings.pulseSize * 1.67);
                 document.getElementById('pulseSizeValue').textContent = cm + ' cm';
             });
-            
+
             pulseSizeSlider.addEventListener('change', () => {
                 applySinglePulseSetting('width', settings.pulseSize);
             });
-            
+
             // Active area
             const activeAreaSlider = document.getElementById('activeAreaSlider');
             activeAreaSlider.addEventListener('input', () => {
                 settings.activeArea = parseInt(activeAreaSlider.value);
                 document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
             });
-            
+
             activeAreaSlider.addEventListener('change', () => {
                 applySinglePulseSetting('area', settings.activeArea);
             });
-            
+
             // Trail settings
             const trailEnabled = document.getElementById('trailEnabled');
             const trailToggle = document.getElementById('trailToggle');
             const trailOptions = document.getElementById('trailOptions');
-            
+
             function updateTrailDisplay() {
                 trailOptions.style.display = settings.trailEnabled ? 'block' : 'none';
                 trailEnabled.checked = settings.trailEnabled;
-                
+
                 if (settings.trailEnabled) {
                     trailToggle.classList.add('checked');
                 } else {
                     trailToggle.classList.remove('checked');
                 }
             }
-            
+
             function toggleTrail() {
                 settings.trailEnabled = !settings.trailEnabled;
                 updateTrailDisplay();
                 applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
             }
-            
+
             trailEnabled.addEventListener('change', () => {
                 settings.trailEnabled = trailEnabled.checked;
                 updateTrailDisplay();
                 applySinglePulseSetting('trailEnabled', settings.trailEnabled ? 1 : 0);
             });
-            
+
             trailToggle.addEventListener('click', (e) => {
                 e.preventDefault();
                 toggleTrail();
             });
-            
+
             updateTrailDisplay();
-            
+
             // Trail duration
             const trailDurationSlider = document.getElementById('trailDurationSlider');
             trailDurationSlider.addEventListener('input', () => {
                 settings.trailDuration = parseFloat(trailDurationSlider.value);
                 document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
             });
-            
+
             trailDurationSlider.addEventListener('change', () => {
                 applySinglePulseSetting('trailLifespan', settings.trailDuration);
             });
         }
-        
+
         function updateSpeedDisplay() {
             document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
             document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
             document.getElementById('speedSlider').value = settings.speed;
-            
+
             // Update preset buttons
             document.querySelectorAll('.speed-preset').forEach(btn => {
                 btn.classList.toggle('active', parseFloat(btn.dataset.speed) === settings.speed);
             });
         }
-        
+
         function updatePulseColorSelection() {
             document.querySelectorAll('.color-option').forEach(option => {
                 if (!option.closest('#trailColorGrid')) {
@@ -1404,48 +1485,48 @@
                 }
             });
         }
-        
+
         function updateTrailColorSelection() {
             document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
                 option.classList.toggle('active', parseInt(option.dataset.hue) === settings.trailHue);
             });
         }
-        
+
         // Extra page
         document.getElementById('partyBtn').addEventListener('click', () => {
             sendCommand('RAINBOW');
             isPlaying = false;
             document.getElementById('playPauseBtn').textContent = 'Play';
         });
-        
+
         document.getElementById('turnOffBtn').addEventListener('click', () => {
             sendCommand('OFF');
             isPlaying = false;
             document.getElementById('playPauseBtn').textContent = 'Play';
         });
-        
+
         // Settings application
         function applyAllSettings() {
             applyBrightnessSetting();
             applyPulseSettings();
         }
-        
+
         function applyBrightnessSetting() {
             if (!ledCharacteristic) return;
             sendCommand(`B:${settings.brightness}`);
         }
-        
+
         function applySpeedSetting() {
             if (!ledCharacteristic) return;
             const command = `P:F${settings.speed}`;
             sendCommand(command);
         }
-        
+
         function applySinglePulseSetting(param, value) {
             if (!ledCharacteristic) return;
-            
+
             let command;
-            switch(param) {
+            switch (param) {
                 case 'width':
                     command = `P:W${value}`;
                     break;
@@ -1471,47 +1552,47 @@
                     applyPulseSettings();
                     return;
             }
-            
+
             sendCommand(command);
-            
+
             if (preferencesPreviewActive) {
                 setTimeout(() => {
                     sendCommand('PULSE');
                 }, 50);
             }
         }
-        
+
         function applyPulseSettings() {
             if (!ledCharacteristic) return;
-            
+
             const enabled = settings.trailEnabled ? 1 : 0;
             const rainbow = 0;
-            
+
             const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
-            
+
             sendCommand(command);
-            
+
             if (preferencesPreviewActive) {
                 setTimeout(() => {
                     sendCommand('PULSE');
                 }, 150);
             }
         }
-        
+
         // Update displays every second
         setInterval(() => {
             if (isPlaying) {
                 updateSessionDisplay();
             }
         }, 1000);
-        
+
         // Initialize everything
         setupPreferences();
         updateSpeedDisplay();
         updatePulseColorSelection();
         updateTrailColorSelection();
         updateTapperDisplay();
-        
+
         // Initialize displays
         cyclesValue.textContent = targetCycles;
         timeValue.textContent = formatTime(targetTimeSeconds);
@@ -1520,4 +1601,5 @@
         document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
     </script>
 </body>
+
 </html>
