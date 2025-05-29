@@ -830,6 +830,13 @@
                             <div class="toggle-slider"></div>
                         </div>
                     </div>
+                    <div class="toggle-switch">
+                        <label>Enhanced Effects</label>
+                        <div class="toggle" id="enhancedToggle">
+                            <input type="checkbox" id="enhancedEnabled">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
 
                     <div id="trailOptions" style="display: none;">
                         <div class="pref-title" style="margin-top: 20px;">Trail Color</div>
@@ -852,6 +859,77 @@
                             </div>
                             <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5"
                                 value="2.0">
+                        </div>
+                    </div>
+                </div>
+                <!-- Enhanced Trail Effects -->
+                <div class="pref-section" id="enhancedTrailSection" style="display: none;">
+                    <div class="pref-title">✨ Enhanced Trail Effects</div>
+
+                    <!-- Style Presets -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Visual Style</div>
+                        <div class="speed-presets">
+                            <button class="speed-preset active" data-style="0">Classic</button>
+                            <button class="speed-preset" data-style="1">Comet</button>
+                            <button class="speed-preset" data-style="2">Firefly</button>
+                            <button class="speed-preset" data-style="3">Ethereal</button>
+                        </div>
+                    </div>
+
+                    <!-- Breathing Effect -->
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>🌊 Breathing Intensity</span>
+                            <span id="breathingValue">30%</span>
+                        </div>
+                        <input type="range" class="slider" id="breathingSlider" min="0" max="100" value="30">
+                    </div>
+
+                    <!-- Shimmer Effect -->
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>✨ Shimmer Amount</span>
+                            <span id="shimmerValue">20%</span>
+                        </div>
+                        <input type="range" class="slider" id="shimmerSlider" min="0" max="100" value="20">
+                    </div>
+
+                    <!-- Velocity Response -->
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>⚡ Speed Response</span>
+                            <span id="velocityValue">80%</span>
+                        </div>
+                        <input type="range" class="slider" id="velocitySlider" min="0" max="200" value="80">
+                    </div>
+
+                    <!-- Width Variation -->
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>📏 Width Variation</span>
+                            <span id="widthValue">20%</span>
+                        </div>
+                        <input type="range" class="slider" id="widthSlider" min="0" max="100" value="20">
+                    </div>
+
+                    <!-- Toggle Effects -->
+                    <div class="toggle-switch">
+                        <label>💫 Sparkles</label>
+                        <div class="toggle checked" id="sparklesToggle">
+                            <input type="checkbox" id="sparklesEnabled" checked>
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fade Style -->
+                    <div style="margin-top: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Fade Style</div>
+                        <div class="speed-presets">
+                            <button class="speed-preset active" data-fade="0">Linear</button>
+                            <button class="speed-preset" data-fade="1">Comet</button>
+                            <button class="speed-preset" data-fade="2">Firefly</button>
+                            <button class="speed-preset" data-fade="3">Long Tail</button>
                         </div>
                     </div>
                 </div>
@@ -1767,6 +1845,7 @@
         updatePulseColorSelection();
         updateTrailColorSelection();
         updateTapperDisplay();
+        setupEnhancedTrailControls();
 
         // Initialize displays
         cyclesValue.textContent = targetCycles;
@@ -1774,6 +1853,158 @@
         document.getElementById('pulseSizeValue').textContent = Math.round(settings.pulseSize * 1.67) + ' cm';
         document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
         document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
+        // Enhanced trail settings
+        let enhancedTrailSettings = {
+            breathingIntensity: 0.3,
+            shimmerAmount: 0.2,
+            velocityResponse: 0.8,
+            widthVariation: 0.2,
+            fadeStyle: 0,
+            enableSparkles: true
+        };
+
+        // Style presets
+        const trailPresets = {
+            0: { name: "Classic", breathing: 0.1, shimmer: 0.0, velocity: 0.5, width: 0.0, fade: 0, sparkles: false },
+            1: { name: "Comet", breathing: 0.2, shimmer: 0.1, velocity: 1.0, width: 0.4, fade: 1, sparkles: false },
+            2: { name: "Firefly", breathing: 0.4, shimmer: 0.6, velocity: 0.3, width: 0.1, fade: 2, sparkles: true },
+            3: { name: "Ethereal", breathing: 0.6, shimmer: 0.3, velocity: 0.2, width: 0.3, fade: 2, sparkles: true }
+        };
+
+        // Send enhanced trail settings to device
+        function sendEnhancedTrailSettings() {
+            if (!ledCharacteristic) return;
+
+            const command = `ET:B${enhancedTrailSettings.breathingIntensity.toFixed(2)},` +
+                `S${enhancedTrailSettings.shimmerAmount.toFixed(2)},` +
+                `V${enhancedTrailSettings.velocityResponse.toFixed(2)},` +
+                `W${enhancedTrailSettings.widthVariation.toFixed(2)},` +
+                `F${enhancedTrailSettings.fadeStyle},` +
+                `P${enhancedTrailSettings.enableSparkles ? 1 : 0}`;
+
+            sendCommand(command);
+            console.log('Enhanced trail settings sent:', command);
+        }
+
+        // Update slider displays
+        function updateSliderDisplay(sliderId, valueId, value, suffix = '%') {
+            document.getElementById(valueId).textContent = Math.round(value) + suffix;
+        }
+
+        // Setup enhanced trail event listeners
+        function setupEnhancedTrailControls() {
+            // Enhanced trail toggle
+            document.getElementById('enhancedToggle').addEventListener('click', () => {
+                const checkbox = document.getElementById('enhancedEnabled');
+                checkbox.checked = !checkbox.checked;
+
+                document.getElementById('enhancedToggle').classList.toggle('checked', checkbox.checked);
+                document.getElementById('enhancedTrailSection').style.display = checkbox.checked ? 'block' : 'none';
+
+                if (checkbox.checked) {
+                    sendEnhancedTrailSettings();
+                }
+            });
+
+            // Breathing slider
+            document.getElementById('breathingSlider').addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                enhancedTrailSettings.breathingIntensity = value / 100.0;
+                updateSliderDisplay('breathingSlider', 'breathingValue', value);
+            });
+            document.getElementById('breathingSlider').addEventListener('change', sendEnhancedTrailSettings);
+
+            // Shimmer slider
+            document.getElementById('shimmerSlider').addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                enhancedTrailSettings.shimmerAmount = value / 100.0;
+                updateSliderDisplay('shimmerSlider', 'shimmerValue', value);
+            });
+            document.getElementById('shimmerSlider').addEventListener('change', sendEnhancedTrailSettings);
+
+            // Velocity slider
+            document.getElementById('velocitySlider').addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                enhancedTrailSettings.velocityResponse = value / 100.0;
+                updateSliderDisplay('velocitySlider', 'velocityValue', value);
+            });
+            document.getElementById('velocitySlider').addEventListener('change', sendEnhancedTrailSettings);
+
+            // Width slider
+            document.getElementById('widthSlider').addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                enhancedTrailSettings.widthVariation = value / 100.0;
+                updateSliderDisplay('widthSlider', 'widthValue', value);
+            });
+            document.getElementById('widthSlider').addEventListener('change', sendEnhancedTrailSettings);
+
+            // Style preset buttons
+            document.querySelectorAll('[data-style]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const style = parseInt(btn.dataset.style);
+                    const preset = trailPresets[style];
+
+                    // Update settings
+                    enhancedTrailSettings.breathingIntensity = preset.breathing;
+                    enhancedTrailSettings.shimmerAmount = preset.shimmer;
+                    enhancedTrailSettings.velocityResponse = preset.velocity;
+                    enhancedTrailSettings.widthVariation = preset.width;
+                    enhancedTrailSettings.fadeStyle = preset.fade;
+                    enhancedTrailSettings.enableSparkles = preset.sparkles;
+
+                    // Update UI
+                    document.getElementById('breathingSlider').value = preset.breathing * 100;
+                    document.getElementById('shimmerSlider').value = preset.shimmer * 100;
+                    document.getElementById('velocitySlider').value = preset.velocity * 100;
+                    document.getElementById('widthSlider').value = preset.width * 100;
+
+                    updateSliderDisplay('breathingSlider', 'breathingValue', preset.breathing * 100);
+                    updateSliderDisplay('shimmerSlider', 'shimmerValue', preset.shimmer * 100);
+                    updateSliderDisplay('velocitySlider', 'velocityValue', preset.velocity * 100);
+                    updateSliderDisplay('widthSlider', 'widthValue', preset.width * 100);
+
+                    document.getElementById('sparklesEnabled').checked = preset.sparkles;
+                    document.getElementById('sparklesToggle').classList.toggle('checked', preset.sparkles);
+
+                    // Update buttons
+                    document.querySelectorAll('[data-style]').forEach(styleBtn => {
+                        styleBtn.classList.toggle('active', parseInt(styleBtn.dataset.style) === style);
+                    });
+
+                    document.querySelectorAll('[data-fade]').forEach(fadeBtn => {
+                        fadeBtn.classList.toggle('active', parseInt(fadeBtn.dataset.fade) === preset.fade);
+                    });
+
+                    sendEnhancedTrailSettings();
+                });
+            });
+
+            // Fade style buttons
+            document.querySelectorAll('[data-fade]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    enhancedTrailSettings.fadeStyle = parseInt(btn.dataset.fade);
+
+                    document.querySelectorAll('[data-fade]').forEach(fadeBtn => {
+                        fadeBtn.classList.toggle('active', parseInt(fadeBtn.dataset.fade) === enhancedTrailSettings.fadeStyle);
+                    });
+
+                    sendEnhancedTrailSettings();
+                });
+            });
+
+            // Sparkles toggle
+            document.getElementById('sparklesToggle').addEventListener('click', () => {
+                const checkbox = document.getElementById('sparklesEnabled');
+                checkbox.checked = !checkbox.checked;
+                enhancedTrailSettings.enableSparkles = checkbox.checked;
+
+                document.getElementById('sparklesToggle').classList.toggle('checked', checkbox.checked);
+                sendEnhancedTrailSettings();
+            });
+        }
+
+        // Call setup function when page loads (add this to existing initialization)
+        
     </script>
 </body>
 
