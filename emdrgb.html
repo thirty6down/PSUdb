@@ -889,6 +889,20 @@
                 </div>
 
                 <div class="pref-section">
+                    <div class="pref-title">🎵 Audio Timing</div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Tone Prediction</span>
+                            <span id="tonePredictionValue">80ms</span>
+                        </div>
+                        <input type="range" class="slider" id="tonePredictionSlider" min="10" max="200" value="80">
+                        <div style="font-size: 12px; color: #aaa; margin-top: 5px;">
+                            How early to send tone commands before visual edge
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pref-section">
                     <div class="pref-title">Party Mode</div>
                     <button class="btn party-btn" id="partyBtn">🌈 Rainbow Party Mode</button>
                 </div>
@@ -1661,6 +1675,20 @@
             activeAreaSlider.addEventListener('change', () => {
                 applySinglePulseSetting('area', settings.activeArea);
             });
+
+            // Tone prediction timing slider
+            const tonePredictionSlider = document.getElementById('tonePredictionSlider');
+            tonePredictionSlider.addEventListener('input', () => {
+                const predictionMs = parseInt(tonePredictionSlider.value);
+                document.getElementById('tonePredictionValue').textContent = predictionMs + 'ms';
+            });
+
+            tonePredictionSlider.addEventListener('change', () => {
+                const predictionMs = parseInt(tonePredictionSlider.value);
+                const command = `T:${predictionMs}`;
+                sendCommand(command);
+                console.log('Tone prediction timing set to:', predictionMs + 'ms');
+            });
         }
 
         function updateSpeedDisplay() {
@@ -1807,7 +1835,7 @@
                 if (isConnected) {
                     updateBluetoothStatus();
                 }
-            }, 2000);
+            }, 10000); // Reduce from 2s to 10s to minimize interference
         }
 
         function stopBluetoothStatusPolling() {
@@ -1862,23 +1890,28 @@
                 // Start scan
                 sendCommand('BT_SCAN');
                 
-                // Wait for scan to complete (up to 12 seconds)
+                // Wait for scan to complete (up to 6 seconds for test scan)
                 let scanComplete = false;
                 let attempts = 0;
                 
-                while (!scanComplete && attempts < 24) {
+                while (!scanComplete && attempts < 12) {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     
                     // Check scan status
                     sendCommand('STATUS_BT_DEVICES');
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                    await new Promise(resolve => setTimeout(resolve, 200));
                     
                     const value = await ledCharacteristic.readValue();
                     const message = new TextDecoder().decode(value);
                     
-                    if (message.includes('BT_DEVICES:') && !message.includes('BT_SCANNING')) {
+                    console.log('Scan check:', message); // Debug log
+                    
+                    if (message.includes('BT_DEVICES:')) {
                         scanComplete = true;
                         parseBluetoothDevices(message);
+                    } else if (message.includes('BT_SCANNING')) {
+                        // Still scanning, update UI
+                        devicesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #aaa;">Scanning... (' + Math.floor(attempts/2) + 's)</div>';
                     }
                     
                     attempts++;
