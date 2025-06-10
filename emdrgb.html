@@ -612,110 +612,6 @@
                 <h2>Session Setup</h2>
 
                 <div class="pref-section">
-                    <div class="pref-title">🎧 Audio Cues</div>
-
-                    <!-- Audio Enable/Disable Toggle -->
-                    <div class="toggle-switch"
-                        style="background: #2a4a2a; border: 2px solid #4CAF50; margin-bottom: 20px;">
-                        <label style="font-size: 16px; font-weight: bold;">Enable Audio Cues</label>
-                        <div class="toggle checked" id="audioMasterToggle">
-                            <input type="checkbox" id="audioMasterEnabled" checked>
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
-
-                    <!-- Connection Status -->
-                    <div id="audioConnectionStatus" class="status" style="margin: 15px 0;">
-                        <span id="audioStatusText">Press "Connect Headphones" to start</span>
-                    </div>
-
-                    <!-- Connection Controls -->
-                    <div class="session-controls" id="audioConnectionControls">
-                        <button class="btn primary" id="connectHeadphonesBtn">Connect Headphones</button>
-                        <button class="btn secondary" id="disconnectHeadphonesBtn"
-                            style="display: none;">Disconnect</button>
-                    </div>
-
-                    <!-- Audio Settings - Only visible when enabled -->
-                    <div id="audioSettingsSection">
-                        <!-- Volume Control -->
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>🔊 Volume</span>
-                                <span id="audioVolumeValue">70%</span>
-                            </div>
-                            <input type="range" class="slider" id="audioVolumeSlider" min="0" max="100" value="70">
-                        </div>
-
-                        <!-- Tone Type Selection -->
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-size: 14px; margin-bottom: 8px; color: #aaa;">Tone Style</div>
-                            <div class="preset-buttons">
-                                <button class="preset-btn active" data-tone-type="0">Sine</button>
-                                <button class="preset-btn" data-tone-type="1">Chirp</button>
-                                <button class="preset-btn" data-tone-type="2">Click</button>
-                                <button class="preset-btn" data-tone-type="3">Nature</button>
-                            </div>
-                        </div>
-
-                        <!-- Left Tone Frequency -->
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>← Left Tone</span>
-                                <span id="leftToneValue">440 Hz</span>
-                            </div>
-                            <input type="range" class="slider" id="leftToneSlider" min="200" max="1000" value="440">
-                        </div>
-
-                        <!-- Right Tone Frequency -->
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>Right Tone →</span>
-                                <span id="rightToneValue">880 Hz</span>
-                            </div>
-                            <input type="range" class="slider" id="rightToneSlider" min="200" max="1000" value="880">
-                        </div>
-
-                        <!-- Tone Duration -->
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>⏱️ Duration</span>
-                                <span id="toneDurationValue">150ms</span>
-                            </div>
-                            <input type="range" class="slider" id="toneDurationSlider" min="50" max="500" value="150">
-                        </div>
-
-                        <!-- Spatial Audio Toggle -->
-                        <div class="toggle-switch">
-                            <label>🎯 Spatial Audio (Left/Right)</label>
-                            <div class="toggle checked" id="spatialAudioToggle">
-                                <input type="checkbox" id="spatialAudioEnabled" checked>
-                                <div class="toggle-slider"></div>
-                            </div>
-                        </div>
-
-                        <!-- Test Audio Controls -->
-                        <div class="pref-title" style="margin-top: 20px;">Test Audio</div>
-                        <div class="session-controls">
-                            <button class="btn" id="testLeftAudioBtn">🔊 Test Left</button>
-                            <button class="btn" id="testRightAudioBtn">🔊 Test Right</button>
-                        </div>
-                    </div>
-
-                    <!-- No Audio Message - Only visible when disabled -->
-                    <div id="noAudioMessage"
-                        style="display: none; text-align: center; padding: 40px 20px; background: #333; border-radius: 8px; margin: 20px 0;">
-                        <div style="font-size: 48px; margin-bottom: 15px;">🔇</div>
-                        <div style="font-size: 18px; color: #4CAF50; margin-bottom: 10px;">Silent Mode</div>
-                        <div style="font-size: 14px; color: #aaa;">Audio cues disabled - visual cues only</div>
-                        <div style="font-size: 12px; color: #666; margin-top: 15px;">
-                            Perfect for quiet environments or hearing sensitivity
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="pref-section">
                     <div class="pref-title">Run for Cycles</div>
                     <div class="counter-control">
                         <button class="counter-btn" id="cyclesDown">-</button>
@@ -784,7 +680,7 @@
                 <!-- NEW: Movement Section -->
                 <div class="movement-section">
                     <div class="pref-title">🎭 Movement Style</div>
-
+                    
                     <div class="movement-presets">
                         <div class="movement-preset active" data-movement="constant">
                             <div class="icon">📏</div>
@@ -885,8 +781,7 @@
                 <div class="pref-section">
                     <div class="pref-title">Trail Settings</div>
 
-                    <div class="toggle-switch"
-                        style="background: #2a4a2a; border: 2px solid #4CAF50; margin-bottom: 20px;">
+                    <div class="toggle-switch" style="background: #2a4a2a; border: 2px solid #4CAF50; margin-bottom: 20px;">
                         <label style="font-size: 16px; font-weight: bold;">Enable Trail</label>
                         <div class="toggle checked" id="trailMasterToggle">
                             <input type="checkbox" id="trailMasterEnabled" checked>
@@ -934,8 +829,7 @@
                                 <span>Trail Duration</span>
                                 <span id="trailDurationValue">2.0s</span>
                             </div>
-                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5"
-                                value="2.0">
+                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5" value="2.0">
                         </div>
 
                         <div class="toggle-switch">
@@ -960,8 +854,7 @@
                         </div>
                     </div>
 
-                    <div id="noTrailMessage"
-                        style="display: none; text-align: center; padding: 40px 20px; background: #333; border-radius: 8px; margin: 20px 0;">
+                    <div id="noTrailMessage" style="display: none; text-align: center; padding: 40px 20px; background: #333; border-radius: 8px; margin: 20px 0;">
                         <div style="font-size: 48px; margin-bottom: 15px;">🎯</div>
                         <div style="font-size: 18px; color: #4CAF50; margin-bottom: 10px;">Clean Pulse Mode</div>
                         <div style="font-size: 14px; color: #aaa;">Trail effects disabled - showing pulse only</div>
@@ -975,6 +868,25 @@
             <!-- Extra Page -->
             <div id="extraPage" class="page">
                 <h2>Extra Features</h2>
+
+                <div class="pref-section">
+                    <div class="pref-title">🎧 Bluetooth Audio</div>
+                    <div id="bluetoothStatus" class="status">Audio processor status unknown</div>
+                    
+                    <button class="btn primary" id="scanBluetoothBtn">🔍 Scan for Headphones</button>
+                    
+                    <div id="bluetoothDevices" style="margin: 20px 0;">
+                        <!-- Device list will appear here -->
+                    </div>
+                    
+                    <div id="bluetoothConnected" style="display: none; background: #1b4332; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <div style="color: #4CAF50; font-weight: bold;">✅ Connected to:</div>
+                        <div id="connectedDeviceName" style="margin-top: 5px; font-size: 16px;"></div>
+                        <div style="margin-top: 10px; font-size: 14px; color: #aaa;">
+                            Tones will play in left/right channels when pulse reaches each end
+                        </div>
+                    </div>
+                </div>
 
                 <div class="pref-section">
                     <div class="pref-title">Party Mode</div>
@@ -1088,7 +1000,7 @@
         // Movement preview animation
         function startMovementPreview() {
             if (previewAnimation) return;
-
+            
             previewStartTime = Date.now();
             previewAnimation = setInterval(updateMovementPreview, 16); // 60 FPS
         }
@@ -1103,22 +1015,22 @@
         function updateMovementPreview() {
             const previewPulse = document.getElementById('previewPulse');
             const previewContainer = document.getElementById('movementPreview');
-
+            
             if (!previewPulse || !previewContainer) return;
-
+            
             const containerWidth = previewContainer.offsetWidth - 40; // Account for padding
             const elapsedTime = (Date.now() - previewStartTime) / 1000; // seconds
-
+            
             // Simulate movement based on selected mode
             let progress = (elapsedTime * currentSpeed) % 2; // 2 second cycle
-
+            
             if (progress > 1) {
                 progress = 2 - progress; // Reverse direction
             }
-
+            
             // Apply easing based on movement mode
             let easedProgress = progress;
-
+            
             if (movementSettings.mode === 'smooth') {
                 // Apply sine easing - slower at edges, faster in center
                 const easingFactor = Math.sin(Math.PI * progress);
@@ -1129,9 +1041,9 @@
                 const easingFactor = 1 - (distanceFromCenter * distanceFromCenter);
                 easedProgress = progress + (easingFactor - 1) * movementSettings.easingIntensity + movementSettings.easingIntensity;
             }
-
+            
             easedProgress = Math.max(0, Math.min(1, easedProgress));
-
+            
             const leftPosition = 20 + (easedProgress * containerWidth);
             previewPulse.style.left = leftPosition + 'px';
         }
@@ -1142,10 +1054,10 @@
                 // Update UI
                 document.querySelectorAll('.movement-preset').forEach(p => p.classList.remove('active'));
                 preset.classList.add('active');
-
+                
                 // Update settings
                 movementSettings.mode = preset.dataset.movement;
-
+                
                 // Show/hide easing intensity slider
                 const easingContainer = document.getElementById('easingIntensityContainer');
                 if (movementSettings.mode === 'constant') {
@@ -1153,10 +1065,10 @@
                 } else {
                     easingContainer.style.display = 'block';
                 }
-
+                
                 // Send to device
                 sendMovementSettings();
-
+                
                 console.log('Movement mode changed to:', movementSettings.mode);
             });
         });
@@ -1173,7 +1085,7 @@
 
         function sendMovementSettings() {
             if (!ledCharacteristic) return;
-
+            
             // Convert mode to number: constant=0, smooth=1, elastic=2
             let modeNumber = 0;
             switch (movementSettings.mode) {
@@ -1181,10 +1093,10 @@
                 case 'smooth': modeNumber = 1; break;
                 case 'elastic': modeNumber = 2; break;
             }
-
+            
             const command = `M:T${modeNumber},I${movementSettings.easingIntensity.toFixed(2)}`;
             sendCommand(command);
-
+            
             console.log('Sent movement command:', command);
         }
 
@@ -1254,6 +1166,7 @@
 
                 applyAllSettings();
                 startCyclePolling();
+                startBluetoothStatusPolling();
 
                 device.addEventListener('gattserverdisconnected', () => {
                     isConnected = false;
@@ -1261,6 +1174,7 @@
                     preferencesPreviewActive = false;
                     stopCyclePolling();
                     stopMovementPreview();
+                    stopBluetoothStatusPolling();
                     updateStatus('Device disconnected', 'error');
                     showPage('connect');
                 });
@@ -1294,7 +1208,6 @@
         function handleNotification(event) {
             const value = new TextDecoder().decode(event.target.value);
             console.log('Received notification:', value);
-
             if (value.startsWith('CYCLES:')) {
                 const count = parseInt(value.substring(7));
                 if (!isNaN(count)) {
@@ -1302,10 +1215,6 @@
                     updateSessionDisplay();
                     console.log('Updated cycle count to:', count);
                 }
-            }
-            // ADD THIS SECTION:
-            else if (value.startsWith('AUDIO:')) {
-                handleAudioStatusUpdate(value);
             }
         }
 
@@ -1886,6 +1795,208 @@
             }
         }, 1000);
 
+        // Bluetooth Management
+        let bluetoothDeviceList = [];
+        let bluetoothConnectedDevice = null;
+        let bluetoothStatusPolling = null;
+
+        function startBluetoothStatusPolling() {
+            if (bluetoothStatusPolling) return;
+            
+            bluetoothStatusPolling = setInterval(() => {
+                if (isConnected) {
+                    updateBluetoothStatus();
+                }
+            }, 2000);
+        }
+
+        function stopBluetoothStatusPolling() {
+            if (bluetoothStatusPolling) {
+                clearInterval(bluetoothStatusPolling);
+                bluetoothStatusPolling = null;
+            }
+        }
+
+        async function updateBluetoothStatus() {
+            if (!ledCharacteristic) return;
+            
+            try {
+                // Check audio processor status
+                sendCommand('STATUS_BT_STATUS');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                const statusValue = await ledCharacteristic.readValue();
+                const statusMessage = new TextDecoder().decode(statusValue);
+                
+                const bluetoothStatus = document.getElementById('bluetoothStatus');
+                
+                if (statusMessage.includes('BT_STATUS:READY')) {
+                    bluetoothStatus.textContent = '✅ Audio processor ready';
+                    bluetoothStatus.className = 'status connected';
+                } else if (statusMessage.includes('BT_STATUS:DISCONNECTED')) {
+                    bluetoothStatus.textContent = '❌ Audio processor disconnected';
+                    bluetoothStatus.className = 'status error';
+                } else {
+                    bluetoothStatus.textContent = '⚠️ Audio processor status unknown';
+                    bluetoothStatus.className = 'status warning';
+                }
+            } catch (error) {
+                console.log('Error checking Bluetooth status:', error);
+            }
+        }
+
+        async function scanForBluetoothDevices() {
+            if (!ledCharacteristic) {
+                updateStatus('Please connect to EMDRbar first', 'warning');
+                return;
+            }
+            
+            const scanBtn = document.getElementById('scanBluetoothBtn');
+            const devicesContainer = document.getElementById('bluetoothDevices');
+            
+            scanBtn.disabled = true;
+            scanBtn.textContent = '🔍 Scanning...';
+            devicesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #aaa;">Scanning for Bluetooth devices...</div>';
+            
+            try {
+                // Start scan
+                sendCommand('BT_SCAN');
+                
+                // Wait for scan to complete (up to 12 seconds)
+                let scanComplete = false;
+                let attempts = 0;
+                
+                while (!scanComplete && attempts < 24) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Check scan status
+                    sendCommand('STATUS_BT_DEVICES');
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    const value = await ledCharacteristic.readValue();
+                    const message = new TextDecoder().decode(value);
+                    
+                    if (message.includes('BT_DEVICES:') && !message.includes('BT_SCANNING')) {
+                        scanComplete = true;
+                        parseBluetoothDevices(message);
+                    }
+                    
+                    attempts++;
+                }
+                
+                if (!scanComplete) {
+                    devicesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #f44336;">Scan timeout. Please try again.</div>';
+                }
+                
+            } catch (error) {
+                console.error('Bluetooth scan error:', error);
+                devicesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #f44336;">Scan failed. Please try again.</div>';
+            }
+            
+            scanBtn.disabled = false;
+            scanBtn.textContent = '🔍 Scan for Headphones';
+        }
+
+        function parseBluetoothDevices(message) {
+            const devicesContainer = document.getElementById('bluetoothDevices');
+            
+            if (message.includes('BT_DEVICES:NONE')) {
+                devicesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #aaa;">No Bluetooth devices found. Make sure your headphones are in pairing mode.</div>';
+                return;
+            }
+            
+            // Parse device list: "BT_DEVICES:Device1|AA:BB:CC:DD:EE:FF;Device2|11:22:33:44:55:66"
+            const deviceData = message.substring(message.indexOf('BT_DEVICES:') + 11);
+            
+            if (!deviceData || deviceData === 'NONE') {
+                devicesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #aaa;">No devices found.</div>';
+                return;
+            }
+            
+            const devices = deviceData.split(';');
+            bluetoothDeviceList = [];
+            
+            let devicesHtml = '<div style="margin-bottom: 15px; color: #4CAF50; font-weight: bold;">Found Devices:</div>';
+            
+            devices.forEach(deviceString => {
+                const [name, address] = deviceString.split('|');
+                if (name && address) {
+                    bluetoothDeviceList.push({ name, address });
+                    
+                    devicesHtml += `
+                        <div class="bluetooth-device" style="background: #2a2a2a; border-radius: 8px; padding: 15px; margin: 10px 0; cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease;" 
+                             data-address="${address}" onclick="connectToBluetoothDevice('${address}', '${name}')">
+                            <div style="font-weight: bold; color: #fff;">${name}</div>
+                            <div style="font-size: 12px; color: #aaa; margin-top: 5px;">${address}</div>
+                            <div style="font-size: 12px; color: #4CAF50; margin-top: 5px;">Tap to connect</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            devicesContainer.innerHTML = devicesHtml;
+            
+            // Add hover effects
+            document.querySelectorAll('.bluetooth-device').forEach(device => {
+                device.addEventListener('mouseenter', () => {
+                    device.style.borderColor = '#4CAF50';
+                    device.style.backgroundColor = '#2a4a2a';
+                });
+                
+                device.addEventListener('mouseleave', () => {
+                    device.style.borderColor = 'transparent';
+                    device.style.backgroundColor = '#2a2a2a';
+                });
+            });
+        }
+
+        async function connectToBluetoothDevice(address, name) {
+            if (!ledCharacteristic) return;
+            
+            const device = document.querySelector(`[data-address="${address}"]`);
+            if (device) {
+                device.style.backgroundColor = '#4CAF50';
+                device.innerHTML = `
+                    <div style="font-weight: bold; color: #fff;">${name}</div>
+                    <div style="font-size: 12px; color: #fff; margin-top: 5px;">Connecting...</div>
+                `;
+            }
+            
+            try {
+                sendCommand(`BT_CONNECT:${address}`);
+                
+                // Wait a moment for connection attempt
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Check if connected (this would need to be implemented with proper status checking)
+                bluetoothConnectedDevice = { name, address };
+                showBluetoothConnected(name);
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                if (device) {
+                    device.style.backgroundColor = '#f44336';
+                    device.innerHTML = `
+                        <div style="font-weight: bold; color: #fff;">${name}</div>
+                        <div style="font-size: 12px; color: #fff; margin-top: 5px;">Connection failed</div>
+                    `;
+                }
+            }
+        }
+
+        function showBluetoothConnected(deviceName) {
+            document.getElementById('connectedDeviceName').textContent = deviceName;
+            document.getElementById('bluetoothConnected').style.display = 'block';
+            document.getElementById('bluetoothDevices').innerHTML = '';
+            document.getElementById('scanBluetoothBtn').textContent = '✅ Connected - Tap to scan again';
+        }
+
+        // Bluetooth scan button event listener
+        document.getElementById('scanBluetoothBtn').addEventListener('click', scanForBluetoothDevices);
+
+        // Global function for device connection (called from onclick in HTML)
+        window.connectToBluetoothDevice = connectToBluetoothDevice;
+
         // Initialize everything
         setupPreferences();
         updateSpeedDisplay();
@@ -1907,262 +2018,6 @@
         if (movementSettings.mode === 'constant') {
             easingContainer.style.display = 'none';
         }
-        let audioSettings = {
-            enabled: true,
-            volume: 70,
-            leftToneFreq: 440,
-            rightToneFreq: 880,
-            toneDuration: 150,
-            toneType: 0,
-            spatialAudio: true
-        };
-
-        // Audio connection state
-        let audioConnected = false;
-        let connectedHeadphonesName = "";
-
-        // Audio UI management
-        function updateAudioEnabledUI() {
-            const audioSettingsSection = document.getElementById('audioSettingsSection');
-            const noAudioMessage = document.getElementById('noAudioMessage');
-            const masterToggle = document.getElementById('audioMasterToggle');
-
-            if (audioSettings.enabled) {
-                audioSettingsSection.style.display = 'block';
-                noAudioMessage.style.display = 'none';
-                masterToggle.classList.add('checked');
-                document.getElementById('audioMasterEnabled').checked = true;
-            } else {
-                audioSettingsSection.style.display = 'none';
-                noAudioMessage.style.display = 'block';
-                masterToggle.classList.remove('checked');
-                document.getElementById('audioMasterEnabled').checked = false;
-            }
-
-            updateAudioControlsVisualState();
-            sendAudioSettings();
-        }
-
-        function updateAudioControlsVisualState() {
-            const controls = document.querySelectorAll('#audioSettingsSection input, #audioSettingsSection button');
-            controls.forEach(control => {
-                if (audioSettings.enabled) {
-                    control.style.opacity = '1';
-                    control.style.pointerEvents = 'auto';
-                } else {
-                    control.style.opacity = '0.5';
-                    control.style.pointerEvents = 'none';
-                }
-            });
-        }
-
-        function updateAudioConnectionStatus() {
-            const statusDiv = document.getElementById('audioConnectionStatus');
-            const statusText = document.getElementById('audioStatusText');
-            const connectBtn = document.getElementById('connectHeadphonesBtn');
-            const disconnectBtn = document.getElementById('disconnectHeadphonesBtn');
-
-            if (audioConnected) {
-                statusDiv.className = 'status connected';
-                statusText.textContent = connectedHeadphonesName ?
-                    `Connected to ${connectedHeadphonesName}` :
-                    'Headphones connected';
-                connectBtn.style.display = 'none';
-                disconnectBtn.style.display = 'block';
-            } else {
-                statusDiv.className = 'status';
-                statusText.textContent = 'Not connected - pair with "EMDRbar Audio"';
-                connectBtn.style.display = 'block';
-                disconnectBtn.style.display = 'none';
-            }
-        }
-
-        function sendAudioSettings() {
-            if (!ledCharacteristic) return;
-
-            const command = `AUDIO:V${audioSettings.volume},` +
-                `L${audioSettings.leftToneFreq},` +
-                `R${audioSettings.rightToneFreq},` +
-                `D${audioSettings.toneDuration},` +
-                `T${audioSettings.toneType},` +
-                `S${audioSettings.spatialAudio ? 1 : 0},` +
-                `E${audioSettings.enabled ? 1 : 0}`;
-
-            sendCommand(command);
-            console.log('Audio settings:', command);
-        }
-
-        // Event Listeners for Audio Controls
-
-        // Master audio toggle
-        document.getElementById('audioMasterToggle').addEventListener('click', () => {
-            audioSettings.enabled = !audioSettings.enabled;
-            updateAudioEnabledUI();
-            console.log('Audio enabled:', audioSettings.enabled);
-        });
-
-        // Connection controls
-        document.getElementById('connectHeadphonesBtn').addEventListener('click', () => {
-            sendCommand('AUDIO_CONNECT');
-            updateStatus('Searching for headphones to pair...', 'warning');
-        });
-
-        document.getElementById('disconnectHeadphonesBtn').addEventListener('click', () => {
-            sendCommand('AUDIO_DISCONNECT');
-            audioConnected = false;
-            connectedHeadphonesName = "";
-            updateAudioConnectionStatus();
-        });
-
-        // Volume control
-        document.getElementById('audioVolumeSlider').addEventListener('input', (e) => {
-            audioSettings.volume = parseInt(e.target.value);
-            document.getElementById('audioVolumeValue').textContent = e.target.value + '%';
-        });
-
-        document.getElementById('audioVolumeSlider').addEventListener('change', () => {
-            if (audioSettings.enabled) sendAudioSettings();
-        });
-
-        // Tone type buttons
-        document.querySelectorAll('[data-tone-type]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (!audioSettings.enabled) return;
-
-                const toneType = parseInt(btn.dataset.toneType);
-                audioSettings.toneType = toneType;
-
-                document.querySelectorAll('[data-tone-type]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                sendAudioSettings();
-            });
-        });
-
-        // Left tone frequency
-        document.getElementById('leftToneSlider').addEventListener('input', (e) => {
-            audioSettings.leftToneFreq = parseInt(e.target.value);
-            document.getElementById('leftToneValue').textContent = e.target.value + ' Hz';
-        });
-
-        document.getElementById('leftToneSlider').addEventListener('change', () => {
-            if (audioSettings.enabled) sendAudioSettings();
-        });
-
-        // Right tone frequency
-        document.getElementById('rightToneSlider').addEventListener('input', (e) => {
-            audioSettings.rightToneFreq = parseInt(e.target.value);
-            document.getElementById('rightToneValue').textContent = e.target.value + ' Hz';
-        });
-
-        document.getElementById('rightToneSlider').addEventListener('change', () => {
-            if (audioSettings.enabled) sendAudioSettings();
-        });
-
-        // Tone duration
-        document.getElementById('toneDurationSlider').addEventListener('input', (e) => {
-            audioSettings.toneDuration = parseInt(e.target.value);
-            document.getElementById('toneDurationValue').textContent = e.target.value + 'ms';
-        });
-
-        document.getElementById('toneDurationSlider').addEventListener('change', () => {
-            if (audioSettings.enabled) sendAudioSettings();
-        });
-
-        // Spatial audio toggle
-        document.getElementById('spatialAudioToggle').addEventListener('click', () => {
-            if (!audioSettings.enabled) return;
-
-            const checkbox = document.getElementById('spatialAudioEnabled');
-            checkbox.checked = !checkbox.checked;
-            audioSettings.spatialAudio = checkbox.checked;
-            document.getElementById('spatialAudioToggle').classList.toggle('checked', checkbox.checked);
-            sendAudioSettings();
-        });
-
-        // Test audio buttons
-        document.getElementById('testLeftAudioBtn').addEventListener('click', () => {
-            if (audioSettings.enabled) {
-                sendCommand('AUDIO_TEST_LEFT');
-
-                // Visual feedback
-                const btn = document.getElementById('testLeftAudioBtn');
-                const originalText = btn.textContent;
-                btn.textContent = '🔊 Playing...';
-                btn.style.background = '#ffaa00';
-
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '';
-                }, audioSettings.toneDuration + 100);
-            }
-        });
-
-        document.getElementById('testRightAudioBtn').addEventListener('click', () => {
-            if (audioSettings.enabled) {
-                sendCommand('AUDIO_TEST_RIGHT');
-
-                // Visual feedback
-                const btn = document.getElementById('testRightAudioBtn');
-                const originalText = btn.textContent;
-                btn.textContent = '🔊 Playing...';
-                btn.style.background = '#ffaa00';
-
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '';
-                }, audioSettings.toneDuration + 100);
-            }
-        });
-
-        // Handle audio status updates from device
-        function handleAudioStatusUpdate(message) {
-            if (message.startsWith('AUDIO:')) {
-                const status = message.substring(6);
-
-                if (status === 'CONNECTED') {
-                    audioConnected = true;
-                    connectedHeadphonesName = "Connected Device";
-                } else if (status === 'DISCONNECTED') {
-                    audioConnected = false;
-                    connectedHeadphonesName = "";
-                } else if (status.includes('CONNECTED,')) {
-                    audioConnected = true;
-                    connectedHeadphonesName = status.split(',')[1];
-                }
-
-                updateAudioConnectionStatus();
-            }
-        }
-
-        // Initialize audio UI
-        function initializeAudioUI() {
-            updateAudioEnabledUI();
-            updateAudioConnectionStatus();
-
-            // Set initial slider values
-            document.getElementById('audioVolumeSlider').value = audioSettings.volume;
-            document.getElementById('audioVolumeValue').textContent = audioSettings.volume + '%';
-
-            document.getElementById('leftToneSlider').value = audioSettings.leftToneFreq;
-            document.getElementById('leftToneValue').textContent = audioSettings.leftToneFreq + ' Hz';
-
-            document.getElementById('rightToneSlider').value = audioSettings.rightToneFreq;
-            document.getElementById('rightToneValue').textContent = audioSettings.rightToneFreq + ' Hz';
-
-            document.getElementById('toneDurationSlider').value = audioSettings.toneDuration;
-            document.getElementById('toneDurationValue').textContent = audioSettings.toneDuration + 'ms';
-
-            // Set initial tone type
-            document.querySelector(`[data-tone-type="${audioSettings.toneType}"]`).classList.add('active');
-
-            console.log('Audio UI initialized');
-        }
-
-        initializeAudioUI();
-        updateAudioEnabledUI();
-
     </script>
 </body>
-
 </html>
