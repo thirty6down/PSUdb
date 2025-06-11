@@ -906,11 +906,40 @@
                     
                     <div style="margin-top: 15px; padding: 12px; background: #2a4a2a; border-radius: 8px; border: 1px solid #4CAF50;">
                         <div style="font-size: 13px; color: #4CAF50; font-weight: bold; margin-bottom: 8px;">🎧 Quick Settings by Device Type:</div>
-                        <div class="preset-buttons">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;">
                             <button class="preset-btn" data-prediction="40" style="font-size: 11px;">Wired<br>40ms</button>
                             <button class="preset-btn" data-prediction="80" style="font-size: 11px;">Bluetooth<br>80ms</button>
                             <button class="preset-btn" data-prediction="150" style="font-size: 11px;">Older BT<br>150ms</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
                             <button class="preset-btn" data-prediction="250" style="font-size: 11px;">Speaker<br>250ms</button>
+                            <button class="preset-btn" data-prediction="320" style="font-size: 11px;">Known HP<br>320ms</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pref-section">
+                    <div class="pref-title">🤏 Haptic Tappers</div>
+                    <div id="tapperStatus" class="status">Tapper status unknown</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                        <button class="btn secondary" id="syncLeftTapperBtn">🔗 Sync Left Tapper</button>
+                        <button class="btn secondary" id="syncRightTapperBtn">🔗 Sync Right Tapper</button>
+                    </div>
+                    
+                    <div id="tapperConnected" style="display: none; background: #1b4332; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <div style="color: #4CAF50; font-weight: bold;">✅ Tappers Connected:</div>
+                        <div id="connectedTappers" style="margin-top: 5px; font-size: 16px;"></div>
+                        <div style="margin-top: 10px; font-size: 14px; color: #aaa;">
+                            Haptic feedback will sync with visual pulse edges
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding: 12px; background: #2a4a2a; border-radius: 8px;">
+                        <div style="font-size: 13px; color: #4CAF50; font-weight: bold; margin-bottom: 8px;">🧪 Test Tappers:</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button class="btn secondary" id="testLeftTapperBtn" style="font-size: 12px;">Test Left</button>
+                            <button class="btn secondary" id="testRightTapperBtn" style="font-size: 12px;">Test Right</button>
                         </div>
                     </div>
                 </div>
@@ -1242,6 +1271,24 @@
                     updateSessionDisplay();
                     console.log('Updated cycle count to:', count);
                 }
+            } else if (value.startsWith('TAPPER_STATUS:')) {
+                // Parse tapper status: "TAPPER_STATUS:LEFT_OK,RIGHT_NO" or "TAPPER_STATUS:LEFT_NO,RIGHT_OK"
+                const statusData = value.substring(14);
+                const [leftStatus, rightStatus] = statusData.split(',');
+                
+                tapperStatus.left = leftStatus === 'LEFT_OK';
+                tapperStatus.right = rightStatus === 'RIGHT_OK';
+                
+                showTapperStatus();
+                console.log('Tapper status updated:', tapperStatus);
+            } else if (value.startsWith('TAPPER_LEFT_CONNECTED')) {
+                tapperStatus.left = true;
+                showTapperStatus();
+                console.log('Left tapper connected');
+            } else if (value.startsWith('TAPPER_RIGHT_CONNECTED')) {
+                tapperStatus.right = true;
+                showTapperStatus();
+                console.log('Right tapper connected');
             }
         }
 
@@ -1867,6 +1914,7 @@
             bluetoothStatusPolling = setInterval(() => {
                 if (isConnected) {
                     updateBluetoothStatus();
+                    updateTapperStatus();
                 }
             }, 10000); // Reduce from 2s to 10s to minimize interference
         }
@@ -2063,6 +2111,119 @@
         // Global function for device connection (called from onclick in HTML)
         window.connectToBluetoothDevice = connectToBluetoothDevice;
 
+        // Tapper Management
+        let tapperStatus = { left: false, right: false };
+
+        function updateTapperStatus() {
+            if (!ledCharacteristic) return;
+            
+            try {
+                sendCommand('TAPPER_STATUS');
+                // Response will be handled in handleNotification
+            } catch (error) {
+                console.error('Failed to get tapper status:', error);
+            }
+        }
+
+        function syncTapper(side) {
+            if (!ledCharacteristic) {
+                updateStatus('Please connect to device first', 'warning');
+                return;
+            }
+            
+            const btn = document.getElementById(`sync${side.charAt(0).toUpperCase() + side.slice(1)}TapperBtn`);
+            const originalText = btn.textContent;
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Syncing...';
+            
+            try {
+                sendCommand(`TAPPER_SYNC_${side.toUpperCase()}`);
+                console.log(`${side} tapper sync request sent`);
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }, 3000);
+                
+            } catch (error) {
+                console.error(`Failed to sync ${side} tapper:`, error);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        function testTapper(side) {
+            if (!ledCharacteristic) {
+                updateStatus('Please connect to device first', 'warning');
+                return;
+            }
+            
+            try {
+                sendCommand(`TAPPER_FLASH:${side},255`);
+                console.log(`${side} tapper test flash sent`);
+                
+                // Visual feedback
+                const btn = document.getElementById(`test${side.charAt(0).toUpperCase() + side.slice(1)}TapperBtn`);
+                const originalBg = btn.style.background;
+                btn.style.background = '#4CAF50';
+                btn.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    btn.style.background = originalBg;
+                    btn.style.transform = '';
+                }, 300);
+                
+            } catch (error) {
+                console.error(`Failed to test ${side} tapper:`, error);
+            }
+        }
+
+        function showTapperStatus() {
+            const statusDiv = document.getElementById('tapperStatus');
+            const connectedDiv = document.getElementById('tapperConnected');
+            const connectedTappersDiv = document.getElementById('connectedTappers');
+            
+            let statusText = '';
+            let connectedCount = 0;
+            let connectedList = [];
+            
+            if (tapperStatus.left) {
+                connectedCount++;
+                connectedList.push('Left');
+            }
+            
+            if (tapperStatus.right) {
+                connectedCount++;
+                connectedList.push('Right');
+            }
+            
+            if (connectedCount === 0) {
+                statusText = '❌ No tappers connected';
+                statusDiv.className = 'status error';
+                connectedDiv.style.display = 'none';
+            } else if (connectedCount === 1) {
+                statusText = `⚠️ ${connectedList[0]} tapper connected`;
+                statusDiv.className = 'status warning';
+                connectedDiv.style.display = 'block';
+                connectedTappersDiv.textContent = connectedList.join(', ') + ' tapper';
+            } else {
+                statusText = '✅ Both tappers connected';
+                statusDiv.className = 'status connected';
+                connectedDiv.style.display = 'block';
+                connectedTappersDiv.textContent = 'Left and Right tappers';
+            }
+            
+            statusDiv.textContent = statusText;
+        }
+
+        // Tapper event listeners
+        document.getElementById('syncLeftTapperBtn').addEventListener('click', () => syncTapper('left'));
+        document.getElementById('syncRightTapperBtn').addEventListener('click', () => syncTapper('right'));
+        document.getElementById('testLeftTapperBtn').addEventListener('click', () => testTapper('left'));
+        document.getElementById('testRightTapperBtn').addEventListener('click', () => testTapper('right'));
+
         // Initialize everything
         setupPreferences();
         updateSpeedDisplay();
@@ -2075,6 +2236,9 @@
         document.getElementById('pulseSizeValue').textContent = Math.round(settings.pulseSize * 1.67) + ' cm';
         document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
         document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
+        
+        // Initialize tapper status
+        showTapperStatus();
 
         // Initialize trail UI
         updateTrailEnabledUI();
