@@ -892,12 +892,25 @@
                     <div class="pref-title">🎵 Audio Timing</div>
                     <div class="slider-container">
                         <div class="slider-label">
-                            <span>Tone Prediction</span>
+                            <span>Audio Delay Compensation</span>
                             <span id="tonePredictionValue">80ms</span>
                         </div>
-                        <input type="range" class="slider" id="tonePredictionSlider" min="10" max="200" value="80">
+                        <input type="range" class="slider" id="tonePredictionSlider" min="10" max="500" value="80">
                         <div style="font-size: 12px; color: #aaa; margin-top: 5px;">
-                            How early to send tone commands before visual edge
+                            Compensate for headphone/speaker audio delay (10-500ms)
+                        </div>
+                        <div style="font-size: 11px; color: #666; margin-top: 8px;">
+                            💡 <strong>Tip:</strong> Start session, then adjust in real-time until audio perfectly syncs with visual edges
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding: 12px; background: #2a4a2a; border-radius: 8px; border: 1px solid #4CAF50;">
+                        <div style="font-size: 13px; color: #4CAF50; font-weight: bold; margin-bottom: 8px;">🎧 Quick Settings by Device Type:</div>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" data-prediction="40" style="font-size: 11px;">Wired<br>40ms</button>
+                            <button class="preset-btn" data-prediction="80" style="font-size: 11px;">Bluetooth<br>80ms</button>
+                            <button class="preset-btn" data-prediction="150" style="font-size: 11px;">Older BT<br>150ms</button>
+                            <button class="preset-btn" data-prediction="250" style="font-size: 11px;">Speaker<br>250ms</button>
                         </div>
                     </div>
                 </div>
@@ -1687,7 +1700,27 @@
                 const predictionMs = parseInt(tonePredictionSlider.value);
                 const command = `T:${predictionMs}`;
                 sendCommand(command);
-                console.log('Tone prediction timing set to:', predictionMs + 'ms');
+                console.log('Audio delay compensation set to:', predictionMs + 'ms');
+            });
+
+            // Audio timing preset buttons
+            document.querySelectorAll('[data-prediction]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const predictionMs = parseInt(btn.dataset.prediction);
+                    
+                    // Update slider and display
+                    document.getElementById('tonePredictionSlider').value = predictionMs;
+                    document.getElementById('tonePredictionValue').textContent = predictionMs + 'ms';
+                    
+                    // Update visual state
+                    document.querySelectorAll('[data-prediction]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Send command immediately for real-time adjustment
+                    const command = `T:${predictionMs}`;
+                    sendCommand(command);
+                    console.log('Audio delay preset applied:', predictionMs + 'ms');
+                });
             });
         }
 
@@ -2051,6 +2084,13 @@
         if (movementSettings.mode === 'constant') {
             easingContainer.style.display = 'none';
         }
+
+        // Initialize audio timing preset display (mark 80ms as active by default)
+        document.querySelectorAll('[data-prediction]').forEach(btn => {
+            if (btn.dataset.prediction === '80') {
+                btn.classList.add('active');
+            }
+        });
     </script>
 </body>
 </html>
