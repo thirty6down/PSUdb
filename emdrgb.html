@@ -1437,14 +1437,29 @@
                 case 'cycles':
                     sessionMode.textContent = `Target: ${targetCycles} cycles`;
                     progressText.textContent = `0 / ${targetCycles} cycles`;
+                    // Send TARGET_CYCLES command to firmware
+                    if (ledCharacteristic && isConnected) {
+                        sendCommand(`TARGET_CYCLES:${targetCycles}`);
+                        console.log(`TARGET_CYCLES:${targetCycles} command sent to firmware`);
+                    }
                     break;
                 case 'time':
                     sessionMode.textContent = `Target: ${formatTime(targetTimeSeconds)}`;
                     progressText.textContent = `0:00 / ${formatTime(targetTimeSeconds)}`;
+                    // Clear target cycles for time-based sessions
+                    if (ledCharacteristic && isConnected) {
+                        sendCommand('TARGET_CYCLES:0');
+                        console.log('TARGET_CYCLES:0 command sent to firmware (time-based session)');
+                    }
                     break;
                 case 'manual':
                     sessionMode.textContent = 'Manual Control';
                     progressText.textContent = 'Ready to start';
+                    // Clear target cycles for manual sessions
+                    if (ledCharacteristic && isConnected) {
+                        sendCommand('TARGET_CYCLES:0');
+                        console.log('TARGET_CYCLES:0 command sent to firmware (manual session)');
+                    }
                     break;
             }
 
