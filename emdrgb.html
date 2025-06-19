@@ -603,6 +603,18 @@
             <!-- Connect Page -->
             <div id="connectPage" class="page active">
                 <h1>EMDRbar</h1>
+                <div style="text-align: center; margin-bottom: 20px; color: #aaa; font-size: 16px;">
+                    ✨ Enhanced Trail Effects System ✨
+                </div>
+                <div style="text-align: center; margin-bottom: 30px; padding: 15px; background: #1a1a1a; border-radius: 8px;">
+                    <div style="font-size: 14px; color: #4CAF50; margin-bottom: 8px;">🌈 New Features Available:</div>
+                    <div style="font-size: 12px; color: #aaa; line-height: 1.4;">
+                        • Rainbow trail effects with cycling colors<br>
+                        • Particle mode with twinkling sparkles<br>
+                        • Customizable trail length & brightness<br>
+                        • Pulse always takes priority over trails
+                    </div>
+                </div>
                 <div id="status" class="status">Press "Connect" to begin</div>
                 <button id="connectBtn" class="btn">Connect to EMDRbar</button>
             </div>
@@ -779,10 +791,13 @@
                 </div>
 
                 <div class="pref-section">
-                    <div class="pref-title">Trail Settings</div>
+                    <div class="pref-title">✨ Trail Effects System</div>
+                    <div style="font-size: 14px; color: #aaa; margin-bottom: 20px; text-align: center;">
+                        🎯 Pulse takes priority - trails enhance without interfering
+                    </div>
 
                     <div class="toggle-switch" style="background: #2a4a2a; border: 2px solid #4CAF50; margin-bottom: 20px;">
-                        <label style="font-size: 16px; font-weight: bold;">Enable Trail</label>
+                        <label style="font-size: 16px; font-weight: bold;">🌟 Enable Trail System</label>
                         <div class="toggle checked" id="trailMasterToggle">
                             <input type="checkbox" id="trailMasterEnabled" checked>
                             <div class="toggle-slider"></div>
@@ -790,67 +805,82 @@
                     </div>
 
                     <div id="trailStyleSection">
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-size: 14px; margin-bottom: 8px; color: #aaa;">Trail Style</div>
+                        <!-- NEW: Trail Mode Selection -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">🎨 Trail Mode</div>
                             <div class="preset-buttons">
-                                <button class="preset-btn active" data-trail-style="classic">Classic</button>
-                                <button class="preset-btn" data-trail-style="comet">Comet</button>
-                                <button class="preset-btn" data-trail-style="firefly">Firefly</button>
-                                <button class="preset-btn" data-trail-style="sparkle">Sparkle</button>
+                                <button class="preset-btn active" data-trail-mode="normal">Normal</button>
+                                <button class="preset-btn" data-trail-mode="rainbow" style="background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff);">🌈 Rainbow</button>
+                                <button class="preset-btn" data-trail-mode="particles">✨ Particles</button>
                             </div>
                         </div>
 
+                        <!-- Trail Length Control -->
                         <div class="slider-container">
                             <div class="slider-label">
-                                <span>🌊 Breathing Effect</span>
-                                <span id="breathingValue">30%</span>
-                            </div>
-                            <input type="range" class="slider" id="breathingSlider" min="0" max="100" value="30">
-                        </div>
-
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>✨ Shimmer Amount</span>
-                                <span id="shimmerValue">20%</span>
-                            </div>
-                            <input type="range" class="slider" id="shimmerSlider" min="0" max="100" value="20">
-                        </div>
-
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>⚡ Speed Response</span>
-                                <span id="velocityResponseValue">80%</span>
-                            </div>
-                            <input type="range" class="slider" id="velocityResponseSlider" min="0" max="200" value="80">
-                        </div>
-
-                        <div class="slider-container">
-                            <div class="slider-label">
-                                <span>Trail Duration</span>
+                                <span>⏱️ Trail Duration</span>
                                 <span id="trailDurationValue">2.0s</span>
                             </div>
                             <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5" value="2.0">
-                        </div>
-
-                        <div class="toggle-switch">
-                            <label>💫 Enable Sparkles</label>
-                            <div class="toggle checked" id="sparklesToggle">
-                                <input type="checkbox" id="sparklesEnabled" checked>
-                                <div class="toggle-slider"></div>
+                            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                How long trail points remain visible behind the pulse
                             </div>
                         </div>
 
-                        <div class="pref-title" style="margin-top: 20px;">Trail Color</div>
-                        <div class="color-grid" id="trailColorGrid">
-                            <div class="color-option" data-hue="0" style="background: #ff0000;">Red</div>
-                            <div class="color-option" data-hue="21" style="background: #ff6600;">Orange</div>
-                            <div class="color-option" data-hue="43" style="background: #ffff00;">Yellow</div>
-                            <div class="color-option active" data-hue="85" style="background: #00ff00;">Green</div>
-                            <div class="color-option" data-hue="128" style="background: #00ff80;">Cyan</div>
-                            <div class="color-option" data-hue="170" style="background: #0080ff;">Blue</div>
-                            <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
-                            <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
-                            <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                        <!-- Trail Brightness Control -->
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>💡 Trail Brightness</span>
+                                <span id="trailBrightnessValue">50%</span>
+                            </div>
+                            <input type="range" class="slider" id="trailBrightnessSlider" min="0" max="100" value="50">
+                            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                Brightness of trail effects relative to pulse
+                            </div>
+                        </div>
+
+                        <!-- Trail Fade Speed -->
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>📉 Fade Speed</span>
+                                <span id="trailFadeSpeedValue">Normal</span>
+                            </div>
+                            <input type="range" class="slider" id="trailFadeSpeedSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                How quickly trail points fade out (slower = longer visible trails)
+                            </div>
+                        </div>
+
+                        <!-- Trail Color (Only for Normal Mode) -->
+                        <div id="trailColorSection">
+                            <div class="pref-title" style="margin-top: 20px;">🎨 Trail Color</div>
+                            <div class="color-grid" id="trailColorGrid">
+                                <div class="color-option" data-hue="0" style="background: #ff0000;">Red</div>
+                                <div class="color-option" data-hue="21" style="background: #ff6600;">Orange</div>
+                                <div class="color-option" data-hue="43" style="background: #ffff00;">Yellow</div>
+                                <div class="color-option active" data-hue="85" style="background: #00ff00;">Green</div>
+                                <div class="color-option" data-hue="128" style="background: #00ff80;">Cyan</div>
+                                <div class="color-option" data-hue="170" style="background: #0080ff;">Blue</div>
+                                <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
+                                <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
+                                <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                            </div>
+                        </div>
+
+                        <!-- NEW: Trail Effect Previews -->
+                        <div style="margin-top: 25px; padding: 15px; background: #1a1a1a; border-radius: 8px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Preview Effects:</div>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <div style="padding: 8px 12px; background: #333; border-radius: 6px; font-size: 12px;" id="normalPreview">
+                                    🎯 Normal: Colored trail following pulse
+                                </div>
+                                <div style="padding: 8px 12px; background: #333; border-radius: 6px; font-size: 12px; display: none;" id="rainbowPreview">
+                                    🌈 Rainbow: Cycling hues based on position and time
+                                </div>
+                                <div style="padding: 8px 12px; background: #333; border-radius: 6px; font-size: 12px; display: none;" id="particlesPreview">
+                                    ✨ Particles: Twinkling sparkles with extra effects
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1009,24 +1039,16 @@
             trailDuration: 2.0
         };
 
-        // Enhanced trail settings
-        let enhancedTrailSettings = {
+        // NEW: Simplified trail settings for the new system
+        let newTrailSettings = {
             enabled: true,
-            breathing: 0.3,
-            shimmer: 0.2,
-            velocityResponse: 0.8,
-            widthVariation: 0.2,
-            fadeStyle: 0,
-            sparkles: true,
-            duration: 2.0
-        };
-
-        // Preset configurations
-        const trailPresets = {
-            classic: { breathing: 0.1, shimmer: 0.0, velocityResponse: 0.5, fadeStyle: 0, sparkles: false },
-            comet: { breathing: 0.2, shimmer: 0.1, velocityResponse: 1.0, fadeStyle: 1, sparkles: false },
-            firefly: { breathing: 0.4, shimmer: 0.6, velocityResponse: 0.3, fadeStyle: 2, sparkles: true },
-            sparkle: { breathing: 0.3, shimmer: 0.8, velocityResponse: 0.8, fadeStyle: 1, sparkles: true }
+            mode: 'normal',          // 'normal', 'rainbow', 'particles'
+            duration: 2.0,           // Trail length in seconds (0.5-10.0)
+            color: 85,               // Trail hue (0-255)
+            brightness: 128,         // Trail brightness (0-255)
+            fadeSpeed: 1.0,          // Fade speed (0.5-2.0)
+            rainbow: false,          // Rainbow mode flag
+            particles: false         // Particle mode flag
         };
 
         // Movement preview animation
@@ -1532,21 +1554,22 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
-        // Trail UI management (existing code continues...)
+        // NEW: Trail UI management for new system
         function updateTrailEnabledUI() {
             const trailStyleSection = document.getElementById('trailStyleSection');
             const noTrailMessage = document.getElementById('noTrailMessage');
             const masterToggle = document.getElementById('trailMasterToggle');
 
-            settings.trailEnabled = enhancedTrailSettings.enabled;
+            settings.trailEnabled = newTrailSettings.enabled;
 
-            if (enhancedTrailSettings.enabled) {
+            if (newTrailSettings.enabled) {
                 trailStyleSection.style.display = 'block';
                 noTrailMessage.style.display = 'none';
                 masterToggle.classList.add('checked');
                 document.getElementById('trailMasterEnabled').checked = true;
 
-                sendEnhancedTrailSettings();
+                sendNewTrailSettings();
+                updateTrailModeUI();
             } else {
                 trailStyleSection.style.display = 'none';
                 noTrailMessage.style.display = 'block';
@@ -1554,131 +1577,103 @@
                 document.getElementById('trailMasterEnabled').checked = false;
 
                 sendCommand('P:E0');
-                sendCommand('ET:DISABLED');
             }
-
-            updateControlsVisualState();
         }
 
-        function sendEnhancedTrailSettings() {
-            if (!ledCharacteristic) return;
+        function sendNewTrailSettings() {
+            if (!ledCharacteristic || !newTrailSettings.enabled) return;
 
-            if (!enhancedTrailSettings.enabled) {
-                sendCommand('ET:DISABLED');
-                return;
-            }
-
-            const command = `ET:B${enhancedTrailSettings.breathing.toFixed(2)},` +
-                `S${enhancedTrailSettings.shimmer.toFixed(2)},` +
-                `V${enhancedTrailSettings.velocityResponse.toFixed(2)},` +
-                `W${enhancedTrailSettings.widthVariation.toFixed(2)},` +
-                `F${enhancedTrailSettings.fadeStyle},` +
-                `P${enhancedTrailSettings.sparkles ? 1 : 0}`;
+            // Build the trail command for the new system
+            const command = `P:L${newTrailSettings.duration.toFixed(1)},` +
+                `H${newTrailSettings.color},` +
+                `E1,` +
+                `R${newTrailSettings.rainbow ? 1 : 0},` +
+                `P${newTrailSettings.particles ? 1 : 0},` +
+                `B${newTrailSettings.brightness}`;
 
             sendCommand(command);
-            console.log('Enhanced trail settings:', command);
+            console.log('New trail settings:', command);
+        }
 
-            sendCommand(`P:L${enhancedTrailSettings.duration},E1`);
+        function updateTrailModeUI() {
+            // Update mode button states
+            document.querySelectorAll('[data-trail-mode]').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.trailMode === newTrailSettings.mode) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Update preview descriptions
+            document.getElementById('normalPreview').style.display = 
+                newTrailSettings.mode === 'normal' ? 'block' : 'none';
+            document.getElementById('rainbowPreview').style.display = 
+                newTrailSettings.mode === 'rainbow' ? 'block' : 'none';
+            document.getElementById('particlesPreview').style.display = 
+                newTrailSettings.mode === 'particles' ? 'block' : 'none';
+
+            // Show/hide color section (only for normal mode)
+            document.getElementById('trailColorSection').style.display = 
+                newTrailSettings.mode === 'normal' ? 'block' : 'none';
+
+            // Update trail flags based on mode
+            newTrailSettings.rainbow = (newTrailSettings.mode === 'rainbow');
+            newTrailSettings.particles = (newTrailSettings.mode === 'particles');
         }
 
         // Master trail toggle event listener
         document.getElementById('trailMasterToggle').addEventListener('click', () => {
-            enhancedTrailSettings.enabled = !enhancedTrailSettings.enabled;
+            newTrailSettings.enabled = !newTrailSettings.enabled;
             updateTrailEnabledUI();
-            console.log('Trail enabled:', enhancedTrailSettings.enabled);
+            console.log('Trail enabled:', newTrailSettings.enabled);
         });
 
-        // Enhanced trail sliders (existing code...)
-        document.getElementById('breathingSlider').addEventListener('input', (e) => {
-            enhancedTrailSettings.breathing = parseInt(e.target.value) / 100.0;
-            document.getElementById('breathingValue').textContent = e.target.value + '%';
+        // NEW: Trail mode buttons
+        document.querySelectorAll('[data-trail-mode]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (!newTrailSettings.enabled) return;
+                
+                newTrailSettings.mode = btn.dataset.trailMode;
+                updateTrailModeUI();
+                sendNewTrailSettings();
+                console.log('Trail mode changed to:', newTrailSettings.mode);
+            });
         });
 
-        document.getElementById('breathingSlider').addEventListener('change', () => {
-            if (enhancedTrailSettings.enabled) sendEnhancedTrailSettings();
-        });
-
-        document.getElementById('shimmerSlider').addEventListener('input', (e) => {
-            enhancedTrailSettings.shimmer = parseInt(e.target.value) / 100.0;
-            document.getElementById('shimmerValue').textContent = e.target.value + '%';
-        });
-
-        document.getElementById('shimmerSlider').addEventListener('change', () => {
-            if (enhancedTrailSettings.enabled) sendEnhancedTrailSettings();
-        });
-
-        document.getElementById('velocityResponseSlider').addEventListener('input', (e) => {
-            enhancedTrailSettings.velocityResponse = parseInt(e.target.value) / 100.0;
-            document.getElementById('velocityResponseValue').textContent = e.target.value + '%';
-        });
-
-        document.getElementById('velocityResponseSlider').addEventListener('change', () => {
-            if (enhancedTrailSettings.enabled) sendEnhancedTrailSettings();
-        });
-
+        // Trail duration slider
         document.getElementById('trailDurationSlider').addEventListener('input', (e) => {
-            enhancedTrailSettings.duration = parseFloat(e.target.value);
+            newTrailSettings.duration = parseFloat(e.target.value);
             document.getElementById('trailDurationValue').textContent = e.target.value + 's';
         });
 
         document.getElementById('trailDurationSlider').addEventListener('change', () => {
-            if (enhancedTrailSettings.enabled) {
-                sendCommand(`P:L${enhancedTrailSettings.duration}`);
-            }
+            if (newTrailSettings.enabled) sendNewTrailSettings();
         });
 
-        // Preset buttons
-        document.querySelectorAll('[data-trail-style]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (!enhancedTrailSettings.enabled) return;
-
-                const style = btn.dataset.trailStyle;
-                const preset = trailPresets[style];
-
-                Object.assign(enhancedTrailSettings, preset);
-
-                document.getElementById('breathingSlider').value = preset.breathing * 100;
-                document.getElementById('shimmerSlider').value = preset.shimmer * 100;
-                document.getElementById('velocityResponseSlider').value = preset.velocityResponse * 100;
-                document.getElementById('sparklesEnabled').checked = preset.sparkles;
-
-                document.getElementById('breathingValue').textContent = Math.round(preset.breathing * 100) + '%';
-                document.getElementById('shimmerValue').textContent = Math.round(preset.shimmer * 100) + '%';
-                document.getElementById('velocityResponseValue').textContent = Math.round(preset.velocityResponse * 100) + '%';
-
-                document.getElementById('sparklesToggle').classList.toggle('checked', preset.sparkles);
-
-                document.querySelectorAll('[data-trail-style]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                sendEnhancedTrailSettings();
-            });
+        // Trail brightness slider
+        document.getElementById('trailBrightnessSlider').addEventListener('input', (e) => {
+            newTrailSettings.brightness = Math.round(parseInt(e.target.value) * 2.55); // Convert % to 0-255
+            document.getElementById('trailBrightnessValue').textContent = e.target.value + '%';
         });
 
-        // Sparkles toggle
-        document.getElementById('sparklesToggle').addEventListener('click', () => {
-            if (!enhancedTrailSettings.enabled) return;
-
-            const checkbox = document.getElementById('sparklesEnabled');
-            checkbox.checked = !checkbox.checked;
-            enhancedTrailSettings.sparkles = checkbox.checked;
-            document.getElementById('sparklesToggle').classList.toggle('checked', checkbox.checked);
-            sendEnhancedTrailSettings();
+        document.getElementById('trailBrightnessSlider').addEventListener('change', () => {
+            if (newTrailSettings.enabled) sendNewTrailSettings();
         });
 
-        // Visual feedback for disabled state
-        function updateControlsVisualState() {
-            const controls = document.querySelectorAll('#trailStyleSection input, #trailStyleSection button');
-            controls.forEach(control => {
-                if (enhancedTrailSettings.enabled) {
-                    control.style.opacity = '1';
-                    control.style.pointerEvents = 'auto';
-                } else {
-                    control.style.opacity = '0.5';
-                    control.style.pointerEvents = 'none';
-                }
-            });
-        }
+        // Trail fade speed slider
+        document.getElementById('trailFadeSpeedSlider').addEventListener('input', (e) => {
+            newTrailSettings.fadeSpeed = parseFloat(e.target.value);
+            const speedLabels = { 0.5: 'Slow', 1.0: 'Normal', 2.0: 'Fast' };
+            const value = parseFloat(e.target.value);
+            let label = 'Normal';
+            if (value <= 0.7) label = 'Slow';
+            else if (value >= 1.5) label = 'Fast';
+            document.getElementById('trailFadeSpeedValue').textContent = label;
+        });
+
+        document.getElementById('trailFadeSpeedSlider').addEventListener('change', () => {
+            if (newTrailSettings.enabled) sendNewTrailSettings();
+        });
 
         // Preferences page setup
         function setupPreferences() {
@@ -1715,13 +1710,14 @@
                 applyBrightnessSetting();
             });
 
-            // Pulse color
+            // Pulse color and trail color
             document.querySelectorAll('.color-option').forEach(option => {
                 option.addEventListener('click', () => {
                     if (option.closest('#trailColorGrid')) {
-                        settings.trailHue = parseInt(option.dataset.hue);
+                        // NEW: Update trail color for new system
+                        newTrailSettings.color = parseInt(option.dataset.hue);
                         updateTrailColorSelection();
-                        applySinglePulseSetting('trailHue', settings.trailHue);
+                        if (newTrailSettings.enabled) sendNewTrailSettings();
                     } else {
                         settings.pulseHue = parseInt(option.dataset.hue);
                         updatePulseColorSelection();
@@ -2264,12 +2260,42 @@
             easingContainer.style.display = 'none';
         }
 
+        // Color selection update functions
+        function updateTrailColorSelection() {
+            document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
+                option.classList.remove('active');
+                if (parseInt(option.dataset.hue) === newTrailSettings.color) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        function updatePulseColorSelection() {
+            document.querySelectorAll('.color-grid:not(#trailColorGrid) .color-option').forEach(option => {
+                option.classList.remove('active');
+                if (parseInt(option.dataset.hue) === settings.pulseHue) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize the interface
+        function initializeInterface() {
+            updateTrailEnabledUI();
+            updateTrailModeUI();
+            updateTrailColorSelection();
+            updatePulseColorSelection();
+        }
+
         // Initialize audio timing preset display (mark 80ms as active by default)
         document.querySelectorAll('[data-prediction]').forEach(btn => {
             if (btn.dataset.prediction === '80') {
                 btn.classList.add('active');
             }
         });
+
+        // Initialize the interface on page load
+        initializeInterface();
     </script>
 </body>
 </html>
