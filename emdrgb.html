@@ -939,14 +939,14 @@
                             </div>
                         </div>
                         
-                        <!-- Particle Quantity Control -->
-                        <div id="particleQuantitySection" style="margin-top: 20px; display: none;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Max Particles:</div>
+                        <!-- Particle Frequency Control -->
+                        <div id="particleFrequencySection" style="margin-top: 20px; display: none;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Frequency:</div>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <span style="font-size: 12px; color: #999;">Low</span>
-                                <input type="range" id="particleQuantitySlider" min="5" max="50" value="25" style="width: 120px;">
-                                <span style="font-size: 12px; color: #999;">High</span>
-                                <span id="particleQuantityValue" style="margin-left: 10px; font-weight: bold; color: #4CAF50;">25</span>
+                                <span style="font-size: 12px; color: #999;">Slow</span>
+                                <input type="range" id="particleFrequencySlider" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 120px;">
+                                <span style="font-size: 12px; color: #999;">Fast</span>
+                                <span id="particleFrequencyValue" style="margin-left: 10px; font-weight: bold; color: #4CAF50;">1.0x</span>
                             </div>
                         </div>
                         
@@ -1714,10 +1714,10 @@
             // Show/hide particle controls
             const spawnModeDiv = document.getElementById('particleSpawnMode');
             const colorDiv = document.getElementById('particleColorSection');
-            const quantityDiv = document.getElementById('particleQuantitySection');
+            const frequencyDiv = document.getElementById('particleFrequencySection');
             spawnModeDiv.style.display = isChecked ? 'block' : 'none';
             colorDiv.style.display = isChecked ? 'block' : 'none';
-            quantityDiv.style.display = isChecked ? 'block' : 'none';
+            frequencyDiv.style.display = isChecked ? 'block' : 'none';
             
             sendCommand(isChecked ? 'PT:ENABLED' : 'PT:DISABLED');
             console.log('Particles enabled:', isChecked);
@@ -1757,16 +1757,16 @@
             });
         });
         
-        // Particle quantity slider
-        document.getElementById('particleQuantitySlider').addEventListener('input', (e) => {
-            const quantity = e.target.value;
-            document.getElementById('particleQuantityValue').textContent = quantity;
+        // Particle frequency slider
+        document.getElementById('particleFrequencySlider').addEventListener('input', (e) => {
+            const frequency = parseFloat(e.target.value);
+            document.getElementById('particleFrequencyValue').textContent = frequency.toFixed(1) + 'x';
         });
         
-        document.getElementById('particleQuantitySlider').addEventListener('change', (e) => {
-            const quantity = e.target.value;
-            sendCommand(`PT:QUANTITY:${quantity}`);
-            console.log('Particle quantity set to:', quantity);
+        document.getElementById('particleFrequencySlider').addEventListener('change', (e) => {
+            const frequency = parseFloat(e.target.value);
+            sendCommand(`PT:FREQUENCY:${frequency.toFixed(1)}`);
+            console.log('Particle frequency set to:', frequency);
         });
 
         // Trail duration slider
