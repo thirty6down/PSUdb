@@ -896,10 +896,9 @@
                     <div class="pref-title">✨ Particle Effects</div>
                     
                     <div style="text-align: center; padding: 20px; background: #1a1a1a; border-radius: 8px;">
-                        <div style="font-size: 16px; margin-bottom: 15px;">Random Particle Spawning</div>
+                        <div style="font-size: 16px; margin-bottom: 15px;">Particle Spawning</div>
                         <div style="font-size: 14px; color: #aaa; margin-bottom: 20px;">
-                            Particles spawn randomly across the LED bar and fade naturally.<br>
-                            They disappear when the pulse hits them!
+                            Particles fade naturally and disappear when the pulse hits them!
                         </div>
                         
                         <div class="toggle" id="particleToggle">
@@ -908,8 +907,23 @@
                         </div>
                         <label for="particleEnabled" style="margin-left: 10px; font-size: 16px;">Enable Particles</label>
                         
+                        <!-- Spawn Mode Selection -->
+                        <div id="particleSpawnMode" style="margin-top: 20px; display: none;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Mode:</div>
+                            <div style="display: flex; justify-content: center; gap: 15px;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="spawnMode" value="random" checked style="margin-right: 8px;">
+                                    <span style="font-size: 14px;">Random Position</span>
+                                </label>
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="spawnMode" value="pulse" style="margin-right: 8px;">
+                                    <span style="font-size: 14px;">From Pulse</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div style="font-size: 12px; color: #666; margin-top: 15px;">
-                            • 3-second lifespan • Green color • Random spawn (10-50ms)<br>
+                            • 3-second lifespan • Green color<br>
                             • Independent of trail settings • Works with or without trails
                         </div>
                     </div>
@@ -1668,8 +1682,23 @@
             
             document.getElementById('particleToggle').classList.toggle('checked', isChecked);
             
+            // Show/hide spawn mode selection
+            const spawnModeDiv = document.getElementById('particleSpawnMode');
+            spawnModeDiv.style.display = isChecked ? 'block' : 'none';
+            
             sendCommand(isChecked ? 'PT:ENABLED' : 'PT:DISABLED');
             console.log('Particles enabled:', isChecked);
+        });
+        
+        // Particle spawn mode radio buttons
+        document.querySelectorAll('input[name="spawnMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    const mode = e.target.value;
+                    sendCommand(mode === 'random' ? 'PT:MODE:RANDOM' : 'PT:MODE:PULSE');
+                    console.log('Particle spawn mode:', mode);
+                }
+            });
         });
 
         // Trail duration slider
