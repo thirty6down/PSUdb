@@ -867,6 +867,71 @@
                             </div>
                         </div>
 
+                        <!-- Particle Settings (Only for Particle Mode) -->
+                        <div id="particleSettingsSection" style="display: none;">
+                            <div class="pref-title" style="margin-top: 20px;">✨ Particle Settings</div>
+                            
+                            <!-- Particle Spawn Rate -->
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>⚡ Spawn Rate</span>
+                                    <span id="particleSpawnRateValue">20ms</span>
+                                </div>
+                                <input type="range" class="slider" id="particleSpawnRateSlider" min="5" max="100" step="5" value="20">
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                    How frequently particles are spawned (lower = more particles)
+                                </div>
+                            </div>
+
+                            <!-- Particle Lifespan -->
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>⏰ Particle Lifespan</span>
+                                    <span id="particleLifespanValue">3.0s</span>
+                                </div>
+                                <input type="range" class="slider" id="particleLifespanSlider" min="0.5" max="10.0" step="0.5" value="3.0">
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                    How long particles remain visible and fade out
+                                </div>
+                            </div>
+
+                            <!-- Particle Brightness -->
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>💡 Particle Brightness</span>
+                                    <span id="particleBrightnessValue">50%</span>
+                                </div>
+                                <input type="range" class="slider" id="particleBrightnessSlider" min="10" max="255" value="128">
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                    Initial brightness of spawned particles
+                                </div>
+                            </div>
+
+                            <!-- Particle Color Selection -->
+                            <div id="particleColorSection">
+                                <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">🎨 Particle Color</div>
+                                <div style="margin-bottom: 15px;">
+                                    <div class="toggle" id="particleRainbowToggle">
+                                        <input type="checkbox" id="particleRainbowEnabled">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                    <label for="particleRainbowEnabled" style="margin-left: 10px;">🌈 Rainbow Particles</label>
+                                </div>
+                                
+                                <div id="particleColorGrid" class="color-grid" style="display: grid;">
+                                    <div class="color-option" data-hue="0" style="background: #ff0000;">Red</div>
+                                    <div class="color-option" data-hue="21" style="background: #ff8000;">Orange</div>
+                                    <div class="color-option" data-hue="43" style="background: #ffff00;">Yellow</div>
+                                    <div class="color-option active" data-hue="85" style="background: #00ff00;">Green</div>
+                                    <div class="color-option" data-hue="128" style="background: #00ff80;">Cyan</div>
+                                    <div class="color-option" data-hue="170" style="background: #0080ff;">Blue</div>
+                                    <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
+                                    <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
+                                    <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- NEW: Trail Effect Previews -->
                         <div style="margin-top: 25px; padding: 15px; background: #1a1a1a; border-radius: 8px;">
                             <div style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Preview Effects:</div>
@@ -1616,9 +1681,20 @@
             document.getElementById('trailColorSection').style.display = 
                 newTrailSettings.mode === 'normal' ? 'block' : 'none';
 
+            // Show/hide particle settings (only for particle mode)
+            document.getElementById('particleSettingsSection').style.display = 
+                newTrailSettings.mode === 'particles' ? 'block' : 'none';
+
             // Update trail flags based on mode
             newTrailSettings.rainbow = (newTrailSettings.mode === 'rainbow');
             newTrailSettings.particles = (newTrailSettings.mode === 'particles');
+            
+            // Enable particles when particle mode is selected
+            if (newTrailSettings.mode === 'particles') {
+                sendCommand('PT:ENABLED');
+            } else {
+                sendCommand('PT:DISABLED');
+            }
         }
 
         // Master trail toggle event listener
@@ -1637,6 +1713,62 @@
                 updateTrailModeUI();
                 sendNewTrailSettings();
                 console.log('Trail mode changed to:', newTrailSettings.mode);
+            });
+        });
+
+        // ================================ PARTICLE SYSTEM CONTROLS ================================
+        
+        // Particle spawn rate slider
+        document.getElementById('particleSpawnRateSlider').addEventListener('input', (e) => {
+            const rate = parseInt(e.target.value);
+            document.getElementById('particleSpawnRateValue').textContent = rate + 'ms';
+            sendCommand(`PT:RATE:${rate}`);
+            console.log('Particle spawn rate changed to:', rate);
+        });
+
+        // Particle lifespan slider
+        document.getElementById('particleLifespanSlider').addEventListener('input', (e) => {
+            const lifespan = parseFloat(e.target.value);
+            document.getElementById('particleLifespanValue').textContent = lifespan + 's';
+            sendCommand(`PT:LIFE:${lifespan}`);
+            console.log('Particle lifespan changed to:', lifespan);
+        });
+
+        // Particle brightness slider
+        document.getElementById('particleBrightnessSlider').addEventListener('input', (e) => {
+            const brightness = parseInt(e.target.value);
+            const percentage = Math.round((brightness / 255) * 100);
+            document.getElementById('particleBrightnessValue').textContent = percentage + '%';
+            sendCommand(`PT:BRIGHT:${brightness}`);
+            console.log('Particle brightness changed to:', brightness);
+        });
+
+        // Particle rainbow toggle
+        document.getElementById('particleRainbowToggle').addEventListener('click', () => {
+            const checkbox = document.getElementById('particleRainbowEnabled');
+            const isChecked = !checkbox.checked;
+            checkbox.checked = isChecked;
+            
+            document.getElementById('particleRainbowToggle').classList.toggle('checked', isChecked);
+            document.getElementById('particleColorGrid').style.display = isChecked ? 'none' : 'grid';
+            
+            sendCommand(`PT:RAINBOW:${isChecked ? 1 : 0}`);
+            console.log('Particle rainbow mode:', isChecked);
+        });
+
+        // Particle color selection
+        document.querySelectorAll('#particleColorGrid .color-option').forEach(option => {
+            option.addEventListener('click', () => {
+                if (document.getElementById('particleRainbowEnabled').checked) return;
+                
+                // Update active state
+                document.querySelectorAll('#particleColorGrid .color-option').forEach(opt => 
+                    opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                const hue = parseInt(option.dataset.hue);
+                sendCommand(`PT:HUE:${hue}`);
+                console.log('Particle color changed to hue:', hue);
             });
         });
 
