@@ -912,11 +912,11 @@
                             <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Mode:</div>
                             <div style="display: flex; justify-content: center; gap: 15px;">
                                 <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="radio" name="spawnMode" value="random" checked style="margin-right: 8px;">
+                                    <input type="radio" name="spawnMode" value="random" style="margin-right: 8px;">
                                     <span style="font-size: 14px;">Random Position</span>
                                 </label>
                                 <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="radio" name="spawnMode" value="pulse" style="margin-right: 8px;">
+                                    <input type="radio" name="spawnMode" value="pulse" checked style="margin-right: 8px;">
                                     <span style="font-size: 14px;">From Pulse</span>
                                 </label>
                             </div>
@@ -925,15 +925,28 @@
                         <!-- Particle Color Selection -->
                         <div id="particleColorSection" style="margin-top: 20px; display: none;">
                             <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Particle Color:</div>
-                            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                                <button class="color-preset" data-hue="0" style="background: hsl(0, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Red"></button>
-                                <button class="color-preset" data-hue="30" style="background: hsl(30, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Orange"></button>
-                                <button class="color-preset" data-hue="60" style="background: hsl(60, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Yellow"></button>
-                                <button class="color-preset" data-hue="85" style="background: hsl(85, 100%, 50%); width: 30px; height: 30px; border: 2px solid #4CAF50; border-radius: 50%; cursor: pointer;" title="Green (Default)"></button>
-                                <button class="color-preset" data-hue="120" style="background: hsl(120, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Bright Green"></button>
-                                <button class="color-preset" data-hue="180" style="background: hsl(180, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Cyan"></button>
-                                <button class="color-preset" data-hue="240" style="background: hsl(240, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Blue"></button>
-                                <button class="color-preset" data-hue="300" style="background: hsl(300, 100%, 50%); width: 30px; height: 30px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Magenta"></button>
+                            <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                                <button class="color-preset" data-hue="0" style="background: hsl(0, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Red"></button>
+                                <button class="color-preset" data-hue="30" style="background: hsl(30, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Orange"></button>
+                                <button class="color-preset" data-hue="60" style="background: hsl(60, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Yellow"></button>
+                                <button class="color-preset" data-hue="85" style="background: hsl(85, 100%, 50%); width: 28px; height: 28px; border: 2px solid #4CAF50; border-radius: 50%; cursor: pointer;" title="Green (Default)"></button>
+                                <button class="color-preset" data-hue="120" style="background: hsl(120, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Bright Green"></button>
+                                <button class="color-preset" data-hue="180" style="background: hsl(180, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Cyan"></button>
+                                <button class="color-preset" data-hue="240" style="background: hsl(240, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Blue"></button>
+                                <button class="color-preset" data-hue="300" style="background: hsl(300, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Magenta"></button>
+                                <button class="color-preset" data-color="RAINBOW" style="background: linear-gradient(45deg, red, orange, yellow, green, cyan, blue, magenta); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Rainbow"></button>
+                                <button class="color-preset" data-color="WHITE" style="background: white; width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="White"></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Particle Quantity Control -->
+                        <div id="particleQuantitySection" style="margin-top: 20px; display: none;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Max Particles:</div>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <span style="font-size: 12px; color: #999;">Low</span>
+                                <input type="range" id="particleQuantitySlider" min="5" max="50" value="25" style="width: 120px;">
+                                <span style="font-size: 12px; color: #999;">High</span>
+                                <span id="particleQuantityValue" style="margin-left: 10px; font-weight: bold; color: #4CAF50;">25</span>
                             </div>
                         </div>
                         
@@ -1698,11 +1711,13 @@
             
             document.getElementById('particleToggle').classList.toggle('checked', isChecked);
             
-            // Show/hide spawn mode and color selection
+            // Show/hide particle controls
             const spawnModeDiv = document.getElementById('particleSpawnMode');
             const colorDiv = document.getElementById('particleColorSection');
+            const quantityDiv = document.getElementById('particleQuantitySection');
             spawnModeDiv.style.display = isChecked ? 'block' : 'none';
             colorDiv.style.display = isChecked ? 'block' : 'none';
+            quantityDiv.style.display = isChecked ? 'block' : 'none';
             
             sendCommand(isChecked ? 'PT:ENABLED' : 'PT:DISABLED');
             console.log('Particles enabled:', isChecked);
@@ -1723,6 +1738,7 @@
         document.querySelectorAll('.color-preset').forEach(button => {
             button.addEventListener('click', (e) => {
                 const hue = e.target.getAttribute('data-hue');
+                const color = e.target.getAttribute('data-color');
                 
                 // Update border to show selection
                 document.querySelectorAll('.color-preset').forEach(btn => {
@@ -1730,9 +1746,27 @@
                 });
                 e.target.style.border = '2px solid #4CAF50';
                 
-                sendCommand(`PT:COLOR:${hue}`);
-                console.log('Particle color set to hue:', hue);
+                // Send appropriate command
+                if (color) {
+                    sendCommand(`PT:COLOR:${color}`);
+                    console.log('Particle color set to:', color);
+                } else if (hue) {
+                    sendCommand(`PT:COLOR:${hue}`);
+                    console.log('Particle color set to hue:', hue);
+                }
             });
+        });
+        
+        // Particle quantity slider
+        document.getElementById('particleQuantitySlider').addEventListener('input', (e) => {
+            const quantity = e.target.value;
+            document.getElementById('particleQuantityValue').textContent = quantity;
+        });
+        
+        document.getElementById('particleQuantitySlider').addEventListener('change', (e) => {
+            const quantity = e.target.value;
+            sendCommand(`PT:QUANTITY:${quantity}`);
+            console.log('Particle quantity set to:', quantity);
         });
 
         // Trail duration slider
