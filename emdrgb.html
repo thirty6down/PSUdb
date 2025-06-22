@@ -765,6 +765,7 @@
                         <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
                         <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
                         <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                        <div class="color-option" data-hue="256" style="background: #ffffff; color: #333; border: 1px solid #ccc;">White</div>
                     </div>
                 </div>
 
@@ -850,9 +851,9 @@
                         <div class="slider-container">
                             <div class="slider-label">
                                 <span>⏱️ Trail Duration</span>
-                                <span id="trailDurationValue">2.0s</span>
+                                <span id="trailDurationValue">0.5s</span>
                             </div>
-                            <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5" value="2.0">
+                            <input type="range" class="slider" id="trailDurationSlider" min="0.0" max="1.0" step="0.1" value="0.5">
                             <div style="font-size: 12px; color: #666; margin-top: 5px;">
                                 How long trail points remain visible behind the pulse
                             </div>
@@ -895,6 +896,7 @@
                                 <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
                                 <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
                                 <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                                <div class="color-option" data-hue="256" style="background: #ffffff; color: #333; border: 1px solid #ccc;">White</div>
                             </div>
                         </div>
 
@@ -1757,6 +1759,47 @@
                 const preset = btn.dataset.preset;
                 sendCommand(`PRESET:${preset}`);
                 console.log('Visual preset applied:', preset);
+                
+                // Update trail color to match preset
+                let trailHue = 85; // Default green
+                switch(preset) {
+                    case 'OCEAN':
+                        trailHue = 170; // Blue
+                        break;
+                    case 'FOREST':
+                        trailHue = 85; // Green (keep as is)
+                        break;
+                    case 'METEOR':
+                        trailHue = 21; // Orange
+                        break;
+                    case 'FAIRY':
+                        trailHue = 234; // Pink
+                        break;
+                    case 'RAINBOW':
+                        newTrailSettings.rainbow = true;
+                        break;
+                    case 'CLASSIC':
+                        trailHue = 85; // Green
+                        break;
+                }
+                
+                if (preset !== 'RAINBOW') {
+                    newTrailSettings.rainbow = false;
+                    newTrailSettings.color = trailHue;
+                    
+                    // Update trail color UI
+                    document.querySelectorAll('#trailColorGrid .color-option').forEach(opt => {
+                        opt.classList.remove('active');
+                        if (parseInt(opt.dataset.hue) === trailHue) {
+                            opt.classList.add('active');
+                        }
+                    });
+                    
+                    // Send updated trail settings
+                    if (newTrailSettings.enabled) {
+                        sendNewTrailSettings();
+                    }
+                }
                 
                 // Visual feedback
                 document.querySelectorAll('.visual-preset').forEach(b => b.classList.remove('active'));
