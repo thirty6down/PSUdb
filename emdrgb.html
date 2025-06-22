@@ -791,6 +791,38 @@
                 </div>
 
                 <div class="pref-section">
+                    <div class="pref-title">🎨 Visual Presets</div>
+                    <div style="font-size: 14px; color: #aaa; margin-bottom: 20px; text-align: center;">
+                        One-click stunning combinations for maximum engagement
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+                        <button class="preset-btn visual-preset" data-preset="METEOR" style="background: linear-gradient(45deg, #FF4500, #FF8C00, #DC143C); color: white; font-weight: bold;">
+                            🌠 Meteor
+                        </button>
+                        <button class="preset-btn visual-preset" data-preset="FAIRY" style="background: linear-gradient(45deg, #87CEEB, #DDA0DD, #F0F8FF); color: #333; font-weight: bold;">
+                            🧚 Fairy
+                        </button>
+                        <button class="preset-btn visual-preset" data-preset="OCEAN" style="background: linear-gradient(45deg, #006994, #00CED1, #4682B4); color: white; font-weight: bold;">
+                            🌊 Ocean
+                        </button>
+                        <button class="preset-btn visual-preset" data-preset="FOREST" style="background: linear-gradient(45deg, #228B22, #32CD32, #90EE90); color: white; font-weight: bold;">
+                            🌲 Forest
+                        </button>
+                        <button class="preset-btn visual-preset" data-preset="RAINBOW" style="background: linear-gradient(45deg, red, orange, yellow, green, cyan, blue, purple); color: white; font-weight: bold;">
+                            🌈 Rainbow
+                        </button>
+                        <button class="preset-btn visual-preset" data-preset="CLASSIC" style="background: #4CAF50; color: white; font-weight: bold;">
+                            💚 Classic
+                        </button>
+                    </div>
+                    
+                    <div style="font-size: 12px; color: #666; text-align: center; margin-bottom: 20px;">
+                        Each preset configures pulse color, trail effects, and particles for optimal child engagement
+                    </div>
+                </div>
+
+                <div class="pref-section">
                     <div class="pref-title">✨ Trail Effects System</div>
                     <div style="font-size: 14px; color: #aaa; margin-bottom: 20px; text-align: center;">
                         🎯 Pulse takes priority - trails enhance without interfering
@@ -947,6 +979,22 @@
                                 <input type="range" id="particleFrequencySlider" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 120px;">
                                 <span style="font-size: 12px; color: #999;">Fast</span>
                                 <span id="particleFrequencyValue" style="margin-left: 10px; font-weight: bold; color: #4CAF50;">1.0x</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Pulse Overwrite Toggle -->
+                        <div id="particleOverwriteSection" style="margin-top: 20px; display: none;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Pulse Interaction:</div>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <div class="toggle" id="particleOverwriteToggle">
+                                    <input type="checkbox" id="particleOverwriteEnabled" checked>
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <label for="particleOverwriteEnabled" style="font-size: 14px;">Pulse overwrites particles</label>
+                            </div>
+                            <div style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">
+                                When enabled: pulse light replaces particles when they overlap<br>
+                                When disabled: particles stay visible over pulse
                             </div>
                         </div>
                         
@@ -1701,6 +1749,28 @@
             });
         });
 
+        // ================================ VISUAL PRESETS ================================
+        
+        // Visual preset buttons
+        document.querySelectorAll('.visual-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = btn.dataset.preset;
+                sendCommand(`PRESET:${preset}`);
+                console.log('Visual preset applied:', preset);
+                
+                // Visual feedback
+                document.querySelectorAll('.visual-preset').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show confirmation
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Applied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 1500);
+            });
+        });
+
         // ================================ PARTICLE SYSTEM CONTROLS ================================
         
         // Particle enable/disable toggle
@@ -1715,9 +1785,11 @@
             const spawnModeDiv = document.getElementById('particleSpawnMode');
             const colorDiv = document.getElementById('particleColorSection');
             const frequencyDiv = document.getElementById('particleFrequencySection');
+            const overwriteDiv = document.getElementById('particleOverwriteSection');
             spawnModeDiv.style.display = isChecked ? 'block' : 'none';
             colorDiv.style.display = isChecked ? 'block' : 'none';
             frequencyDiv.style.display = isChecked ? 'block' : 'none';
+            overwriteDiv.style.display = isChecked ? 'block' : 'none';
             
             sendCommand(isChecked ? 'PT:ENABLED' : 'PT:DISABLED');
             console.log('Particles enabled:', isChecked);
@@ -1767,6 +1839,18 @@
             const frequency = parseFloat(e.target.value);
             sendCommand(`PT:FREQUENCY:${frequency.toFixed(1)}`);
             console.log('Particle frequency set to:', frequency);
+        });
+        
+        // Particle overwrite toggle
+        document.getElementById('particleOverwriteToggle').addEventListener('click', () => {
+            const checkbox = document.getElementById('particleOverwriteEnabled');
+            const isChecked = !checkbox.checked;
+            checkbox.checked = isChecked;
+            
+            document.getElementById('particleOverwriteToggle').classList.toggle('checked', isChecked);
+            
+            sendCommand(`PT:OVERWRITE:${isChecked ? 'true' : 'false'}`);
+            console.log('Particle overwrite enabled:', isChecked);
         });
 
         // Trail duration slider
