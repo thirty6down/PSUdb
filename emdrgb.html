@@ -1383,6 +1383,45 @@
         }
 
         // BLE communication
+        
+        // Helper function to convert HSV hue (0-255) to RGB (0-255)
+        function hueToRGB(hue) {
+            // Handle special case for white
+            if (hue === 255) {
+                return { r: 255, g: 255, b: 255 };
+            }
+            
+            // Convert hue from 0-255 to 0-360 degrees
+            const h = (hue / 255) * 360;
+            const s = 1; // Full saturation
+            const v = 1; // Full value
+            
+            const c = v * s;
+            const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+            const m = v - c;
+            
+            let r, g, b;
+            if (h >= 0 && h < 60) {
+                r = c; g = x; b = 0;
+            } else if (h >= 60 && h < 120) {
+                r = x; g = c; b = 0;
+            } else if (h >= 120 && h < 180) {
+                r = 0; g = c; b = x;
+            } else if (h >= 180 && h < 240) {
+                r = 0; g = x; b = c;
+            } else if (h >= 240 && h < 300) {
+                r = x; g = 0; b = c;
+            } else {
+                r = c; g = 0; b = x;
+            }
+            
+            return {
+                r: Math.round((r + m) * 255),
+                g: Math.round((g + m) * 255),
+                b: Math.round((b + m) * 255)
+            };
+        }
+        
         function sendCommand(command) {
             if (!ledCharacteristic) {
                 console.log('Cannot send command - no BLE connection');
@@ -1697,16 +1736,19 @@
         function sendNewTrailSettings() {
             if (!ledCharacteristic || !newTrailSettings.enabled) return;
 
+            // Convert hue to RGB for trail color
+            const trailRGB = hueToRGB(newTrailSettings.color);
+
             // Build the trail command for the new system
             const command = `P:L${newTrailSettings.duration.toFixed(1)},` +
-                `H${newTrailSettings.color},` +
+                `HR${trailRGB.r},HG${trailRGB.g},HB${trailRGB.b},` +
                 `E1,` +
                 `R${newTrailSettings.rainbow ? 1 : 0},` +
                 `P${newTrailSettings.particles ? 1 : 0},` +
                 `B${newTrailSettings.brightness}`;
 
             sendCommand(command);
-            console.log('New trail settings:', command);
+            console.log('New trail settings with RGB:', { ...newTrailSettings, trailRGB });
         }
 
         function updateTrailModeUI() {
@@ -2103,7 +2145,10 @@
                     command = `P:W${value}`;
                     break;
                 case 'color':
-                    command = `P:C${value}`;
+                    {
+                        const pulseRGB = hueToRGB(value);
+                        command = `P:CR${pulseRGB.r},CG${pulseRGB.g},CB${pulseRGB.b}`;
+                    }
                     break;
                 case 'frequency':
                     command = `P:F${value}`;
@@ -2115,7 +2160,10 @@
                     command = `P:L${value}`;
                     break;
                 case 'trailHue':
-                    command = `P:H${value}`;
+                    {
+                        const trailRGB = hueToRGB(value);
+                        command = `P:HR${trailRGB.r},HG${trailRGB.g},HB${trailRGB.b}`;
+                    }
                     break;
                 case 'trailEnabled':
                     command = `P:E${value}`;
@@ -2140,16 +2188,20 @@
 
             const enabled = settings.trailEnabled ? 1 : 0;
             const rainbow = 0;
+            
+            // Convert hue values to RGB
+            const pulseRGB = hueToRGB(settings.pulseHue);
+            const trailRGB = hueToRGB(settings.trailHue);
 
-            const command = `P:W${settings.pulseSize},C${settings.pulseHue},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},H${settings.trailHue},E${enabled},R${rainbow}`;
+            const command = `P:W${settings.pulseSize},CR${pulseRGB.r},CG${pulseRGB.g},CB${pulseRGB.b},F${settings.speed},A${settings.activeArea},L${settings.trailDuration},HR${trailRGB.r},HG${trailRGB.g},HB${trailRGB.b},E${enabled},R${rainbow}`;
 
             console.log('Applying full pulse settings:', {
                 width: settings.pulseSize,
-                hue: settings.pulseHue,
+                pulseRGB: pulseRGB,
                 frequency: settings.speed,
                 area: settings.activeArea,
                 trailLifespan: settings.trailDuration,
-                trailHue: settings.trailHue,
+                trailRGB: trailRGB,
                 trailEnabled: enabled,
                 rainbow: rainbow
             });
