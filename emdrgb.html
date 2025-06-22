@@ -900,6 +900,26 @@
                             </div>
                         </div>
 
+                        <!-- Trail Gradient Controls -->
+                        <div style="margin-top: 20px;">
+                            <div class="pref-title">🌈 Trail Gradient</div>
+                            <div style="font-size: 14px; color: #aaa; margin-bottom: 15px; text-align: center;">
+                                Create dynamic color transitions along the trail
+                            </div>
+                            
+                            <div class="preset-buttons" style="margin-bottom: 15px;">
+                                <button class="preset-btn active" data-gradient-mode="0" style="background: linear-gradient(90deg, #00ff00, #00ff00);">None</button>
+                                <button class="preset-btn" data-gradient-mode="1" style="background: linear-gradient(90deg, #00ff00, #ff6600, #ff0000);">🔥 Meteor</button>
+                                <button class="preset-btn" data-gradient-mode="2" style="background: linear-gradient(90deg, #0080ff, #8000ff);">🧚 Fairy</button>
+                                <button class="preset-btn" data-gradient-mode="3" style="background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #0080ff);">🌈 Rainbow</button>
+                                <button class="preset-btn" data-gradient-mode="4" style="background: linear-gradient(90deg, #ff6600, #ffff00, #00ffff, #0080ff);">🌊 Warm-Cool</button>
+                            </div>
+                            
+                            <div style="font-size: 12px; color: #666; margin-top: 10px; text-align: center;">
+                                Gradient flows from pulse (left) to trail end (right)
+                            </div>
+                        </div>
+
 
                         <!-- NEW: Trail Effect Previews -->
                         <div style="margin-top: 25px; padding: 15px; background: #1a1a1a; border-radius: 8px;">
@@ -1162,7 +1182,8 @@
             brightness: 128,         // Trail brightness (0-255)
             fadeSpeed: 1.0,          // Fade speed (0.5-2.0)
             rainbow: false,          // Rainbow mode flag
-            particles: false         // Particle mode flag
+            particles: false,        // Particle mode flag
+            gradientMode: 0          // Gradient mode (0-4): 0=none, 1=meteor, 2=fairy, 3=rainbow, 4=warm-cool
         };
 
         // Movement preview animation
@@ -1748,7 +1769,14 @@
                 `B${newTrailSettings.brightness}`;
 
             sendCommand(command);
-            console.log('New trail settings with RGB:', { ...newTrailSettings, trailRGB });
+            
+            // Send gradient mode as separate command using ET: protocol
+            if (newTrailSettings.gradientMode !== undefined) {
+                const gradientCommand = `ET:G${newTrailSettings.gradientMode}`;
+                sendCommand(gradientCommand);
+            }
+
+            console.log('New trail settings with RGB and gradient:', { ...newTrailSettings, trailRGB });
         }
 
         function updateTrailModeUI() {
@@ -2021,6 +2049,27 @@
                         updatePulseColorSelection();
                         applySinglePulseSetting('color', settings.pulseHue);
                     }
+                });
+            });
+
+            // Trail gradient mode buttons
+            document.querySelectorAll('[data-gradient-mode]').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all gradient buttons
+                    document.querySelectorAll('[data-gradient-mode]').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update gradient mode setting
+                    newTrailSettings.gradientMode = parseInt(button.dataset.gradientMode);
+                    
+                    // Send updated trail settings
+                    if (newTrailSettings.enabled) {
+                        sendNewTrailSettings();
+                    }
+                    
+                    console.log('Gradient mode changed to:', newTrailSettings.gradientMode);
                 });
             });
 
