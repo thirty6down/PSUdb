@@ -846,52 +846,76 @@
                 </div>
 
 
-                <div class="pref-section">
-                    <div class="pref-title">Brightness</div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>Brightness</span>
-                            <span id="brightnessValue">255</span>
+                <!-- Pulse Section -->
+                <div class="pref-section-expandable">
+                    <div class="pref-section-header">
+                        <div class="pref-section-title">
+                            🔴 Pulse
+                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Color, Size & Area</span>
                         </div>
-                        <input type="range" class="slider" id="brightnessSlider" min="1" max="255" value="255">
+                        <div class="pref-section-toggle">▼</div>
                     </div>
-                </div>
-
-                <div class="pref-section">
-                    <div class="pref-title">Pulse Color</div>
-                    <div class="color-grid">
-                        <div class="color-option active" data-hue="0" style="background: #ff0000;">Red</div>
-                        <div class="color-option" data-hue="21" style="background: #ff6600;">Orange</div>
-                        <div class="color-option" data-hue="43" style="background: #ffff00;">Yellow</div>
-                        <div class="color-option" data-hue="85" style="background: #00ff00;">Green</div>
-                        <div class="color-option" data-hue="128" style="background: #00ff80;">Cyan</div>
-                        <div class="color-option" data-hue="170" style="background: #0080ff;">Blue</div>
-                        <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
-                        <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
-                        <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
-                        <div class="color-option" data-hue="255" style="background: #ffffff; color: #333; border: 1px solid #ccc;">White</div>
-                    </div>
-                </div>
-
-                <div class="pref-section">
-                    <div class="pref-title">Pulse Size</div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>Pulse Width</span>
-                            <span id="pulseSizeValue">5 cm</span>
+                    <div class="pref-section-content">
+                        <!-- Brightness -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Brightness</div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Brightness</span>
+                                    <span id="brightnessValue">255</span>
+                                </div>
+                                <input type="range" class="slider" id="brightnessSlider" min="1" max="255" value="255">
+                            </div>
                         </div>
-                        <input type="range" class="slider" id="pulseSizeSlider" min="1" max="15" value="3">
-                    </div>
-                </div>
-
-                <div class="pref-section">
-                    <div class="pref-title">Active Area Size</div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>Active Length</span>
-                            <span id="activeAreaValue">100 cm</span>
+                        
+                        <!-- Pulse Color -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Pulse Color</div>
+                            <div class="color-grid">
+                                <div class="color-option active" data-hue="0" style="background: #ff0000;">Red</div>
+                                <div class="color-option" data-hue="21" style="background: #ff6600;">Orange</div>
+                                <div class="color-option" data-hue="43" style="background: #ffff00;">Yellow</div>
+                                <div class="color-option" data-hue="85" style="background: #00ff00;">Green</div>
+                                <div class="color-option" data-hue="128" style="background: #00ff80;">Cyan</div>
+                                <div class="color-option" data-hue="170" style="background: #0080ff;">Blue</div>
+                                <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
+                                <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
+                                <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                                <div class="color-option" data-hue="255" style="background: #ffffff; color: #333; border: 1px solid #ccc;">White</div>
+                            </div>
+                            
+                            <!-- Custom Color Input -->
+                            <div class="custom-color-input">
+                                <label style="color: #ccc; font-size: 14px;">Custom:</label>
+                                <input type="text" class="hex-input" id="customPulseColor" placeholder="#FF0000" maxlength="7">
+                                <div class="color-preview" id="pulseColorPreview" style="background: #ff0000;"></div>
+                                <button style="background: #4CAF50; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="applyCustomPulseColor()">Apply</button>
+                            </div>
                         </div>
-                        <input type="range" class="slider" id="activeAreaSlider" min="10" max="100" value="100">
+                        
+                        <!-- Pulse Size -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Pulse Size</div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Width</span>
+                                    <span id="pulseSizeValue">5 cm</span>
+                                </div>
+                                <input type="range" class="slider" id="pulseSizeSlider" min="1" max="15" value="3">
+                            </div>
+                        </div>
+                        
+                        <!-- Active Area -->
+                        <div>
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Active Area</div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Length</span>
+                                    <span id="activeAreaValue">100%</span>
+                                </div>
+                                <input type="range" class="slider" id="activeAreaSlider" min="10" max="100" value="100">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -927,8 +951,108 @@
                     </div>
                 </div>
 
+                <!-- Trails Section -->
+                <div class="pref-section-expandable">
+                    <div class="pref-section-header">
+                        <div class="pref-section-title">
+                            ✨ Trails
+                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Effects & Gradients</span>
+                        </div>
+                        <div class="pref-section-toggle">▼</div>
+                    </div>
+                    <div class="pref-section-content">
+                        <!-- Trail Toggle -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Effects</div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="preset-btn active" id="trailsEnabled">✨ Enabled</button>
+                                <button class="preset-btn" id="trailsDisabled">❌ Disabled</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Trail Mode -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Mode</div>
+                            <div class="preset-buttons">
+                                <button class="preset-btn active" data-trail-mode="normal">Normal</button>
+                                <button class="preset-btn" data-trail-mode="rainbow" style="background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff);">🌈 Rainbow</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Trail Color -->
+                        <div style="margin-bottom: 20px;" id="trailColorSection">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Color</div>
+                            <div class="color-grid" id="trailColorGrid">
+                                <div class="color-option" data-hue="0" style="background: #ff0000;">Red</div>
+                                <div class="color-option" data-hue="21" style="background: #ff6600;">Orange</div>
+                                <div class="color-option" data-hue="43" style="background: #ffff00;">Yellow</div>
+                                <div class="color-option active" data-hue="85" style="background: #00ff00;">Green</div>
+                                <div class="color-option" data-hue="128" style="background: #00ff80;">Cyan</div>
+                                <div class="color-option" data-hue="170" style="background: #0080ff;">Blue</div>
+                                <div class="color-option" data-hue="213" style="background: #8000ff;">Purple</div>
+                                <div class="color-option" data-hue="234" style="background: #ff00ff;">Pink</div>
+                                <div class="color-option" data-hue="255" style="background: #ff0080;">Magenta</div>
+                                <div class="color-option" data-hue="255" style="background: #ffffff; color: #333; border: 1px solid #ccc;">White</div>
+                            </div>
+                            
+                            <!-- Custom Trail Color -->
+                            <div class="custom-color-input">
+                                <label style="color: #ccc; font-size: 14px;">Custom:</label>
+                                <input type="text" class="hex-input" id="customTrailColor" placeholder="#00FF00" maxlength="7">
+                                <div class="color-preview" id="trailColorPreview" style="background: #00ff00;"></div>
+                                <button style="background: #4CAF50; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="applyCustomTrailColor()">Apply</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Trail Gradient -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Gradient</div>
+                            <div class="preset-buttons" style="margin-bottom: 15px;">
+                                <button class="preset-btn active" data-gradient-mode="0" style="background: linear-gradient(90deg, #00ff00, #00ff00);">None</button>
+                                <button class="preset-btn" data-gradient-mode="1" style="background: linear-gradient(90deg, #00ff00, #ff6600, #ff0000);">🔥 Meteor</button>
+                                <button class="preset-btn" data-gradient-mode="2" style="background: linear-gradient(90deg, #0080ff, #8000ff);">🧚 Fairy</button>
+                                <button class="preset-btn" data-gradient-mode="3" style="background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #0080ff);">🌈 Rainbow</button>
+                                <button class="preset-btn" data-gradient-mode="4" style="background: linear-gradient(90deg, #ff6600, #ffff00, #00ffff, #0080ff);">🌊 Warm-Cool</button>
+                            </div>
+                            
+                            <!-- Custom Gradient -->
+                            <div class="custom-color-input">
+                                <label style="color: #ccc; font-size: 14px;">Custom Gradient:</label>
+                                <input type="text" class="hex-input" id="customGradientStart" placeholder="#FF0000" maxlength="7" style="width: 80px;">
+                                <span style="color: #aaa;">→</span>
+                                <input type="text" class="hex-input" id="customGradientEnd" placeholder="#0000FF" maxlength="7" style="width: 80px;">
+                                <button style="background: #4CAF50; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="applyCustomGradient()">Apply</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Trail Duration -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Duration</div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Duration</span>
+                                    <span id="trailDurationValue">0.5s</span>
+                                </div>
+                                <input type="range" class="slider" id="trailDurationSlider" min="0.0" max="1.0" step="0.1" value="0.5">
+                            </div>
+                        </div>
+                        
+                        <!-- Trail Brightness -->
+                        <div>
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Brightness</div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Brightness</span>
+                                    <span id="trailBrightnessValue">50%</span>
+                                </div>
+                                <input type="range" class="slider" id="trailBrightnessSlider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="pref-section">
-                    <div class="pref-title">✨ Trail Effects System</div>
+                    <div class="pref-title" style="display: none;">✨ Trail Effects System (Old)</div>
                     <div style="font-size: 14px; color: #aaa; margin-bottom: 20px; text-align: center;">
                         🎯 Pulse takes priority - trails enhance without interfering
                     </div>
@@ -1049,40 +1173,37 @@
                     </div>
                 </div>
 
-                <!-- ================================ PARTICLE SYSTEM ================================ -->
-                <div class="pref-section">
-                    <div class="pref-title">✨ Particle Effects</div>
-                    
-                    <div style="text-align: center; padding: 20px; background: #1a1a1a; border-radius: 8px;">
-                        <div style="font-size: 16px; margin-bottom: 15px;">Particle Spawning</div>
-                        <div style="font-size: 14px; color: #aaa; margin-bottom: 20px;">
-                            Particles fade naturally and disappear when the pulse hits them!
+                <!-- Particles Section -->
+                <div class="pref-section-expandable">
+                    <div class="pref-section-header">
+                        <div class="pref-section-title">
+                            ⭐ Particles
+                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Advanced Effects</span>
                         </div>
-                        
-                        <div class="toggle" id="particleToggle">
-                            <input type="checkbox" id="particleEnabled">
-                            <div class="toggle-slider"></div>
-                        </div>
-                        <label for="particleEnabled" style="margin-left: 10px; font-size: 16px;">Enable Particles</label>
-                        
-                        <!-- Spawn Mode Selection -->
-                        <div id="particleSpawnMode" style="margin-top: 20px; display: none;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Mode:</div>
-                            <div style="display: flex; justify-content: center; gap: 15px;">
-                                <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="radio" name="spawnMode" value="random" style="margin-right: 8px;">
-                                    <span style="font-size: 14px;">Random Position</span>
-                                </label>
-                                <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="radio" name="spawnMode" value="pulse" checked style="margin-right: 8px;">
-                                    <span style="font-size: 14px;">From Pulse</span>
-                                </label>
+                        <div class="pref-section-toggle">▼</div>
+                    </div>
+                    <div class="pref-section-content">
+                        <!-- Particle Toggle -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Particle System</div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="preset-btn" id="particlesEnabled">⭐ Enabled</button>
+                                <button class="preset-btn active" id="particlesDisabled">❌ Disabled</button>
                             </div>
                         </div>
                         
-                        <!-- Particle Color Selection -->
-                        <div id="particleColorSection" style="margin-top: 20px; display: none;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Particle Color:</div>
+                        <!-- Particle Spawn Mode -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Mode</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="preset-btn active" data-particle-mode="pulse">🎯 From Pulse</button>
+                                <button class="preset-btn" data-particle-mode="random">🎲 Random</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Particle Color -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Particle Color</div>
                             <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
                                 <button class="color-preset" data-hue="0" style="background: hsl(0, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Red"></button>
                                 <button class="color-preset" data-hue="30" style="background: hsl(30, 100%, 50%); width: 28px; height: 28px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Orange"></button>
@@ -1097,37 +1218,15 @@
                             </div>
                         </div>
                         
-                        <!-- Particle Frequency Control -->
-                        <div id="particleFrequencySection" style="margin-top: 20px; display: none;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Frequency:</div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <span style="font-size: 12px; color: #999;">Slow</span>
-                                <input type="range" id="particleFrequencySlider" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 120px;">
-                                <span style="font-size: 12px; color: #999;">Fast</span>
-                                <span id="particleFrequencyValue" style="margin-left: 10px; font-weight: bold; color: #4CAF50;">1.0x</span>
+                        <!-- Particle Settings -->
+                        <div>
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Settings</div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <label style="display: flex; align-items: center; gap: 5px; color: #ccc;">
+                                    <input type="checkbox" id="particleOverwrite" style="margin: 0;">
+                                    <span style="font-size: 12px;">Overwrite pulse</span>
+                                </label>
                             </div>
-                        </div>
-                        
-                        <!-- Pulse Overwrite Toggle -->
-                        <div id="particleOverwriteSection" style="margin-top: 20px; display: none;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Pulse Interaction:</div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <div class="toggle" id="particleOverwriteToggle">
-                                    <input type="checkbox" id="particleOverwriteEnabled" checked>
-                                    <div class="toggle-slider"></div>
-                                </div>
-                                <label for="particleOverwriteEnabled" style="font-size: 14px;">Pulse overwrites particles</label>
-                            </div>
-                            <div style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">
-                                When enabled: pulse light replaces particles when they overlap<br>
-                                When disabled: particles stay visible over pulse
-                            </div>
-                        </div>
-                        
-                        <div style="font-size: 12px; color: #666; margin-top: 15px;">
-                            • 3-second lifespan • Customizable color<br>
-                            • Random: 10-50ms intervals • Pulse: 100-500ms intervals<br>
-                            • Independent of trail settings • Works with or without trails
                         </div>
                     </div>
                 </div>
@@ -2115,6 +2214,74 @@
                 });
             });
             
+            // Custom color functions
+            window.applyCustomPulseColor = () => {
+                const hexInput = document.getElementById('customPulseColor');
+                const preview = document.getElementById('pulseColorPreview');
+                const hex = hexInput.value;
+                
+                if (isValidHex(hex)) {
+                    const rgb = hexToRgb(hex);
+                    preview.style.background = hex;
+                    
+                    // Apply color via RGB commands
+                    const command = `P:CR${rgb.r},CG${rgb.g},CB${rgb.b}`;
+                    sendCommand(command);
+                    console.log('Applied custom pulse color:', hex, rgb);
+                } else {
+                    alert('Please enter a valid hex color (e.g., #FF0000)');
+                }
+            };
+            
+            window.applyCustomTrailColor = () => {
+                const hexInput = document.getElementById('customTrailColor');
+                const preview = document.getElementById('trailColorPreview');
+                const hex = hexInput.value;
+                
+                if (isValidHex(hex)) {
+                    const rgb = hexToRgb(hex);
+                    preview.style.background = hex;
+                    
+                    // Apply color via RGB commands  
+                    const command = `P:HR${rgb.r},HG${rgb.g},HB${rgb.b}`;
+                    sendCommand(command);
+                    console.log('Applied custom trail color:', hex, rgb);
+                } else {
+                    alert('Please enter a valid hex color (e.g., #00FF00)');
+                }
+            };
+            
+            window.applyCustomGradient = () => {
+                const startHex = document.getElementById('customGradientStart').value;
+                const endHex = document.getElementById('customGradientEnd').value;
+                
+                if (isValidHex(startHex) && isValidHex(endHex)) {
+                    // For now, just apply the start color as trail color
+                    // Future: implement custom gradient mode in firmware
+                    const rgb = hexToRgb(startHex);
+                    const command = `P:HR${rgb.r},HG${rgb.g},HB${rgb.b}`;
+                    sendCommand(command);
+                    console.log('Applied custom gradient start color:', startHex, rgb);
+                    alert('Custom gradients coming soon! Applied start color for now.');
+                } else {
+                    alert('Please enter valid hex colors for both start and end');
+                }
+            };
+            
+            // Utility functions
+            function isValidHex(hex) {
+                return /^#[0-9A-F]{6}$/i.test(hex);
+            }
+            
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+            
             // Speed presets
             document.querySelectorAll('.speed-preset').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2183,6 +2350,59 @@
                     
                     console.log('Gradient mode changed to:', newTrailSettings.gradientMode);
                 });
+            });
+            
+            // Particle system controls
+            const particlesEnabled = document.getElementById('particlesEnabled');
+            const particlesDisabled = document.getElementById('particlesDisabled');
+            
+            particlesEnabled.addEventListener('click', () => {
+                particlesEnabled.classList.add('active');
+                particlesDisabled.classList.remove('active');
+                sendCommand('PT:ENABLED');
+                console.log('Particles enabled');
+            });
+            
+            particlesDisabled.addEventListener('click', () => {
+                particlesDisabled.classList.add('active');
+                particlesEnabled.classList.remove('active');
+                sendCommand('PT:DISABLED');
+                console.log('Particles disabled');
+            });
+            
+            // Particle spawn mode buttons
+            document.querySelectorAll('[data-particle-mode]').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all particle mode buttons
+                    document.querySelectorAll('[data-particle-mode]').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    const mode = button.dataset.particleMode;
+                    sendCommand(mode === 'random' ? 'PT:MODE:RANDOM' : 'PT:MODE:PULSE');
+                    console.log('Particle spawn mode:', mode);
+                });
+            });
+
+            // Trails enable/disable buttons
+            const trailsEnabled = document.getElementById('trailsEnabled');
+            const trailsDisabled = document.getElementById('trailsDisabled');
+            
+            trailsEnabled.addEventListener('click', () => {
+                trailsEnabled.classList.add('active');
+                trailsDisabled.classList.remove('active');
+                newTrailSettings.enabled = true;
+                updateTrailEnabledUI();
+                console.log('Trails enabled');
+            });
+            
+            trailsDisabled.addEventListener('click', () => {
+                trailsDisabled.classList.add('active');
+                trailsEnabled.classList.remove('active');
+                newTrailSettings.enabled = false;
+                updateTrailEnabledUI();
+                console.log('Trails disabled');
             });
 
             const pulseSizeSlider = document.getElementById('pulseSizeSlider');
