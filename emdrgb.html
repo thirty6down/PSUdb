@@ -1842,10 +1842,13 @@
 
             sendCommand(command);
             
-            // Send gradient mode as separate command using ET: protocol
+            // Send gradient mode as separate command using ET: protocol with delay for reliable processing
             if (newTrailSettings.gradientMode !== undefined) {
-                const gradientCommand = `ET:G${newTrailSettings.gradientMode}`;
-                sendCommand(gradientCommand);
+                setTimeout(() => {
+                    const gradientCommand = `ET:G${newTrailSettings.gradientMode}`;
+                    sendCommand(gradientCommand);
+                    console.log('Gradient mode sent:', gradientCommand);
+                }, 100);
             }
 
             console.log('New trail settings with RGB and gradient:', { ...newTrailSettings, trailRGB });
@@ -2022,17 +2025,23 @@
                     const startRgb = hexToRgb(startHex);
                     const endRgb = hexToRgb(endHex);
                     
-                    // Enable trails first (required for gradient functionality)
-                    sendCommand('P:E1');
+                    // Improved command sequencing with proper delays for reliable gradient application
                     
-                    // Set custom gradient colors in firmware
-                    const gradientCommand = `CG:SR${startRgb.r},SG${startRgb.g},SB${startRgb.b},ER${endRgb.r},EG${endRgb.g},EB${endRgb.b}`;
-                    sendCommand(gradientCommand);
+                    // Step 1: Enable trails and ensure clean state
+                    sendCommand('P:E1,R0'); // Enable trails and disable rainbow explicitly
                     
-                    // Set gradient mode to custom (mode 5) with slight delay to ensure CG command is processed first
+                    // Step 2: Set custom gradient colors (with delay for BLE processing)
+                    setTimeout(() => {
+                        const gradientCommand = `CG:SR${startRgb.r},SG${startRgb.g},SB${startRgb.b},ER${endRgb.r},EG${endRgb.g},EB${endRgb.b}`;
+                        sendCommand(gradientCommand);
+                        console.log('Custom gradient colors set:', gradientCommand);
+                    }, 100);
+                    
+                    // Step 3: Set gradient mode to custom (mode 5) with sufficient delay
                     setTimeout(() => {
                         sendCommand('ET:G5');
-                    }, 50);
+                        console.log('Custom gradient mode activated');
+                    }, 200);
                     
                     // Update newTrailSettings
                     newTrailSettings.gradientMode = 5;
