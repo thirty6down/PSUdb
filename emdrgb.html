@@ -1013,6 +1013,7 @@
                                 <button class="preset-btn" data-gradient-mode="2" style="background: linear-gradient(90deg, #0080ff, #8000ff);">🧚 Fairy</button>
                                 <button class="preset-btn" data-gradient-mode="3" style="background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #0080ff);">🌈 Rainbow</button>
                                 <button class="preset-btn" data-gradient-mode="4" style="background: linear-gradient(90deg, #ff6600, #ffff00, #00ffff, #0080ff);">🌊 Warm-Cool</button>
+                                <button class="preset-btn" data-gradient-mode="5" style="background: linear-gradient(90deg, #ff0000, #0000ff);" id="customGradientBtn">🎨 Custom</button>
                             </div>
                             
                             <!-- Custom Gradient -->
@@ -1812,26 +1813,12 @@
 
         // NEW: Trail UI management for new system
         function updateTrailEnabledUI() {
-            const trailStyleSection = document.getElementById('trailStyleSection');
-            const noTrailMessage = document.getElementById('noTrailMessage');
-            const masterToggle = document.getElementById('trailMasterToggle');
-
             settings.trailEnabled = newTrailSettings.enabled;
 
             if (newTrailSettings.enabled) {
-                trailStyleSection.style.display = 'block';
-                noTrailMessage.style.display = 'none';
-                masterToggle.classList.add('checked');
-                document.getElementById('trailMasterEnabled').checked = true;
-
                 sendNewTrailSettings();
                 updateTrailModeUI();
             } else {
-                trailStyleSection.style.display = 'none';
-                noTrailMessage.style.display = 'block';
-                masterToggle.classList.remove('checked');
-                document.getElementById('trailMasterEnabled').checked = false;
-
                 sendCommand('P:E0');
             }
         }
@@ -1870,15 +1857,12 @@
                 }
             });
 
-            // Update preview descriptions
-            document.getElementById('normalPreview').style.display = 
-                newTrailSettings.mode === 'normal' ? 'block' : 'none';
-            document.getElementById('rainbowPreview').style.display = 
-                newTrailSettings.mode === 'rainbow' ? 'block' : 'none';
-
             // Show/hide color section (only for normal mode)
-            document.getElementById('trailColorSection').style.display = 
-                newTrailSettings.mode === 'normal' ? 'block' : 'none';
+            const trailColorSection = document.getElementById('trailColorSection');
+            if (trailColorSection) {
+                trailColorSection.style.display = 
+                    newTrailSettings.mode === 'normal' ? 'block' : 'none';
+            }
 
             // Update trail flags based on mode
             newTrailSettings.rainbow = (newTrailSettings.mode === 'rainbow');
@@ -2003,13 +1987,30 @@
                 const endHex = document.getElementById('customGradientEnd').value;
                 
                 if (isValidHex(startHex) && isValidHex(endHex)) {
-                    // For now, just apply the start color as trail color
-                    // Future: implement custom gradient mode in firmware
-                    const rgb = hexToRgb(startHex);
-                    const command = `P:HR${rgb.r},HG${rgb.g},HB${rgb.b}`;
-                    sendCommand(command);
-                    console.log('Applied custom gradient start color:', startHex, rgb);
-                    alert('Custom gradients coming soon! Applied start color for now.');
+                    // Convert hex colors to RGB
+                    const startRgb = hexToRgb(startHex);
+                    const endRgb = hexToRgb(endHex);
+                    
+                    // Set custom gradient colors in firmware
+                    const gradientCommand = `CG:SR${startRgb.r},SG${startRgb.g},SB${startRgb.b},ER${endRgb.r},EG${endRgb.g},EB${endRgb.b}`;
+                    sendCommand(gradientCommand);
+                    
+                    // Set gradient mode to custom (mode 5)
+                    sendCommand('ET:G5');
+                    
+                    // Update newTrailSettings
+                    newTrailSettings.gradientMode = 5;
+                    
+                    // Update UI to show custom gradient is active
+                    document.querySelectorAll('[data-gradient-mode]').forEach(btn => btn.classList.remove('active'));
+                    const customBtn = document.getElementById('customGradientBtn');
+                    customBtn.classList.add('active');
+                    
+                    // Update the custom button's preview gradient
+                    customBtn.style.background = `linear-gradient(90deg, ${startHex}, ${endHex})`;
+                    
+                    console.log('Applied custom gradient:', startHex, '→', endHex);
+                    console.log('Start RGB:', startRgb, 'End RGB:', endRgb);
                 } else {
                     alert('Please enter valid hex colors for both start and end');
                 }
