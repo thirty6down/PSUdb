@@ -2022,12 +2022,17 @@
                     const startRgb = hexToRgb(startHex);
                     const endRgb = hexToRgb(endHex);
                     
+                    // Enable trails first (required for gradient functionality)
+                    sendCommand('P:E1');
+                    
                     // Set custom gradient colors in firmware
                     const gradientCommand = `CG:SR${startRgb.r},SG${startRgb.g},SB${startRgb.b},ER${endRgb.r},EG${endRgb.g},EB${endRgb.b}`;
                     sendCommand(gradientCommand);
                     
-                    // Set gradient mode to custom (mode 5)
-                    sendCommand('ET:G5');
+                    // Set gradient mode to custom (mode 5) with slight delay to ensure CG command is processed first
+                    setTimeout(() => {
+                        sendCommand('ET:G5');
+                    }, 50);
                     
                     // Update newTrailSettings
                     newTrailSettings.gradientMode = 5;
@@ -2122,8 +2127,11 @@
                     // Update gradient mode setting
                     newTrailSettings.gradientMode = parseInt(button.dataset.gradientMode);
                     
-                    // Send updated trail settings
-                    if (newTrailSettings.enabled) {
+                    // Auto-enable trails when a gradient mode is selected (except mode 0 = None)
+                    if (newTrailSettings.gradientMode > 0 && !newTrailSettings.enabled) {
+                        newTrailSettings.enabled = true;
+                        updateTrailEnabledUI(); // This will call sendNewTrailSettings()
+                    } else if (newTrailSettings.enabled) {
                         sendNewTrailSettings();
                     }
                     
