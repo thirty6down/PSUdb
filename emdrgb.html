@@ -594,6 +594,95 @@
             padding: 20px;
             margin: 20px 0;
         }
+
+        /* Expandable sections */
+        .pref-section-expandable {
+            background: #2a2a2a;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #444;
+        }
+
+        .pref-section-header {
+            background: #333;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .pref-section-header:hover {
+            background: #3a3a3a;
+        }
+
+        .pref-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pref-section-toggle {
+            font-size: 18px;
+            color: #888;
+            transition: transform 0.3s ease;
+        }
+
+        .pref-section-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .pref-section-expandable.expanded .pref-section-content {
+            max-height: 2000px;
+            padding: 20px;
+        }
+
+        .pref-section-expandable.expanded .pref-section-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* Custom color input */
+        .custom-color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+
+        .hex-input {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 100px;
+            font-family: monospace;
+        }
+
+        .hex-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 1px solid #666;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -690,8 +779,15 @@
                 <h2>Preferences</h2>
 
                 <!-- NEW: Movement Section -->
-                <div class="movement-section">
-                    <div class="pref-title">🎭 Movement Style</div>
+                <div class="pref-section-expandable expanded">
+                    <div class="pref-section-header">
+                        <div class="pref-section-title">
+                            🎯 Movement
+                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Speed & Style</span>
+                        </div>
+                        <div class="pref-section-toggle">▼</div>
+                    </div>
+                    <div class="pref-section-content">
                     
                     <div class="movement-presets">
                         <div class="movement-preset active" data-movement="constant">
@@ -723,24 +819,32 @@
                         </div>
                         <input type="range" class="slider" id="easingIntensitySlider" min="0" max="100" value="70">
                     </div>
+                    
+                    <!-- Speed Presets -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Speed Presets</div>
+                        <div class="speed-presets">
+                            <button class="speed-preset active" data-speed="0.4">0.4 Hz</button>
+                            <button class="speed-preset" data-speed="1.0">1.0 Hz</button>
+                            <button class="speed-preset" data-speed="1.5">1.5 Hz</button>
+                            <button class="speed-preset" data-speed="2.0">2.0 Hz</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Speed -->
+                    <div>
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Custom Speed</div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Speed</span>
+                                <span id="speedValue">0.4 Hz</span>
+                            </div>
+                            <input type="range" class="slider" id="speedSlider" min="0.1" max="3.0" step="0.1" value="0.4">
+                        </div>
+                    </div>
+                    </div>
                 </div>
 
-                <div class="pref-section">
-                    <div class="pref-title">Speed</div>
-                    <div class="speed-presets">
-                        <button class="speed-preset active" data-speed="0.4">0.4 Hz</button>
-                        <button class="speed-preset" data-speed="1.0">1.0 Hz</button>
-                        <button class="speed-preset" data-speed="1.5">1.5 Hz</button>
-                        <button class="speed-preset" data-speed="2.0">2.0 Hz</button>
-                    </div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>Custom Speed</span>
-                            <span id="speedSliderValue">0.4 Hz</span>
-                        </div>
-                        <input type="range" class="slider" id="speedSlider" min="0.1" max="2.0" step="0.1" value="0.4">
-                    </div>
-                </div>
 
                 <div class="pref-section">
                     <div class="pref-title">Brightness</div>
@@ -2003,6 +2107,14 @@
 
         // Preferences page setup
         function setupPreferences() {
+            // Setup expandable sections
+            document.querySelectorAll('.pref-section-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const section = header.parentElement;
+                    section.classList.toggle('expanded');
+                });
+            });
+            
             // Speed presets
             document.querySelectorAll('.speed-preset').forEach(btn => {
                 btn.addEventListener('click', () => {
