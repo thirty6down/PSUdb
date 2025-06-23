@@ -1829,11 +1829,14 @@
             // Convert hue to RGB for trail color
             const trailRGB = hueToRGB(newTrailSettings.color);
 
+            // When using gradient modes, disable rainbow to allow gradient to work
+            const useRainbow = newTrailSettings.rainbow && (newTrailSettings.gradientMode === 0);
+
             // Build the trail command for the new system
             const command = `P:L${newTrailSettings.duration.toFixed(1)},` +
                 `HR${trailRGB.r},HG${trailRGB.g},HB${trailRGB.b},` +
                 `E1,` +
-                `R${newTrailSettings.rainbow ? 1 : 0},` +
+                `R${useRainbow ? 1 : 0},` +
                 `P${newTrailSettings.particles ? 1 : 0},` +
                 `B${newTrailSettings.brightness}`;
 
@@ -1878,32 +1881,41 @@
                 sendCommand(`PRESET:${preset}`);
                 console.log('Visual preset applied:', preset);
                 
-                // Update trail color to match preset
+                // Update trail color and gradient mode to match preset
                 let trailHue = 85; // Default green
+                let gradientMode = 0; // Default no gradient
+                
                 switch(preset) {
                     case 'OCEAN':
                         trailHue = 170; // Blue
+                        gradientMode = 0; // Solid color
                         break;
                     case 'FOREST':
                         trailHue = 85; // Green (keep as is)
+                        gradientMode = 0; // Solid color
                         break;
                     case 'METEOR':
-                        trailHue = 21; // Orange
+                        trailHue = 60; // Yellow (better for fade to red)
+                        gradientMode = 1; // GRADIENT_FADE_TO_RED
                         break;
                     case 'FAIRY':
-                        trailHue = 234; // Pink
+                        trailHue = 170; // Blue
+                        gradientMode = 2; // GRADIENT_BLUE_TO_PURPLE
                         break;
                     case 'RAINBOW':
                         newTrailSettings.rainbow = true;
+                        gradientMode = 3; // GRADIENT_RAINBOW_SHIFT
                         break;
                     case 'CLASSIC':
                         trailHue = 85; // Green
+                        gradientMode = 0; // Solid color
                         break;
                 }
                 
                 if (preset !== 'RAINBOW') {
                     newTrailSettings.rainbow = false;
                     newTrailSettings.color = trailHue;
+                    newTrailSettings.gradientMode = gradientMode;
                     
                     // Update trail color UI
                     document.querySelectorAll('#trailColorGrid .color-option').forEach(opt => {
@@ -1913,10 +1925,29 @@
                         }
                     });
                     
+                    // Update gradient mode UI
+                    document.querySelectorAll('[data-gradient-mode]').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (parseInt(btn.dataset.gradientMode) === gradientMode) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
                     // Send updated trail settings
                     if (newTrailSettings.enabled) {
                         sendNewTrailSettings();
                     }
+                } else {
+                    // Rainbow mode
+                    newTrailSettings.gradientMode = gradientMode;
+                    
+                    // Update gradient mode UI for rainbow
+                    document.querySelectorAll('[data-gradient-mode]').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (parseInt(btn.dataset.gradientMode) === gradientMode) {
+                            btn.classList.add('active');
+                        }
+                    });
                 }
                 
                 // Visual feedback
