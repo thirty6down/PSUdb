@@ -952,7 +952,7 @@
                 </div>
 
                 <!-- Trails Section -->
-                <div class="pref-section-expandable expanded">
+                <div class="pref-section-expandable">
                     <div class="pref-section-header">
                         <div class="pref-section-title">
                             ✨ Trails
@@ -961,21 +961,14 @@
                         <div class="pref-section-toggle">▼</div>
                     </div>
                     <div class="pref-section-content">
-                        <!-- Trail Toggle -->
-                        <div style="margin-bottom: 20px;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Effects</div>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="preset-btn active" id="trailsEnabled">✨ Enabled</button>
-                                <button class="preset-btn" id="trailsDisabled">❌ Disabled</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Trail Mode -->
+                        <!-- Universal Trail Mode -->
                         <div style="margin-bottom: 20px;">
                             <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Mode</div>
-                            <div class="preset-buttons">
-                                <button class="preset-btn active" data-trail-mode="normal">Normal</button>
+                            <div class="preset-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <button class="preset-btn" data-trail-mode="off">❌ Off</button>
+                                <button class="preset-btn active" data-trail-mode="solid">🔘 Solid</button>
                                 <button class="preset-btn" data-trail-mode="rainbow" style="background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff);">🌈 Rainbow</button>
+                                <button class="preset-btn" data-trail-mode="gradient">🎨 Gradient</button>
                             </div>
                         </div>
                         
@@ -1004,26 +997,36 @@
                             </div>
                         </div>
                         
-                        <!-- Trail Gradient -->
-                        <div style="margin-bottom: 20px;">
-                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Trail Gradient</div>
+                        <!-- Gradient Presets (only shown when gradient mode is active) -->
+                        <div style="margin-bottom: 20px;" id="gradientPresetSection">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Gradient Presets</div>
                             <div class="preset-buttons" style="margin-bottom: 15px;">
-                                <button class="preset-btn active" data-gradient-mode="0" style="background: linear-gradient(90deg, #00ff00, #00ff00);">None</button>
-                                <button class="preset-btn" data-gradient-mode="1" style="background: linear-gradient(90deg, #00ff00, #ff6600, #ff0000);">🔥 Meteor</button>
-                                <button class="preset-btn" data-gradient-mode="2" style="background: linear-gradient(90deg, #0080ff, #8000ff);">🧚 Fairy</button>
-                                <button class="preset-btn" data-gradient-mode="3" style="background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #0080ff);">🌈 Rainbow</button>
-                                <button class="preset-btn" data-gradient-mode="4" style="background: linear-gradient(90deg, #ff6600, #ffff00, #00ffff, #0080ff);">🌊 Warm-Cool</button>
-                                <button class="preset-btn" data-gradient-mode="5" style="background: linear-gradient(90deg, #ff0000, #0000ff);" id="customGradientBtn">🎨 Custom</button>
+                                <button class="preset-btn" data-gradient-preset="meteor" style="background: linear-gradient(90deg, #00ff00, #ff6600, #ff0000);">🔥 Meteor</button>
+                                <button class="preset-btn" data-gradient-preset="fairy" style="background: linear-gradient(90deg, #0080ff, #8000ff);">🧚 Fairy</button>
+                                <button class="preset-btn" data-gradient-preset="warm-cool" style="background: linear-gradient(90deg, #ff6600, #ffff00, #00ffff, #0080ff);">🌊 Warm-Cool</button>
+                                <button class="preset-btn" data-gradient-preset="sunset" style="background: linear-gradient(90deg, #ff0000, #ff8000, #ffff00);">🌅 Sunset</button>
                             </div>
                             
                             <!-- Custom Gradient -->
                             <div class="custom-color-input">
                                 <label style="color: #ccc; font-size: 14px;">Custom Gradient:</label>
-                                <input type="text" class="hex-input" id="customGradientStart" placeholder="#FF0000" maxlength="7" style="width: 80px;">
+                                <input type="text" class="hex-input" id="customGradientStart" placeholder="#FF0000" maxlength="7" style="width: 70px;">
                                 <span style="color: #aaa;">→</span>
-                                <input type="text" class="hex-input" id="customGradientEnd" placeholder="#0000FF" maxlength="7" style="width: 80px;">
+                                <input type="text" class="hex-input" id="customGradientEnd" placeholder="#0000FF" maxlength="7" style="width: 70px;">
                                 <button style="background: #4CAF50; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="applyCustomGradient()">Apply</button>
                             </div>
+                            
+                            <!-- Advanced: Middle Color (expandable) -->
+                            <details style="margin-top: 15px;">
+                                <summary style="color: #aaa; cursor: pointer; font-size: 12px;">Advanced: Three-Point Gradient</summary>
+                                <div style="margin-top: 10px;" class="custom-color-input">
+                                    <label style="color: #ccc; font-size: 14px;">Middle Color:</label>
+                                    <input type="text" class="hex-input" id="customGradientMiddle" placeholder="#FFFF00" maxlength="7" style="width: 70px;">
+                                    <label style="color: #ccc; font-size: 14px; margin-left: 10px;">Position:</label>
+                                    <input type="range" id="middlePosition" min="0.1" max="0.9" step="0.1" value="0.5" style="width: 60px;">
+                                    <span id="middlePositionValue" style="color: #aaa; font-size: 12px;">50%</span>
+                                </div>
+                            </details>
                         </div>
                         
                         <!-- Trail Duration -->
@@ -1032,9 +1035,9 @@
                             <div class="slider-container">
                                 <div class="slider-label">
                                     <span>Duration</span>
-                                    <span id="trailDurationValue">0.5s</span>
+                                    <span id="trailDurationValue">2.0s</span>
                                 </div>
-                                <input type="range" class="slider" id="trailDurationSlider" min="0.0" max="1.0" step="0.1" value="0.5">
+                                <input type="range" class="slider" id="trailDurationSlider" min="0.5" max="10.0" step="0.5" value="2.0">
                             </div>
                         </div>
                         
@@ -2016,49 +2019,93 @@
                 }
             };
             
+            // Universal Trail System Functions
+            
+            window.applyTrailMode = (mode) => {
+                console.log('Applying trail mode:', mode);
+                
+                // Update UI
+                document.querySelectorAll('[data-trail-mode]').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-trail-mode="${mode}"]`).classList.add('active');
+                
+                // Show/hide gradient section based on mode
+                const gradientSection = document.getElementById('gradientPresetSection');
+                if (gradientSection) {
+                    gradientSection.style.display = (mode === 'gradient') ? 'block' : 'none';
+                }
+                
+                // Send trail command
+                switch (mode) {
+                    case 'off':
+                        sendCommand('TRAIL:OFF');
+                        break;
+                    case 'solid':
+                        sendCommand('TRAIL:SOLID');
+                        break;
+                    case 'rainbow':
+                        sendCommand('TRAIL:RAINBOW');
+                        break;
+                    case 'gradient':
+                        // Default to meteor gradient if no specific gradient is set
+                        applyGradientPreset('meteor');
+                        break;
+                }
+            };
+            
+            window.applyGradientPreset = (preset) => {
+                console.log('Applying gradient preset:', preset);
+                
+                // Update UI
+                document.querySelectorAll('[data-gradient-preset]').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-gradient-preset="${preset}"]`)?.classList.add('active');
+                
+                // Define preset gradients
+                const presets = {
+                    meteor: { start: '0,255,0', end: '255,0,0' }, // Green to red
+                    fairy: { start: '0,128,255', end: '128,0,255' }, // Blue to purple  
+                    'warm-cool': { start: '255,100,0', middle: '255,255,0,0.3', end: '0,128,255' }, // Orange->Yellow->Blue
+                    sunset: { start: '255,0,0', middle: '255,128,0,0.5', end: '255,255,0' } // Red->Orange->Yellow
+                };
+                
+                if (presets[preset]) {
+                    const p = presets[preset];
+                    let gradientCommand = `TRAIL:GRADIENT,S${p.start},E${p.end}`;
+                    
+                    // Add middle color if defined
+                    if (p.middle) {
+                        gradientCommand = `TRAIL:GRADIENT,S${p.start},M${p.middle},E${p.end}`;
+                    }
+                    
+                    sendCommand(gradientCommand);
+                    console.log('Gradient preset command:', gradientCommand);
+                }
+            };
+            
             window.applyCustomGradient = () => {
                 const startHex = document.getElementById('customGradientStart').value;
                 const endHex = document.getElementById('customGradientEnd').value;
+                const middleHex = document.getElementById('customGradientMiddle').value;
+                const middlePos = document.getElementById('middlePosition').value;
                 
-                if (isValidHex(startHex) && isValidHex(endHex)) {
-                    // Convert hex colors to RGB
-                    const startRgb = hexToRgb(startHex);
-                    const endRgb = hexToRgb(endHex);
-                    
-                    // Improved command sequencing with proper delays for reliable gradient application
-                    
-                    // Step 1: Enable trails and ensure clean state
-                    sendCommand('P:E1,R0'); // Enable trails and disable rainbow explicitly
-                    
-                    // Step 2: Set custom gradient colors (with delay for BLE processing)
-                    setTimeout(() => {
-                        const gradientCommand = `CG:SR${startRgb.r},SG${startRgb.g},SB${startRgb.b},ER${endRgb.r},EG${endRgb.g},EB${endRgb.b}`;
-                        sendCommand(gradientCommand);
-                        console.log('Custom gradient colors set:', gradientCommand);
-                    }, 100);
-                    
-                    // Step 3: Set gradient mode to custom (mode 5) with sufficient delay
-                    setTimeout(() => {
-                        sendCommand('ET:G5');
-                        console.log('Custom gradient mode activated');
-                    }, 200);
-                    
-                    // Update newTrailSettings
-                    newTrailSettings.gradientMode = 5;
-                    
-                    // Update UI to show custom gradient is active
-                    document.querySelectorAll('[data-gradient-mode]').forEach(btn => btn.classList.remove('active'));
-                    const customBtn = document.getElementById('customGradientBtn');
-                    customBtn.classList.add('active');
-                    
-                    // Update the custom button's preview gradient
-                    customBtn.style.background = `linear-gradient(90deg, ${startHex}, ${endHex})`;
-                    
-                    console.log('Applied custom gradient:', startHex, '→', endHex);
-                    console.log('Start RGB:', startRgb, 'End RGB:', endRgb);
-                } else {
-                    alert('Please enter valid hex colors for both start and end');
+                if (!isValidHex(startHex) || !isValidHex(endHex)) {
+                    alert('Please enter valid hex colors for start and end');
+                    return;
                 }
+                
+                // Convert hex to RGB
+                const startRgb = hexToRgb(startHex);
+                const endRgb = hexToRgb(endHex);
+                
+                let gradientCommand = `TRAIL:GRADIENT,S${startRgb.r},${startRgb.g},${startRgb.b},E${endRgb.r},${endRgb.g},${endRgb.b}`;
+                
+                // Add middle color if specified
+                if (middleHex && isValidHex(middleHex)) {
+                    const middleRgb = hexToRgb(middleHex);
+                    gradientCommand = `TRAIL:GRADIENT,S${startRgb.r},${startRgb.g},${startRgb.b},M${middleRgb.r},${middleRgb.g},${middleRgb.b},${middlePos},E${endRgb.r},${endRgb.g},${endRgb.b}`;
+                }
+                
+                sendCommand(gradientCommand);
+                console.log('Custom gradient applied:', gradientCommand);
             };
             
             // Utility functions
@@ -2181,47 +2228,62 @@
                 });
             });
 
-            // Trails enable/disable buttons
-            const trailsEnabled = document.getElementById('trailsEnabled');
-            const trailsDisabled = document.getElementById('trailsDisabled');
-            
-            trailsEnabled.addEventListener('click', () => {
-                trailsEnabled.classList.add('active');
-                trailsDisabled.classList.remove('active');
-                newTrailSettings.enabled = true;
-                updateTrailEnabledUI();
-                console.log('Trails enabled');
+            // Universal Trail Mode buttons
+            document.querySelectorAll('[data-trail-mode]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const mode = button.dataset.trailMode;
+                    applyTrailMode(mode);
+                });
             });
             
-            trailsDisabled.addEventListener('click', () => {
-                trailsDisabled.classList.add('active');
-                trailsEnabled.classList.remove('active');
-                newTrailSettings.enabled = false;
-                updateTrailEnabledUI();
-                console.log('Trails disabled');
+            // Gradient preset buttons
+            document.querySelectorAll('[data-gradient-preset]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const preset = button.dataset.gradientPreset;
+                    applyGradientPreset(preset);
+                });
             });
-
+            
             // Trail duration slider
             const trailDurationSlider = document.getElementById('trailDurationSlider');
-            trailDurationSlider.addEventListener('input', (e) => {
-                newTrailSettings.duration = parseFloat(e.target.value);
-                document.getElementById('trailDurationValue').textContent = e.target.value + 's';
-            });
-
-            trailDurationSlider.addEventListener('change', () => {
-                if (newTrailSettings.enabled) sendNewTrailSettings();
-            });
-
+            const trailDurationValue = document.getElementById('trailDurationValue');
+            if (trailDurationSlider && trailDurationValue) {
+                trailDurationSlider.addEventListener('input', () => {
+                    const duration = parseFloat(trailDurationSlider.value);
+                    trailDurationValue.textContent = duration.toFixed(1) + 's';
+                    sendCommand(`TRAIL_DURATION:${duration}`);
+                });
+            }
+            
             // Trail brightness slider
             const trailBrightnessSlider = document.getElementById('trailBrightnessSlider');
-            trailBrightnessSlider.addEventListener('input', (e) => {
-                newTrailSettings.brightness = Math.round(parseInt(e.target.value) * 2.55); // Convert % to 0-255
-                document.getElementById('trailBrightnessValue').textContent = e.target.value + '%';
-            });
-
-            trailBrightnessSlider.addEventListener('change', () => {
-                if (newTrailSettings.enabled) sendNewTrailSettings();
-            });
+            const trailBrightnessValue = document.getElementById('trailBrightnessValue');
+            if (trailBrightnessSlider && trailBrightnessValue) {
+                trailBrightnessSlider.addEventListener('input', () => {
+                    const brightness = parseInt(trailBrightnessSlider.value);
+                    trailBrightnessValue.textContent = brightness + '%';
+                    const firmwareBrightness = Math.round((brightness / 100) * 255);
+                    sendCommand(`TRAIL_BRIGHTNESS:${firmwareBrightness}`);
+                });
+            }
+            
+            // Middle position slider for advanced gradients
+            const middlePosition = document.getElementById('middlePosition');
+            const middlePositionValue = document.getElementById('middlePositionValue');
+            if (middlePosition && middlePositionValue) {
+                middlePosition.addEventListener('input', () => {
+                    const pos = parseFloat(middlePosition.value);
+                    middlePositionValue.textContent = Math.round(pos * 100) + '%';
+                });
+            }
+            
+            // Initialize gradient section visibility
+            const gradientSection = document.getElementById('gradientPresetSection');
+            if (gradientSection) {
+                gradientSection.style.display = 'none'; // Hidden by default
+            }
+            
+            // OLD TRAIL SYSTEM HANDLERS REMOVED - Now using universal trail system above
 
             const pulseSizeSlider = document.getElementById('pulseSizeSlider');
             pulseSizeSlider.addEventListener('input', () => {
