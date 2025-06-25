@@ -2022,6 +2022,7 @@
             // Universal Trail System Functions
             
             // JSON-based gradient definitions (global scope)
+            console.log('🔧 Loading JSON gradients...');
             const jsonGradients = [
                 {
                     "name": "Radioactive Heat",
@@ -2064,6 +2065,7 @@
                     "colors": ["#FF0000", "#FF4500", "#FFA500"]
                 }
             ];
+            console.log('🔧 JSON gradients loaded:', jsonGradients.length, 'gradients');
 
             window.applyTrailMode = (mode) => {
                 console.log('Applying trail mode:', mode);
@@ -2388,7 +2390,7 @@
             // Initialize gradient section visibility
             const gradientSection = document.getElementById('gradientPresetSection');
             if (gradientSection) {
-                gradientSection.style.display = 'none'; // Hidden by default
+                gradientSection.style.display = 'block'; // Temporarily visible for debugging
             }
             
             // OLD TRAIL SYSTEM HANDLERS REMOVED - Now using universal trail system above
