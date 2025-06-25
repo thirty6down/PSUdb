@@ -3498,17 +3498,34 @@
             
             // Test red color
             console.log('Testing red color...');
+            console.log('Sending: SOLIDCOLOR:R255,G0,B0');
             sendCommand('SOLIDCOLOR:R255,G0,B0');
+            
+            setTimeout(() => {
+                console.log('Testing blue color...');
+                console.log('Sending: SOLIDCOLOR:R0,G0,B255');
+                sendCommand('SOLIDCOLOR:R0,G0,B255');
+            }, 3000);
             
             setTimeout(() => {
                 console.log('Testing rainbow...');
                 sendCommand('RAINBOW_TEST');
-            }, 2000);
+            }, 6000);
             
             setTimeout(() => {
                 console.log('Clearing LEDs...');
                 sendCommand('CLEAR_TEST');
-            }, 5000);
+            }, 10000);
+        };
+
+        // Simple debug function for immediate testing
+        window.testRed = function() {
+            console.log('Testing immediate red...');
+            if (ledCharacteristic && isConnected) {
+                sendCommand('SOLIDCOLOR:R255,G0,B0');
+            } else {
+                console.log('Not connected');
+            }
         };
 
         // Initialize everything
