@@ -1276,6 +1276,52 @@
         let previewAnimation = null;
         let previewStartTime = 0;
 
+        // JSON-based gradient definitions (global scope)
+        console.log('🔧 Loading JSON gradients...');
+        const jsonGradients = [
+            {
+                "name": "Radioactive Heat",
+                "colors": ["#F7941E", "#72C6EF", "#00A651"]
+            },
+            {
+                "name": "The Sky And The Sea", 
+                "colors": ["#F7941E", "#004E8F"]
+            },
+            {
+                "name": "Meteor Trail",
+                "colors": ["#00FF00", "#FF0000"]
+            },
+            {
+                "name": "Fairy Dust",
+                "colors": ["#0080FF", "#8000FF"]
+            },
+            {
+                "name": "Ocean Depths",
+                "colors": ["#00FFFF", "#000080", "#4B0082"]
+            },
+            {
+                "name": "Sunset Glow",
+                "colors": ["#FF0000", "#FF8000", "#FFFF00"]
+            },
+            {
+                "name": "Forest Fire",
+                "colors": ["#FF4500", "#FFD700", "#00FF00"]
+            },
+            {
+                "name": "Purple Haze",
+                "colors": ["#8A2BE2", "#FF1493"]
+            },
+            {
+                "name": "Arctic Ice",
+                "colors": ["#E0FFFF", "#4682B4", "#191970"]
+            },
+            {
+                "name": "Lava Flow",
+                "colors": ["#FF0000", "#FF4500", "#FFA500"]
+            }
+        ];
+        console.log('🔧 JSON gradients loaded:', jsonGradients.length, 'gradients');
+
         // DOM elements
         const pages = document.querySelectorAll('.page');
         const navItems = document.querySelectorAll('.nav-item');
@@ -2020,52 +2066,6 @@
             };
             
             // Universal Trail System Functions
-            
-            // JSON-based gradient definitions (global scope)
-            console.log('🔧 Loading JSON gradients...');
-            const jsonGradients = [
-                {
-                    "name": "Radioactive Heat",
-                    "colors": ["#F7941E", "#72C6EF", "#00A651"]
-                },
-                {
-                    "name": "The Sky And The Sea", 
-                    "colors": ["#F7941E", "#004E8F"]
-                },
-                {
-                    "name": "Meteor Trail",
-                    "colors": ["#00FF00", "#FF0000"]
-                },
-                {
-                    "name": "Fairy Dust",
-                    "colors": ["#0080FF", "#8000FF"]
-                },
-                {
-                    "name": "Ocean Depths",
-                    "colors": ["#00FFFF", "#000080", "#4B0082"]
-                },
-                {
-                    "name": "Sunset Glow",
-                    "colors": ["#FF0000", "#FF8000", "#FFFF00"]
-                },
-                {
-                    "name": "Forest Fire",
-                    "colors": ["#FF4500", "#FFD700", "#00FF00"]
-                },
-                {
-                    "name": "Purple Haze",
-                    "colors": ["#8A2BE2", "#FF1493"]
-                },
-                {
-                    "name": "Arctic Ice",
-                    "colors": ["#E0FFFF", "#4682B4", "#191970"]
-                },
-                {
-                    "name": "Lava Flow",
-                    "colors": ["#FF0000", "#FF4500", "#FFA500"]
-                }
-            ];
-            console.log('🔧 JSON gradients loaded:', jsonGradients.length, 'gradients');
 
             window.applyTrailMode = (mode) => {
                 console.log('Applying trail mode:', mode);
@@ -2301,6 +2301,12 @@
                     applyTrailMode(mode);
                 });
             });
+            
+            // Initialize gradient section visibility
+            const gradientSection = document.getElementById('gradientPresetSection');
+            if (gradientSection) {
+                gradientSection.style.display = 'none'; // Hidden by default
+            }
             
             // Initialize JSON gradient dropdown
             initializeJsonGradientDropdown();
