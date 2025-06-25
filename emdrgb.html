@@ -2308,6 +2308,29 @@
                 gradientSection.style.display = 'none'; // Hidden by default
             }
             
+            // Trail duration slider
+            const trailDurationSlider = document.getElementById('trailDurationSlider');
+            const trailDurationValue = document.getElementById('trailDurationValue');
+            if (trailDurationSlider && trailDurationValue) {
+                trailDurationSlider.addEventListener('input', () => {
+                    const duration = parseFloat(trailDurationSlider.value);
+                    trailDurationValue.textContent = duration.toFixed(1) + 's';
+                    sendCommand(`TRAIL_DURATION:${duration}`);
+                });
+            }
+            
+            // Trail brightness slider
+            const trailBrightnessSlider = document.getElementById('trailBrightnessSlider');
+            const trailBrightnessValue = document.getElementById('trailBrightnessValue');
+            if (trailBrightnessSlider && trailBrightnessValue) {
+                trailBrightnessSlider.addEventListener('input', () => {
+                    const brightness = parseInt(trailBrightnessSlider.value);
+                    trailBrightnessValue.textContent = brightness + '%';
+                    const firmwareBrightness = Math.round((brightness / 100) * 255);
+                    sendCommand(`TRAIL_BRIGHTNESS:${firmwareBrightness}`);
+                });
+            }
+            
             // Initialize JSON gradient dropdown
             initializeJsonGradientDropdown();
         }
