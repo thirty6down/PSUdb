@@ -1224,7 +1224,7 @@
 
                         <!-- Color Array Management -->
                         <div id="colorArraySection">
-                            <div style="margin-bottom: 10px; display: flex; justify-content: between; align-items: center;">
+                            <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-weight: bold;">Color Sequence</span>
                                 <button class="btn small" id="addColorBtn">+ Add Color</button>
                             </div>
@@ -2513,14 +2513,16 @@
             }
 
             function sendColorCycleCommand() {
-                if (!isConnected()) {
+                if (!ledCharacteristic || !isConnected) {
                     showStatus('Not connected to device', 'error');
                     return;
                 }
 
                 if (!colorCycleEnabled || colorCycleArray.length === 0) {
                     // Disable color cycling
+                    console.log('Disabling color cycling');
                     sendCommand('COLORCYCLE:OFF');
+                    showStatus('Color cycling disabled', 'connected');
                     return;
                 }
 
@@ -2530,16 +2532,24 @@
                 );
                 const colorCommand = `COLORCYCLE:COLORS:${colorStrings.join(';')}`;
                 
-                // Send the command
+                console.log('Sending color cycling commands:', {
+                    colors: colorCommand,
+                    speed: colorCycleSpeed,
+                    smooth: smoothTransitions
+                });
+                
+                // Send the commands with small delays to ensure proper processing
                 sendCommand(colorCommand);
                 
-                // Send speed setting
-                sendCommand(`COLORCYCLE:SPEED:${colorCycleSpeed}`);
+                setTimeout(() => {
+                    sendCommand(`COLORCYCLE:SPEED:${colorCycleSpeed}`);
+                }, 100);
                 
-                // Send smooth transitions setting
-                sendCommand(`COLORCYCLE:SMOOTH:${smoothTransitions ? 'ON' : 'OFF'}`);
+                setTimeout(() => {
+                    sendCommand(`COLORCYCLE:SMOOTH:${smoothTransitions ? 'ON' : 'OFF'}`);
+                }, 200);
                 
-                showStatus(`Color cycling ${colorCycleEnabled ? 'enabled' : 'disabled'} with ${colorCycleArray.length} colors`, 'connected');
+                showStatus(`Color cycling enabled with ${colorCycleArray.length} colors at ${colorCycleSpeed}x speed`, 'connected');
             }
             
             // Speed presets
@@ -3258,6 +3268,28 @@
             loadPreset('christmas');
         });
 
+        // Debug function for testing color cycling
+        window.testColorCycling = function() {
+            console.log('Testing color cycling...');
+            console.log('Connection status:', isConnected);
+            console.log('LED Characteristic:', ledCharacteristic);
+            
+            if (!ledCharacteristic || !isConnected) {
+                console.log('❌ Not connected to device');
+                return;
+            }
+            
+            // Test basic command
+            console.log('Sending test command...');
+            sendCommand('COLORCYCLE:TEST');
+            
+            // Test status command
+            setTimeout(() => {
+                console.log('Sending status command...');
+                sendCommand('COLORCYCLE:STATUS');
+            }, 1000);
+        };
+
         // Initialize everything
         setupPreferences();
         updateSpeedDisplay();
@@ -3276,6 +3308,11 @@
 
         // Initialize trail UI
         updateTrailEnabledUI();
+
+        // Initialize color cycling UI
+        document.getElementById('colorCyclingDisabled').classList.add('active');
+        document.getElementById('colorCyclingEnabled').classList.remove('active');
+        colorCycleEnabled = false;
 
         // Initialize movement mode display
         const easingContainer = document.getElementById('easingIntensityContainer');
