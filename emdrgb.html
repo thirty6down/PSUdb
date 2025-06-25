@@ -997,14 +997,14 @@
                             </div>
                         </div>
                         
-                        <!-- Gradient Presets (only shown when gradient mode is active) -->
+                        <!-- JSON Gradient Presets (only shown when gradient mode is active) -->
                         <div style="margin-bottom: 20px;" id="gradientPresetSection">
                             <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Gradient Presets</div>
-                            <div class="preset-buttons" style="margin-bottom: 15px;">
-                                <button class="preset-btn" data-gradient-preset="meteor" style="background: linear-gradient(90deg, #00ff00, #ff6600, #ff0000);">🔥 Meteor</button>
-                                <button class="preset-btn" data-gradient-preset="fairy" style="background: linear-gradient(90deg, #0080ff, #8000ff);">🧚 Fairy</button>
-                                <button class="preset-btn" data-gradient-preset="warm-cool" style="background: linear-gradient(90deg, #ff6600, #ffff00, #00ffff, #0080ff);">🌊 Warm-Cool</button>
-                                <button class="preset-btn" data-gradient-preset="sunset" style="background: linear-gradient(90deg, #ff0000, #ff8000, #ffff00);">🌅 Sunset</button>
+                            <div style="margin-bottom: 15px;">
+                                <select id="jsonGradientDropdown" style="width: 100%; padding: 8px; background: #2a2a2a; color: white; border: 1px solid #555; border-radius: 4px; font-size: 14px;">
+                                    <option value="">Choose a gradient...</option>
+                                </select>
+                                <button id="applyJsonGradientBtn" style="background: #4CAF50; border: none; color: white; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px; width: 100%; font-size: 14px;">Apply Gradient</button>
                             </div>
                             
                             <!-- Custom Gradient -->
@@ -2340,9 +2340,6 @@
                 });
             });
             
-            // Initialize JSON gradient dropdown
-            initializeJsonGradientDropdown();
-            
             // Trail duration slider
             const trailDurationSlider = document.getElementById('trailDurationSlider');
             const trailDurationValue = document.getElementById('trailDurationValue');
@@ -2953,6 +2950,7 @@
             updateTrailModeUI();
             updateTrailColorSelection();
             updatePulseColorSelection();
+            initializeJsonGradientDropdown();
         }
 
         // Initialize audio timing preset display (mark 80ms as active by default)
