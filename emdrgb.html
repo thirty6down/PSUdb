@@ -683,6 +683,80 @@
             border: 1px solid #666;
             cursor: pointer;
         }
+
+        /* Color Cycling Styles */
+        .color-item {
+            display: flex;
+            align-items: center;
+            background: #333;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #555;
+        }
+
+        .color-item .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #666;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .color-info {
+            flex: 1;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .color-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-picker-input {
+            width: 25px;
+            height: 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: none;
+        }
+
+        .btn.small {
+            padding: 6px 12px;
+            font-size: 12px;
+            min-width: auto;
+        }
+
+        .btn.remove {
+            background: #d32f2f;
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: auto;
+        }
+
+        .btn.remove:hover {
+            background: #f44336;
+        }
+
+        .preset-btn.small {
+            padding: 6px 10px;
+            font-size: 11px;
+            min-width: auto;
+        }
+
+        #colorList:empty::after {
+            content: "No colors added yet. Click + Add Color to get started!";
+            color: #666;
+            font-style: italic;
+            font-size: 12px;
+            text-align: center;
+            padding: 20px;
+            display: block;
+        }
     </style>
 </head>
 
@@ -1111,6 +1185,69 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Color Cycling Section -->
+                <div class="pref-section-expandable">
+                    <div class="pref-section-header">
+                        <div class="pref-section-title">
+                            🌈 Color Cycling
+                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Dynamic Colors</span>
+                        </div>
+                        <div class="pref-section-toggle">▼</div>
+                    </div>
+                    <div class="pref-section-content">
+                        <!-- Color Cycling Enable/Disable -->
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <button class="preset-btn" id="colorCyclingEnabled">🌈 Enabled</button>
+                            <button class="preset-btn active" id="colorCyclingDisabled">❌ Disabled</button>
+                        </div>
+
+                        <!-- Speed Control -->
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Cycling Speed</span>
+                                <span id="cyclingSpeedValue">1.0x</span>
+                            </div>
+                            <input type="range" class="slider" id="cyclingSpeedSlider" min="0.1" max="5.0" step="0.1" value="1.0">
+                        </div>
+
+                        <!-- Smooth Transitions Toggle -->
+                        <div style="margin: 20px 0;">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="smoothTransitionsCheckbox" checked>
+                                <span class="checkmark"></span>
+                                <span style="font-size: 12px;">Smooth transitions between colors</span>
+                            </label>
+                        </div>
+
+                        <!-- Color Array Management -->
+                        <div id="colorArraySection">
+                            <div style="margin-bottom: 10px; display: flex; justify-content: between; align-items: center;">
+                                <span style="font-weight: bold;">Color Sequence</span>
+                                <button class="btn small" id="addColorBtn">+ Add Color</button>
+                            </div>
+                            
+                            <!-- Color List Container -->
+                            <div id="colorList" style="margin-bottom: 15px;">
+                                <!-- Dynamic color items will be added here -->
+                            </div>
+
+                            <!-- Quick Preset Buttons -->
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px;">
+                                <button class="preset-btn small" id="presetRainbow">🌈 Rainbow</button>
+                                <button class="preset-btn small" id="presetWarmCool">🔥❄️ Warm/Cool</button>
+                                <button class="preset-btn small" id="presetSunset">🌅 Sunset</button>
+                                <button class="preset-btn small" id="presetOcean">🌊 Ocean</button>
+                                <button class="preset-btn small" id="presetChristmas">🎄 Christmas</button>
+                            </div>
+                        </div>
+
+                        <!-- Send to Device Button -->
+                        <button class="btn primary" id="sendColorCycleBtn" style="width: 100%; margin-top: 20px;">
+                            📡 Apply Color Cycling
+                        </button>
                     </div>
                 </div>
             </div>
@@ -2187,6 +2324,223 @@
                     b: parseInt(result[3], 16)
                 } : null;
             }
+
+            // ==============================================
+            // COLOR CYCLING SYSTEM
+            // ==============================================
+
+            // Color cycling state
+            let colorCycleArray = [];
+            let colorCycleEnabled = false;
+            let colorCycleSpeed = 1.0;
+            let smoothTransitions = true;
+
+            // Color conversion utilities
+            function rgbToHsv(r, g, b) {
+                r /= 255;
+                g /= 255;
+                b /= 255;
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                const diff = max - min;
+                
+                let h = 0;
+                if (diff !== 0) {
+                    if (max === r) h = (60 * ((g - b) / diff) + 360) % 360;
+                    else if (max === g) h = (60 * ((b - r) / diff) + 120) % 360;
+                    else h = (60 * ((r - g) / diff) + 240) % 360;
+                }
+                
+                const s = max === 0 ? 0 : diff / max;
+                const v = max;
+                
+                return {
+                    h: Math.round(h / 360 * 255), // Convert to 0-255 range for firmware
+                    s: Math.round(s * 255),
+                    v: Math.round(v * 255)
+                };
+            }
+
+            function hsvToRgb(h, s, v) {
+                h = (h / 255) * 360; // Convert from 0-255 to 0-360
+                s = s / 255;
+                v = v / 255;
+                
+                const c = v * s;
+                const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+                const m = v - c;
+                
+                let r, g, b;
+                if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
+                else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
+                else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
+                else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
+                else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
+                else { r = c; g = 0; b = x; }
+                
+                return {
+                    r: Math.round((r + m) * 255),
+                    g: Math.round((g + m) * 255),
+                    b: Math.round((b + m) * 255)
+                };
+            }
+
+            function hexToHsv(hex) {
+                const rgb = hexToRgb(hex);
+                return rgb ? rgbToHsv(rgb.r, rgb.g, rgb.b) : null;
+            }
+
+            function hsvToHex(h, s, v) {
+                const rgb = hsvToRgb(h, s, v);
+                return `#${((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1)}`;
+            }
+
+            // Preset color arrays
+            const colorPresets = {
+                rainbow: [
+                    { h: 0, s: 255, v: 255 },    // Red
+                    { h: 42, s: 255, v: 255 },   // Orange  
+                    { h: 64, s: 255, v: 255 },   // Yellow
+                    { h: 85, s: 255, v: 255 },   // Green
+                    { h: 128, s: 255, v: 255 },  // Cyan
+                    { h: 170, s: 255, v: 255 },  // Blue
+                    { h: 213, s: 255, v: 255 }   // Purple
+                ],
+                warmCool: [
+                    { h: 0, s: 255, v: 255 },    // Red
+                    { h: 16, s: 255, v: 255 },   // Orange
+                    { h: 43, s: 255, v: 255 },   // Yellow
+                    { h: 128, s: 255, v: 255 },  // Cyan
+                    { h: 170, s: 255, v: 255 },  // Blue
+                    { h: 192, s: 255, v: 255 }   // Purple
+                ],
+                sunset: [
+                    { h: 14, s: 255, v: 255 },   // Deep orange
+                    { h: 25, s: 255, v: 200 },   // Orange
+                    { h: 35, s: 180, v: 255 },   // Light orange
+                    { h: 45, s: 150, v: 255 },   // Yellow-orange
+                    { h: 320, s: 100, v: 180 }   // Pink
+                ],
+                ocean: [
+                    { h: 128, s: 255, v: 255 },  // Cyan
+                    { h: 150, s: 200, v: 255 },  // Light blue
+                    { h: 170, s: 255, v: 255 },  // Blue
+                    { h: 190, s: 180, v: 200 },  // Deep blue
+                    { h: 200, s: 255, v: 150 }   // Navy
+                ],
+                christmas: [
+                    { h: 0, s: 255, v: 255 },    // Red
+                    { h: 85, s: 255, v: 255 },   // Green
+                    { h: 0, s: 255, v: 255 },    // Red
+                    { h: 85, s: 255, v: 255 }    // Green
+                ]
+            };
+
+            // Color array management
+            function addColorToArray(color = null) {
+                if (!color) {
+                    // Default to red if no color specified
+                    color = { h: 0, s: 255, v: 255 };
+                }
+                colorCycleArray.push(color);
+                renderColorList();
+            }
+
+            function removeColorFromArray(index) {
+                if (index >= 0 && index < colorCycleArray.length) {
+                    colorCycleArray.splice(index, 1);
+                    renderColorList();
+                }
+            }
+
+            function updateColorInArray(index, color) {
+                if (index >= 0 && index < colorCycleArray.length) {
+                    colorCycleArray[index] = color;
+                    renderColorList();
+                }
+            }
+
+            function renderColorList() {
+                const colorList = document.getElementById('colorList');
+                colorList.innerHTML = '';
+                
+                colorCycleArray.forEach((color, index) => {
+                    const rgb = hsvToRgb(color.h, color.s, color.v);
+                    const hex = hsvToHex(color.h, color.s, color.v);
+                    
+                    const colorItem = document.createElement('div');
+                    colorItem.className = 'color-item';
+                    
+                    colorItem.innerHTML = `
+                        <div class="color-preview" style="background-color: ${hex};"></div>
+                        <div class="color-info">
+                            <div>HSV: ${color.h}, ${color.s}, ${color.v}</div>
+                            <div>RGB: ${rgb.r}, ${rgb.g}, ${rgb.b}</div>
+                        </div>
+                        <div class="color-controls">
+                            <input type="color" class="color-picker-input" value="${hex}" data-index="${index}">
+                            <button class="btn remove" data-index="${index}">✕</button>
+                        </div>
+                    `;
+                    
+                    colorList.appendChild(colorItem);
+                });
+                
+                // Add event listeners to the new elements
+                colorList.querySelectorAll('.color-picker-input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        const hsv = hexToHsv(e.target.value);
+                        if (hsv) {
+                            updateColorInArray(index, hsv);
+                        }
+                    });
+                });
+                
+                colorList.querySelectorAll('.btn.remove').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        removeColorFromArray(index);
+                    });
+                });
+            }
+
+            function loadPreset(presetName) {
+                if (colorPresets[presetName]) {
+                    colorCycleArray = [...colorPresets[presetName]];
+                    renderColorList();
+                }
+            }
+
+            function sendColorCycleCommand() {
+                if (!isConnected()) {
+                    showStatus('Not connected to device', 'error');
+                    return;
+                }
+
+                if (!colorCycleEnabled || colorCycleArray.length === 0) {
+                    // Disable color cycling
+                    sendCommand('COLORCYCLE:OFF');
+                    return;
+                }
+
+                // Build color array command
+                const colorStrings = colorCycleArray.map(color => 
+                    `H${color.h},S${color.s},B${color.v}`
+                );
+                const colorCommand = `COLORCYCLE:COLORS:${colorStrings.join(';')}`;
+                
+                // Send the command
+                sendCommand(colorCommand);
+                
+                // Send speed setting
+                sendCommand(`COLORCYCLE:SPEED:${colorCycleSpeed}`);
+                
+                // Send smooth transitions setting
+                sendCommand(`COLORCYCLE:SMOOTH:${smoothTransitions ? 'ON' : 'OFF'}`);
+                
+                showStatus(`Color cycling ${colorCycleEnabled ? 'enabled' : 'disabled'} with ${colorCycleArray.length} colors`, 'connected');
+            }
             
             // Speed presets
             document.querySelectorAll('.speed-preset').forEach(btn => {
@@ -2852,6 +3206,57 @@
         document.getElementById('syncRightTapperBtn').addEventListener('click', () => syncTapper('right'));
         document.getElementById('testLeftTapperBtn').addEventListener('click', () => testTapper('left'));
         document.getElementById('testRightTapperBtn').addEventListener('click', () => testTapper('right'));
+
+        // Color cycling event listeners
+        document.getElementById('colorCyclingEnabled').addEventListener('click', () => {
+            colorCycleEnabled = true;
+            document.getElementById('colorCyclingEnabled').classList.add('active');
+            document.getElementById('colorCyclingDisabled').classList.remove('active');
+        });
+
+        document.getElementById('colorCyclingDisabled').addEventListener('click', () => {
+            colorCycleEnabled = false;
+            document.getElementById('colorCyclingEnabled').classList.remove('active');
+            document.getElementById('colorCyclingDisabled').classList.add('active');
+        });
+
+        document.getElementById('cyclingSpeedSlider').addEventListener('input', (e) => {
+            colorCycleSpeed = parseFloat(e.target.value);
+            document.getElementById('cyclingSpeedValue').textContent = colorCycleSpeed.toFixed(1) + 'x';
+        });
+
+        document.getElementById('smoothTransitionsCheckbox').addEventListener('change', (e) => {
+            smoothTransitions = e.target.checked;
+        });
+
+        document.getElementById('addColorBtn').addEventListener('click', () => {
+            addColorToArray();
+        });
+
+        document.getElementById('sendColorCycleBtn').addEventListener('click', () => {
+            sendColorCycleCommand();
+        });
+
+        // Preset button event listeners
+        document.getElementById('presetRainbow').addEventListener('click', () => {
+            loadPreset('rainbow');
+        });
+
+        document.getElementById('presetWarmCool').addEventListener('click', () => {
+            loadPreset('warmCool');
+        });
+
+        document.getElementById('presetSunset').addEventListener('click', () => {
+            loadPreset('sunset');
+        });
+
+        document.getElementById('presetOcean').addEventListener('click', () => {
+            loadPreset('ocean');
+        });
+
+        document.getElementById('presetChristmas').addEventListener('click', () => {
+            loadPreset('christmas');
+        });
 
         // Initialize everything
         setupPreferences();
