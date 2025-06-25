@@ -2052,32 +2052,96 @@
                 }
             };
             
+            // JSON-based gradient definitions
+            const jsonGradients = [
+                {
+                    "name": "Radioactive Heat",
+                    "colors": ["#F7941E", "#72C6EF", "#00A651"]
+                },
+                {
+                    "name": "The Sky And The Sea", 
+                    "colors": ["#F7941E", "#004E8F"]
+                },
+                {
+                    "name": "Meteor Trail",
+                    "colors": ["#00FF00", "#FF0000"]
+                },
+                {
+                    "name": "Fairy Dust",
+                    "colors": ["#0080FF", "#8000FF"]
+                },
+                {
+                    "name": "Ocean Depths",
+                    "colors": ["#00FFFF", "#000080", "#4B0082"]
+                },
+                {
+                    "name": "Sunset Glow",
+                    "colors": ["#FF0000", "#FF8000", "#FFFF00"]
+                },
+                {
+                    "name": "Forest Fire",
+                    "colors": ["#FF4500", "#FFD700", "#00FF00"]
+                },
+                {
+                    "name": "Purple Haze",
+                    "colors": ["#8A2BE2", "#FF1493"]
+                },
+                {
+                    "name": "Arctic Ice",
+                    "colors": ["#E0FFFF", "#4682B4", "#191970"]
+                },
+                {
+                    "name": "Lava Flow",
+                    "colors": ["#FF0000", "#FF4500", "#FFA500"]
+                }
+            ];
+
+            window.applyJsonGradient = (gradientName) => {
+                console.log('Applying JSON gradient:', gradientName);
+                
+                const gradient = jsonGradients.find(g => g.name === gradientName);
+                if (!gradient) {
+                    console.error('Gradient not found:', gradientName);
+                    return;
+                }
+                
+                // Convert hex colors to RGB
+                const rgbColors = gradient.colors.map(hex => hexToRgb(hex));
+                
+                let gradientCommand;
+                
+                if (rgbColors.length === 2) {
+                    // Two-color gradient
+                    const start = rgbColors[0];
+                    const end = rgbColors[1];
+                    gradientCommand = `TRAIL:GRADIENT,S${start.r},${start.g},${start.b},E${end.r},${end.g},${end.b}`;
+                } else if (rgbColors.length >= 3) {
+                    // Three-color gradient (use first, middle, and last)
+                    const start = rgbColors[0];
+                    const middle = rgbColors[1];
+                    const end = rgbColors[rgbColors.length - 1];
+                    gradientCommand = `TRAIL:GRADIENT,S${start.r},${start.g},${start.b},M${middle.r},${middle.g},${middle.b},0.5,E${end.r},${end.g},${end.b}`;
+                }
+                
+                if (gradientCommand) {
+                    sendCommand(gradientCommand);
+                    console.log('JSON gradient command:', gradientCommand);
+                }
+            };
+
+            // Legacy preset function for backward compatibility
             window.applyGradientPreset = (preset) => {
-                console.log('Applying gradient preset:', preset);
-                
-                // Update UI
-                document.querySelectorAll('[data-gradient-preset]').forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`[data-gradient-preset="${preset}"]`)?.classList.add('active');
-                
-                // Define preset gradients
-                const presets = {
-                    meteor: { start: '0,255,0', end: '255,0,0' }, // Green to red
-                    fairy: { start: '0,128,255', end: '128,0,255' }, // Blue to purple  
-                    'warm-cool': { start: '255,100,0', middle: '255,255,0,0.3', end: '0,128,255' }, // Orange->Yellow->Blue
-                    sunset: { start: '255,0,0', middle: '255,128,0,0.5', end: '255,255,0' } // Red->Orange->Yellow
+                // Map old presets to JSON gradients
+                const presetMap = {
+                    'meteor': 'Meteor Trail',
+                    'fairy': 'Fairy Dust', 
+                    'warm-cool': 'Ocean Depths',
+                    'sunset': 'Sunset Glow'
                 };
                 
-                if (presets[preset]) {
-                    const p = presets[preset];
-                    let gradientCommand = `TRAIL:GRADIENT,S${p.start},E${p.end}`;
-                    
-                    // Add middle color if defined
-                    if (p.middle) {
-                        gradientCommand = `TRAIL:GRADIENT,S${p.start},M${p.middle},E${p.end}`;
-                    }
-                    
-                    sendCommand(gradientCommand);
-                    console.log('Gradient preset command:', gradientCommand);
+                const jsonName = presetMap[preset];
+                if (jsonName) {
+                    applyJsonGradient(jsonName);
                 }
             };
             
@@ -2236,13 +2300,48 @@
                 });
             });
             
-            // Gradient preset buttons
+            // Initialize JSON gradient dropdown
+            function initializeJsonGradientDropdown() {
+                const dropdown = document.getElementById('jsonGradientDropdown');
+                const applyBtn = document.getElementById('applyJsonGradientBtn');
+                
+                if (dropdown && jsonGradients) {
+                    // Clear existing options except first
+                    dropdown.innerHTML = '<option value="">Choose a gradient...</option>';
+                    
+                    // Add JSON gradients to dropdown
+                    jsonGradients.forEach(gradient => {
+                        const option = document.createElement('option');
+                        option.value = gradient.name;
+                        option.textContent = gradient.name;
+                        dropdown.appendChild(option);
+                    });
+                    
+                    // Apply button handler
+                    if (applyBtn) {
+                        applyBtn.addEventListener('click', () => {
+                            const selectedGradient = dropdown.value;
+                            if (selectedGradient) {
+                                applyJsonGradient(selectedGradient);
+                                console.log('Applied JSON gradient:', selectedGradient);
+                            } else {
+                                alert('Please select a gradient first');
+                            }
+                        });
+                    }
+                }
+            }
+
+            // Gradient preset buttons (legacy support)
             document.querySelectorAll('[data-gradient-preset]').forEach(button => {
                 button.addEventListener('click', () => {
                     const preset = button.dataset.gradientPreset;
                     applyGradientPreset(preset);
                 });
             });
+            
+            // Initialize JSON gradient dropdown
+            initializeJsonGradientDropdown();
             
             // Trail duration slider
             const trailDurationSlider = document.getElementById('trailDurationSlider');
