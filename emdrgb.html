@@ -3402,10 +3402,17 @@
         // ==============================================
 
         function setupColorTestingEvents() {
+            console.log('🔧 Setting up color testing events...');
+            
             // Color preset buttons
-            document.querySelectorAll('[data-test-color]').forEach(btn => {
+            const colorButtons = document.querySelectorAll('[data-test-color]');
+            console.log('📌 Found', colorButtons.length, 'color buttons');
+            
+            colorButtons.forEach(btn => {
+                console.log('📌 Setting up event listener for color button:', btn.dataset.testColor);
                 btn.addEventListener('click', () => {
                     const color = btn.dataset.testColor;
+                    console.log('🎨 Color preset button clicked:', color);
                     applyTestColor(color);
                 });
             });
@@ -3425,10 +3432,14 @@
 
             // Apply custom color button
             document.getElementById('applyCustomColorBtn').addEventListener('click', () => {
+                console.log('🎨 Apply custom color button clicked');
                 const hex = document.getElementById('customColorHex').value;
+                console.log('🎨 Custom hex value:', hex);
                 if (isValidHex(hex)) {
+                    console.log('🎨 Hex is valid, calling applyTestColor');
                     applyTestColor(hex);
                 } else {
+                    console.log('❌ Invalid hex color code:', hex);
                     showStatus('Invalid hex color code', 'error');
                 }
             });
@@ -3467,12 +3478,16 @@
         }
 
         function applyTestColor(hex) {
+            console.log('🎨 applyTestColor called with:', hex);
+            
             if (!ledCharacteristic || !isConnected) {
+                console.log('❌ Not connected to device');
                 showStatus('Not connected to device', 'error');
                 return;
             }
 
             if (!isValidHex(hex)) {
+                console.log('❌ Invalid hex format:', hex);
                 showStatus('Invalid color format', 'error');
                 return;
             }
