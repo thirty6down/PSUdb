@@ -1336,6 +1336,67 @@
                     <button class="btn party-btn" id="partyBtn">🌈 Rainbow Party Mode</button>
                 </div>
 
+                <!-- Color Testing Section -->
+                <div class="pref-section">
+                    <div class="pref-title">🎨 Color Testing</div>
+                    <div style="margin-bottom: 15px; font-size: 14px; color: #aaa;">
+                        Light up the entire LED bar with any color for testing
+                    </div>
+                    
+                    <!-- Color Presets -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #ccc; font-weight: bold;">Quick Color Presets</div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
+                            <button class="btn secondary" data-test-color="#FF0000" style="background: #FF0000; color: white;">🔴 Red</button>
+                            <button class="btn secondary" data-test-color="#00FF00" style="background: #00FF00; color: black;">🟢 Green</button>
+                            <button class="btn secondary" data-test-color="#0000FF" style="background: #0000FF; color: white;">🔵 Blue</button>
+                            <button class="btn secondary" data-test-color="#FFFF00" style="background: #FFFF00; color: black;">🟡 Yellow</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
+                            <button class="btn secondary" data-test-color="#FF8000" style="background: #FF8000; color: black;">🟠 Orange</button>
+                            <button class="btn secondary" data-test-color="#8000FF" style="background: #8000FF; color: white;">🟣 Purple</button>
+                            <button class="btn secondary" data-test-color="#00FFFF" style="background: #00FFFF; color: black;">🟦 Cyan</button>
+                            <button class="btn secondary" data-test-color="#FF00FF" style="background: #FF00FF; color: white;">🌺 Pink</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                            <button class="btn secondary" data-test-color="#FFFFFF" style="background: #FFFFFF; color: black; border: 1px solid #666;">⚪ White</button>
+                            <button class="btn secondary" data-test-color="#808080" style="background: #808080; color: white;">⚫ Gray</button>
+                            <button class="btn secondary" data-test-color="#FFA500" style="background: #FFA500; color: black;">🧡 Warm</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Color Picker -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #ccc; font-weight: bold;">Custom Color</div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <input type="color" id="customColorPicker" value="#FF0000" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
+                            <input type="text" id="customColorHex" value="#FF0000" placeholder="#RRGGBB" 
+                                   style="flex: 1; padding: 8px 12px; background: #333; border: 1px solid #555; border-radius: 8px; color: white; font-family: monospace;">
+                            <button class="btn primary" id="applyCustomColorBtn">Apply</button>
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            Use the color picker or enter a hex code (e.g., #FF5500)
+                        </div>
+                    </div>
+                    
+                    <!-- Brightness Control -->
+                    <div style="margin-bottom: 20px;">
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Test Brightness</span>
+                                <span id="testBrightnessValue">100%</span>
+                            </div>
+                            <input type="range" class="slider" id="testBrightnessSlider" min="1" max="100" value="100">
+                        </div>
+                    </div>
+                    
+                    <!-- Control Buttons -->
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn primary" id="rainbowTestBtn" style="flex: 1;">🌈 Rainbow Test</button>
+                        <button class="btn secondary" id="clearTestBtn" style="flex: 1;">⬛ Clear LEDs</button>
+                    </div>
+                </div>
+
                 <button class="btn danger" id="turnOffBtn">Turn Off LEDs</button>
             </div>
         </div>
@@ -2755,10 +2816,19 @@
 
 
         function updateSpeedDisplay() {
-            document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
-            document.getElementById('speedSliderValue').textContent = settings.speed.toFixed(1) + ' Hz';
-            document.getElementById('speedSlider').value = settings.speed;
+            // Update speed value display (the actual element that exists)
+            const speedValueElement = document.getElementById('speedValue');
+            if (speedValueElement) {
+                speedValueElement.textContent = settings.speed.toFixed(1) + ' Hz';
+            }
+            
+            // Update speed slider
+            const speedSliderElement = document.getElementById('speedSlider');
+            if (speedSliderElement) {
+                speedSliderElement.value = settings.speed;
+            }
 
+            // Update speed preset buttons
             document.querySelectorAll('.speed-preset').forEach(btn => {
                 btn.classList.toggle('active', parseFloat(btn.dataset.speed) === settings.speed);
             });
@@ -3290,6 +3360,157 @@
             }, 1000);
         };
 
+        // Simple test function with known good colors
+        window.testSimpleColors = function() {
+            console.log('Testing simple color cycling...');
+            
+            if (!ledCharacteristic || !isConnected) {
+                console.log('❌ Not connected to device');
+                return;
+            }
+
+            // Test with simple red and green
+            console.log('Sending simple red/green color cycle...');
+            sendCommand('COLORCYCLE:COLORS:H0,S255,B255;H85,S255,B255');
+            
+            setTimeout(() => {
+                sendCommand('COLORCYCLE:SPEED:1.0');
+            }, 200);
+            
+            setTimeout(() => {
+                sendCommand('COLORCYCLE:STATUS');
+            }, 400);
+        };
+
+        // ==============================================
+        // COLOR TESTING FUNCTIONS
+        // ==============================================
+
+        function setupColorTestingEvents() {
+            // Color preset buttons
+            document.querySelectorAll('[data-test-color]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const color = btn.dataset.testColor;
+                    applyTestColor(color);
+                });
+            });
+
+            // Custom color picker
+            document.getElementById('customColorPicker').addEventListener('change', (e) => {
+                document.getElementById('customColorHex').value = e.target.value;
+            });
+
+            // Custom color hex input
+            document.getElementById('customColorHex').addEventListener('input', (e) => {
+                const hex = e.target.value;
+                if (isValidHex(hex)) {
+                    document.getElementById('customColorPicker').value = hex;
+                }
+            });
+
+            // Apply custom color button
+            document.getElementById('applyCustomColorBtn').addEventListener('click', () => {
+                const hex = document.getElementById('customColorHex').value;
+                if (isValidHex(hex)) {
+                    applyTestColor(hex);
+                } else {
+                    showStatus('Invalid hex color code', 'error');
+                }
+            });
+
+            // Test brightness slider
+            document.getElementById('testBrightnessSlider').addEventListener('input', (e) => {
+                const brightness = parseInt(e.target.value);
+                document.getElementById('testBrightnessValue').textContent = brightness + '%';
+                
+                // Apply brightness immediately if we have a connection
+                if (ledCharacteristic && isConnected) {
+                    const brightnessValue = Math.round((brightness / 100) * 255);
+                    sendCommand(`B:${brightnessValue}`);
+                }
+            });
+
+            // Rainbow test button
+            document.getElementById('rainbowTestBtn').addEventListener('click', () => {
+                if (!ledCharacteristic || !isConnected) {
+                    showStatus('Not connected to device', 'error');
+                    return;
+                }
+                sendCommand('RAINBOW_TEST');
+                showStatus('Rainbow test mode activated', 'connected');
+            });
+
+            // Clear LEDs button
+            document.getElementById('clearTestBtn').addEventListener('click', () => {
+                if (!ledCharacteristic || !isConnected) {
+                    showStatus('Not connected to device', 'error');
+                    return;
+                }
+                sendCommand('CLEAR_TEST');
+                showStatus('LEDs cleared', 'connected');
+            });
+        }
+
+        function applyTestColor(hex) {
+            if (!ledCharacteristic || !isConnected) {
+                showStatus('Not connected to device', 'error');
+                return;
+            }
+
+            if (!isValidHex(hex)) {
+                showStatus('Invalid color format', 'error');
+                return;
+            }
+
+            // Convert hex to RGB
+            const rgb = hexToRgb(hex);
+            if (!rgb) {
+                showStatus('Failed to parse color', 'error');
+                return;
+            }
+
+            // Apply test brightness
+            const brightness = parseInt(document.getElementById('testBrightnessSlider').value);
+            const r = Math.round((rgb.r * brightness) / 100);
+            const g = Math.round((rgb.g * brightness) / 100);
+            const b = Math.round((rgb.b * brightness) / 100);
+
+            // Send command to device
+            const command = `SOLIDCOLOR:R${r},G${g},B${b}`;
+            console.log('Sending color test command:', command);
+            sendCommand(command);
+            
+            showStatus(`Applied color ${hex} at ${brightness}% brightness`, 'connected');
+        }
+
+        function isValidHex(hex) {
+            return /^#[0-9A-F]{6}$/i.test(hex);
+        }
+
+        // Debug function for testing color commands
+        window.testColorCommands = function() {
+            console.log('Testing color commands...');
+            
+            if (!ledCharacteristic || !isConnected) {
+                console.log('❌ Not connected to device');
+                return;
+            }
+            
+            // Test red color
+            console.log('Testing red color...');
+            sendCommand('SOLIDCOLOR:R255,G0,B0');
+            
+            setTimeout(() => {
+                console.log('Testing rainbow...');
+                sendCommand('RAINBOW_TEST');
+            }, 2000);
+            
+            setTimeout(() => {
+                console.log('Clearing LEDs...');
+                sendCommand('CLEAR_TEST');
+            }, 5000);
+        };
+
         // Initialize everything
         setupPreferences();
         updateSpeedDisplay();
@@ -3313,6 +3534,9 @@
         document.getElementById('colorCyclingDisabled').classList.add('active');
         document.getElementById('colorCyclingEnabled').classList.remove('active');
         colorCycleEnabled = false;
+
+        // Color Testing Event Listeners
+        setupColorTestingEvents();
 
         // Initialize movement mode display
         const easingContainer = document.getElementById('easingIntensityContainer');
