@@ -2315,7 +2315,12 @@
                 trailDurationSlider.addEventListener('input', () => {
                     const duration = parseFloat(trailDurationSlider.value);
                     trailDurationValue.textContent = duration.toFixed(1) + 's';
-                    sendCommand(`TRAIL_DURATION:${duration}`);
+                    
+                    // Update the trail settings and resend the complete trail command
+                    newTrailSettings.duration = duration;
+                    if (newTrailSettings.enabled) {
+                        sendNewTrailSettings();
+                    }
                 });
             }
             
@@ -2327,7 +2332,12 @@
                     const brightness = parseInt(trailBrightnessSlider.value);
                     trailBrightnessValue.textContent = brightness + '%';
                     const firmwareBrightness = Math.round((brightness / 100) * 255);
-                    sendCommand(`TRAIL_BRIGHTNESS:${firmwareBrightness}`);
+                    
+                    // Update the trail settings and resend the complete trail command
+                    newTrailSettings.brightness = firmwareBrightness;
+                    if (newTrailSettings.enabled) {
+                        sendNewTrailSettings();
+                    }
                 });
             }
             
