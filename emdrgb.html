@@ -2303,7 +2303,11 @@
             });
             
             // Initialize JSON gradient dropdown
-            function initializeJsonGradientDropdown() {
+            initializeJsonGradientDropdown();
+        }
+
+        // Initialize JSON gradient dropdown (moved to global scope)
+        function initializeJsonGradientDropdown() {
                 console.log('Initializing JSON gradient dropdown...');
                 const dropdown = document.getElementById('jsonGradientDropdown');
                 const applyBtn = document.getElementById('applyJsonGradientBtn');
@@ -2344,112 +2348,8 @@
                     console.log('Dropdown found:', !!dropdown);
                     console.log('Gradients defined:', !!jsonGradients);
                 }
-            }
-
-            // Gradient preset buttons (legacy support)
-            document.querySelectorAll('[data-gradient-preset]').forEach(button => {
-                button.addEventListener('click', () => {
-                    const preset = button.dataset.gradientPreset;
-                    applyGradientPreset(preset);
-                });
-            });
-            
-            // Trail duration slider
-            const trailDurationSlider = document.getElementById('trailDurationSlider');
-            const trailDurationValue = document.getElementById('trailDurationValue');
-            if (trailDurationSlider && trailDurationValue) {
-                trailDurationSlider.addEventListener('input', () => {
-                    const duration = parseFloat(trailDurationSlider.value);
-                    trailDurationValue.textContent = duration.toFixed(1) + 's';
-                    sendCommand(`TRAIL_DURATION:${duration}`);
-                });
-            }
-            
-            // Trail brightness slider
-            const trailBrightnessSlider = document.getElementById('trailBrightnessSlider');
-            const trailBrightnessValue = document.getElementById('trailBrightnessValue');
-            if (trailBrightnessSlider && trailBrightnessValue) {
-                trailBrightnessSlider.addEventListener('input', () => {
-                    const brightness = parseInt(trailBrightnessSlider.value);
-                    trailBrightnessValue.textContent = brightness + '%';
-                    const firmwareBrightness = Math.round((brightness / 100) * 255);
-                    sendCommand(`TRAIL_BRIGHTNESS:${firmwareBrightness}`);
-                });
-            }
-            
-            // Middle position slider for advanced gradients
-            const middlePosition = document.getElementById('middlePosition');
-            const middlePositionValue = document.getElementById('middlePositionValue');
-            if (middlePosition && middlePositionValue) {
-                middlePosition.addEventListener('input', () => {
-                    const pos = parseFloat(middlePosition.value);
-                    middlePositionValue.textContent = Math.round(pos * 100) + '%';
-                });
-            }
-            
-            // Initialize gradient section visibility
-            const gradientSection = document.getElementById('gradientPresetSection');
-            if (gradientSection) {
-                gradientSection.style.display = 'block'; // Temporarily visible for debugging
-            }
-            
-            // OLD TRAIL SYSTEM HANDLERS REMOVED - Now using universal trail system above
-
-            const pulseSizeSlider = document.getElementById('pulseSizeSlider');
-            pulseSizeSlider.addEventListener('input', () => {
-                settings.pulseSize = parseInt(pulseSizeSlider.value);
-                const cm = Math.round(settings.pulseSize * 1.67);
-                document.getElementById('pulseSizeValue').textContent = cm + ' cm';
-            });
-
-            pulseSizeSlider.addEventListener('change', () => {
-                applySinglePulseSetting('width', settings.pulseSize);
-            });
-
-            const activeAreaSlider = document.getElementById('activeAreaSlider');
-            activeAreaSlider.addEventListener('input', () => {
-                settings.activeArea = parseInt(activeAreaSlider.value);
-                document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
-            });
-
-            activeAreaSlider.addEventListener('change', () => {
-                applySinglePulseSetting('area', settings.activeArea);
-            });
-
-            // Tone prediction timing slider
-            const tonePredictionSlider = document.getElementById('tonePredictionSlider');
-            tonePredictionSlider.addEventListener('input', () => {
-                const predictionMs = parseInt(tonePredictionSlider.value);
-                document.getElementById('tonePredictionValue').textContent = predictionMs + 'ms';
-            });
-
-            tonePredictionSlider.addEventListener('change', () => {
-                const predictionMs = parseInt(tonePredictionSlider.value);
-                const command = `T:${predictionMs}`;
-                sendCommand(command);
-                console.log('Audio delay compensation set to:', predictionMs + 'ms');
-            });
-
-            // Audio timing preset buttons
-            document.querySelectorAll('[data-prediction]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const predictionMs = parseInt(btn.dataset.prediction);
-                    
-                    // Update slider and display
-                    document.getElementById('tonePredictionSlider').value = predictionMs;
-                    document.getElementById('tonePredictionValue').textContent = predictionMs + 'ms';
-                    
-                    // Update visual state
-                    document.querySelectorAll('[data-prediction]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Send command immediately for real-time adjustment
-                    const command = `T:${predictionMs}`;
-                    sendCommand(command);
-                    console.log('Audio delay preset applied:', predictionMs + 'ms');
-                });
-            });
         }
+
 
         function updateSpeedDisplay() {
             document.getElementById('speedDisplay').textContent = currentSpeed.toFixed(1) + ' Hz';
