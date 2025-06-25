@@ -2021,38 +2021,7 @@
             
             // Universal Trail System Functions
             
-            window.applyTrailMode = (mode) => {
-                console.log('Applying trail mode:', mode);
-                
-                // Update UI
-                document.querySelectorAll('[data-trail-mode]').forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`[data-trail-mode="${mode}"]`).classList.add('active');
-                
-                // Show/hide gradient section based on mode
-                const gradientSection = document.getElementById('gradientPresetSection');
-                if (gradientSection) {
-                    gradientSection.style.display = (mode === 'gradient') ? 'block' : 'none';
-                }
-                
-                // Send trail command
-                switch (mode) {
-                    case 'off':
-                        sendCommand('TRAIL:OFF');
-                        break;
-                    case 'solid':
-                        sendCommand('TRAIL:SOLID');
-                        break;
-                    case 'rainbow':
-                        sendCommand('TRAIL:RAINBOW');
-                        break;
-                    case 'gradient':
-                        // Default to meteor gradient if no specific gradient is set
-                        applyGradientPreset('meteor');
-                        break;
-                }
-            };
-            
-            // JSON-based gradient definitions
+            // JSON-based gradient definitions (global scope)
             const jsonGradients = [
                 {
                     "name": "Radioactive Heat",
@@ -2095,6 +2064,37 @@
                     "colors": ["#FF0000", "#FF4500", "#FFA500"]
                 }
             ];
+
+            window.applyTrailMode = (mode) => {
+                console.log('Applying trail mode:', mode);
+                
+                // Update UI
+                document.querySelectorAll('[data-trail-mode]').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-trail-mode="${mode}"]`).classList.add('active');
+                
+                // Show/hide gradient section based on mode
+                const gradientSection = document.getElementById('gradientPresetSection');
+                if (gradientSection) {
+                    gradientSection.style.display = (mode === 'gradient') ? 'block' : 'none';
+                }
+                
+                // Send trail command
+                switch (mode) {
+                    case 'off':
+                        sendCommand('TRAIL:OFF');
+                        break;
+                    case 'solid':
+                        sendCommand('TRAIL:SOLID');
+                        break;
+                    case 'rainbow':
+                        sendCommand('TRAIL:RAINBOW');
+                        break;
+                    case 'gradient':
+                        // Default to meteor gradient if no specific gradient is set
+                        applyGradientPreset('meteor');
+                        break;
+                }
+            };
 
             window.applyJsonGradient = (gradientName) => {
                 console.log('Applying JSON gradient:', gradientName);
@@ -2302,20 +2302,28 @@
             
             // Initialize JSON gradient dropdown
             function initializeJsonGradientDropdown() {
+                console.log('Initializing JSON gradient dropdown...');
                 const dropdown = document.getElementById('jsonGradientDropdown');
                 const applyBtn = document.getElementById('applyJsonGradientBtn');
+                
+                console.log('Dropdown element:', dropdown);
+                console.log('Apply button element:', applyBtn);
+                console.log('JSON gradients available:', jsonGradients?.length || 0);
                 
                 if (dropdown && jsonGradients) {
                     // Clear existing options except first
                     dropdown.innerHTML = '<option value="">Choose a gradient...</option>';
                     
                     // Add JSON gradients to dropdown
-                    jsonGradients.forEach(gradient => {
+                    jsonGradients.forEach((gradient, index) => {
                         const option = document.createElement('option');
                         option.value = gradient.name;
                         option.textContent = gradient.name;
                         dropdown.appendChild(option);
+                        console.log(`Added gradient ${index + 1}: ${gradient.name}`);
                     });
+                    
+                    console.log('✅ JSON gradient dropdown populated with', jsonGradients.length, 'gradients');
                     
                     // Apply button handler
                     if (applyBtn) {
@@ -2329,6 +2337,10 @@
                             }
                         });
                     }
+                } else {
+                    console.error('❌ Failed to initialize dropdown - missing elements or gradients');
+                    console.log('Dropdown found:', !!dropdown);
+                    console.log('Gradients defined:', !!jsonGradients);
                 }
             }
 
@@ -2961,7 +2973,16 @@
         });
 
         // Initialize the interface on page load
-        initializeInterface();
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeInterface();
+        });
+        
+        // Also call immediately in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeInterface);
+        } else {
+            initializeInterface();
+        }
     </script>
 </body>
 </html>
