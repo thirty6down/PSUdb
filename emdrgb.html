@@ -1391,9 +1391,24 @@
                     </div>
                     
                     <!-- Control Buttons -->
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                         <button class="btn primary" id="rainbowTestBtn" style="flex: 1;">🌈 Rainbow Test</button>
                         <button class="btn secondary" id="clearTestBtn" style="flex: 1;">⬛ Clear LEDs</button>
+                    </div>
+                    
+                    <!-- Debug Buttons -->
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
+                        <div style="font-size: 14px; margin-bottom: 10px; color: #ccc; font-weight: bold;">🔧 Debug Commands</div>
+                        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                            <button class="btn secondary" onclick="testRed()" style="flex: 1; font-size: 12px;">TEST_RED</button>
+                            <button class="btn secondary" onclick="testGreen()" style="flex: 1; font-size: 12px;">TEST_GREEN</button>
+                            <button class="btn secondary" onclick="testClear()" style="flex: 1; font-size: 12px;">CLEAR_TEST</button>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn secondary" onclick="sendCommand('SOLIDCOLOR:R255,G0,B0')" style="flex: 1; font-size: 12px;">Full Red</button>
+                            <button class="btn secondary" onclick="sendCommand('SOLIDCOLOR:R0,G255,B0')" style="flex: 1; font-size: 12px;">Full Green</button>
+                            <button class="btn secondary" onclick="sendCommand('SOLIDCOLOR:R0,G0,B255')" style="flex: 1; font-size: 12px;">Full Blue</button>
+                        </div>
                     </div>
                 </div>
 
@@ -3475,6 +3490,18 @@
             const g = Math.round((rgb.g * brightness) / 100);
             const b = Math.round((rgb.b * brightness) / 100);
 
+            // Debug logging
+            console.log('🎨 Color test debug:');
+            console.log(`  Original RGB: (${rgb.r}, ${rgb.g}, ${rgb.b})`);
+            console.log(`  Brightness: ${brightness}%`);
+            console.log(`  Final RGB: (${r}, ${g}, ${b})`);
+            
+            // Check for zero values that might cause black LEDs
+            if (r === 0 && g === 0 && b === 0) {
+                console.warn('⚠️ All RGB values are 0 - this will result in black LEDs');
+                console.log('💡 Try increasing brightness or using a brighter color');
+            }
+
             // Send command to device
             const command = `SOLIDCOLOR:R${r},G${g},B${b}`;
             console.log('Sending color test command:', command);
@@ -3522,11 +3549,30 @@
         window.testRed = function() {
             console.log('Testing immediate red...');
             if (ledCharacteristic && isConnected) {
-                sendCommand('SOLIDCOLOR:R255,G0,B0');
+                sendCommand('TEST_RED');  // Simple command first
             } else {
                 console.log('Not connected');
             }
         };
+
+        window.testGreen = function() {
+            console.log('Testing immediate green...');
+            if (ledCharacteristic && isConnected) {
+                sendCommand('TEST_GREEN');
+            } else {
+                console.log('Not connected');
+            }
+        };
+
+        window.testClear = function() {
+            console.log('Testing immediate clear...');
+            if (ledCharacteristic && isConnected) {
+                sendCommand('CLEAR_TEST');
+            } else {
+                console.log('Not connected');
+            }
+        };
+
 
         // Initialize everything
         setupPreferences();
