@@ -3308,7 +3308,71 @@
         updateTrailColorSelection();
 
         // Initialize displays
+        cyclesValue.textContent = targetCycles;
+        timeValue.textContent = formatTime(targetTimeSeconds);
+        document.getElementById('pulseSizeValue').textContent = Math.round(settings.pulseSize * 1.67) + ' cm';
+        document.getElementById('activeAreaValue').textContent = settings.activeArea + ' cm';
+        document.getElementById('trailDurationValue').textContent = settings.trailDuration.toFixed(1) + 's';
         
+        // Initialize tapper status
+        showTapperStatus();
+
+        // Initialize trail UI
+        updateTrailEnabledUI();
+
+        // Initialize color cycling UI
+        document.getElementById('colorCyclingDisabled').classList.add('active');
+        document.getElementById('colorCyclingEnabled').classList.remove('active');
+        colorCycleEnabled = false;
+        
+        // Initialize color array with empty state
+        renderColorList();
+
+        // Color Testing Setup
+        setupColorSync();
+
+        // Initialize movement mode display
+        const easingContainer = document.getElementById('easingIntensityContainer');
+        if (movementSettings.mode === 'constant') {
+            easingContainer.style.display = 'none';
+        }
+
+
+        // Color selection update functions
+        function updateTrailColorSelection() {
+            document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
+                option.classList.remove('active');
+                if (parseInt(option.dataset.hue) === newTrailSettings.color) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        function updatePulseColorSelection() {
+            document.querySelectorAll('.color-grid:not(#trailColorGrid) .color-option').forEach(option => {
+                option.classList.remove('active');
+                if (parseInt(option.dataset.hue) === settings.pulseHue) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize the interface
+        function initializeInterface() {
+            updateTrailEnabledUI();
+            updateTrailModeUI();
+            updateTrailColorSelection();
+            updatePulseColorSelection();
+            initializeJsonGradientDropdown();
+        }
+
+        // Initialize audio timing preset display (mark 80ms as active by default)
+        document.querySelectorAll('[data-prediction]').forEach(btn => {
+            if (btn.dataset.prediction === '80') {
+                btn.classList.add('active');
+            }
+        });
+
         // ==============================================
         // GLOBAL COLOR CYCLING SYSTEM (moved from setupPreferences)
         // ==============================================
@@ -3549,78 +3613,6 @@
             
             updateStatus(`Color cycling enabled with ${colorCycleArray.length} colors at ${colorCycleSpeed}x speed`, 'connected');
         }
-
-        // Initialize displays (moved from loose code)
-        const cyclesValue = document.getElementById('cyclesValue');
-        const timeValue = document.getElementById('timeValue');
-        if (cyclesValue) cyclesValue.textContent = targetCycles;
-        if (timeValue) timeValue.textContent = formatTime(targetTimeSeconds);
-        
-        const pulseSizeValue = document.getElementById('pulseSizeValue');
-        const activeAreaValue = document.getElementById('activeAreaValue');
-        const trailDurationValue = document.getElementById('trailDurationValue');
-        
-        if (pulseSizeValue) pulseSizeValue.textContent = Math.round(settings.pulseSize * 1.67) + ' cm';
-        if (activeAreaValue) activeAreaValue.textContent = settings.activeArea + ' cm';
-        if (trailDurationValue) trailDurationValue.textContent = settings.trailDuration.toFixed(1) + 's';
-        
-        // Initialize tapper status
-        showTapperStatus();
-
-        // Initialize trail UI
-        updateTrailEnabledUI();
-
-        // Initialize color cycling UI
-        document.getElementById('colorCyclingDisabled').classList.add('active');
-        document.getElementById('colorCyclingEnabled').classList.remove('active');
-        colorCycleEnabled = false;
-        
-        // Initialize color array with empty state
-        renderColorList();
-
-        // Color Testing Setup
-        setupColorSync();
-
-        // Initialize movement mode display
-        const easingContainer = document.getElementById('easingIntensityContainer');
-        if (movementSettings.mode === 'constant') {
-            easingContainer.style.display = 'none';
-        }
-
-        // Color selection update functions
-        function updateTrailColorSelection() {
-            document.querySelectorAll('#trailColorGrid .color-option').forEach(option => {
-                option.classList.remove('active');
-                if (parseInt(option.dataset.hue) === newTrailSettings.color) {
-                    option.classList.add('active');
-                }
-            });
-        }
-
-        function updatePulseColorSelection() {
-            document.querySelectorAll('.color-grid:not(#trailColorGrid) .color-option').forEach(option => {
-                option.classList.remove('active');
-                if (parseInt(option.dataset.hue) === settings.pulseHue) {
-                    option.classList.add('active');
-                }
-            });
-        }
-
-        // Initialize the interface
-        function initializeInterface() {
-            updateTrailEnabledUI();
-            updateTrailModeUI();
-            updateTrailColorSelection();
-            updatePulseColorSelection();
-            initializeJsonGradientDropdown();
-        }
-
-        // Initialize audio timing preset display (mark 80ms as active by default)
-        document.querySelectorAll('[data-prediction]').forEach(btn => {
-            if (btn.dataset.prediction === '80') {
-                btn.classList.add('active');
-            }
-        });
 
         // Initialize the interface on page load
         document.addEventListener('DOMContentLoaded', function() {
