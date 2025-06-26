@@ -1175,6 +1175,72 @@
                             </div>
                         </div>
                         
+                        <!-- Spawn Rate Control -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Spawn Rate</div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                                <button class="preset-btn" data-spawn-rate="0.1">🐌 Very Slow</button>
+                                <button class="preset-btn" data-spawn-rate="0.5">🚶 Slow</button>
+                                <button class="preset-btn active" data-spawn-rate="1.0">🏃 Normal</button>
+                                <button class="preset-btn" data-spawn-rate="1.5">🏃‍♂️ Fast</button>
+                                <button class="preset-btn" data-spawn-rate="2.0">🚀 Very Fast</button>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" id="spawnRateSlider" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%;">
+                                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-top: 5px;">
+                                    <span>0.1x</span>
+                                    <span id="spawnRateValue">1.0x</span>
+                                    <span>2.0x</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lifespan Range Control -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Particle Lifespan</div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                                <button class="preset-btn" data-lifespan="200,800">⚡ Short</button>
+                                <button class="preset-btn active" data-lifespan="500,2000">⏱️ Medium</button>
+                                <button class="preset-btn" data-lifespan="1000,4000">🕐 Long</button>
+                                <button class="preset-btn" data-lifespan="2000,6000">🕕 Very Long</button>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; font-size: 12px; color: #ccc; margin-bottom: 3px;">Min (ms)</label>
+                                    <input type="range" id="lifespanMinSlider" min="100" max="3000" step="100" value="500" style="width: 100%;">
+                                    <div style="text-align: center; font-size: 11px; color: #aaa;" id="lifespanMinValue">500ms</div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="display: block; font-size: 12px; color: #ccc; margin-bottom: 3px;">Max (ms)</label>
+                                    <input type="range" id="lifespanMaxSlider" min="500" max="8000" step="100" value="2000" style="width: 100%;">
+                                    <div style="text-align: center; font-size: 11px; color: #aaa;" id="lifespanMaxValue">2000ms</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Multi-Color Mode -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Color Mode</div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                                <button class="preset-btn active" data-color-mode="single">🎨 Single Color</button>
+                                <button class="preset-btn" data-color-mode="random">🎭 Random Colors</button>
+                                <button class="preset-btn" data-color-mode="palette">🌈 Color Palette</button>
+                            </div>
+                            <div id="colorPaletteSection" style="display: none; margin-top: 10px;">
+                                <div style="font-size: 12px; color: #ccc; margin-bottom: 8px;">Select Palette Colors (click to toggle)</div>
+                                <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                                    <button class="palette-color" data-hue="0" style="background: hsl(0, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Red"></button>
+                                    <button class="palette-color" data-hue="30" style="background: hsl(30, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Orange"></button>
+                                    <button class="palette-color" data-hue="60" style="background: hsl(60, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Yellow"></button>
+                                    <button class="palette-color active" data-hue="85" style="background: hsl(85, 100%, 50%); width: 24px; height: 24px; border: 2px solid #4CAF50; border-radius: 50%; cursor: pointer;" title="Green"></button>
+                                    <button class="palette-color" data-hue="120" style="background: hsl(120, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Bright Green"></button>
+                                    <button class="palette-color" data-hue="180" style="background: hsl(180, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Cyan"></button>
+                                    <button class="palette-color" data-hue="240" style="background: hsl(240, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Blue"></button>
+                                    <button class="palette-color" data-hue="300" style="background: hsl(300, 100%, 50%); width: 24px; height: 24px; border: 2px solid #666; border-radius: 50%; cursor: pointer;" title="Magenta"></button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Particle Settings -->
                         <div>
                             <div style="font-size: 14px; margin-bottom: 10px; color: #ccc;">Settings</div>
@@ -2563,6 +2629,172 @@
                         const color = preset.dataset.color;
                         sendCommand(`PT:COLOR:${color}`);
                         console.log('Particle color set to:', color);
+                    }
+                });
+            });
+
+            // Particle spawn rate controls
+            document.querySelectorAll('[data-spawn-rate]').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all spawn rate buttons
+                    document.querySelectorAll('[data-spawn-rate]').forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    const rate = parseFloat(button.dataset.spawnRate);
+                    document.getElementById('spawnRateSlider').value = rate;
+                    document.getElementById('spawnRateValue').textContent = rate + 'x';
+                    
+                    sendCommand(`PT:FREQUENCY:${rate}`);
+                    console.log('Particle spawn rate set to:', rate);
+                });
+            });
+
+            // Spawn rate slider
+            const spawnRateSlider = document.getElementById('spawnRateSlider');
+            spawnRateSlider.addEventListener('input', () => {
+                const rate = parseFloat(spawnRateSlider.value);
+                document.getElementById('spawnRateValue').textContent = rate + 'x';
+                
+                // Update active button
+                document.querySelectorAll('[data-spawn-rate]').forEach(btn => btn.classList.remove('active'));
+                const matchingBtn = document.querySelector(`[data-spawn-rate="${rate}"]`);
+                if (matchingBtn) matchingBtn.classList.add('active');
+            });
+
+            spawnRateSlider.addEventListener('change', () => {
+                const rate = parseFloat(spawnRateSlider.value);
+                sendCommand(`PT:FREQUENCY:${rate}`);
+                console.log('Particle spawn rate changed to:', rate);
+            });
+
+            // Particle lifespan preset buttons
+            document.querySelectorAll('[data-lifespan]').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all lifespan buttons
+                    document.querySelectorAll('[data-lifespan]').forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    const [min, max] = button.dataset.lifespan.split(',').map(Number);
+                    document.getElementById('lifespanMinSlider').value = min;
+                    document.getElementById('lifespanMaxSlider').value = max;
+                    document.getElementById('lifespanMinValue').textContent = min + 'ms';
+                    document.getElementById('lifespanMaxValue').textContent = max + 'ms';
+                    
+                    sendCommand(`PT:LIFESPAN:${min},${max}`);
+                    console.log('Particle lifespan set to:', min, '-', max, 'ms');
+                });
+            });
+
+            // Lifespan sliders
+            const lifespanMinSlider = document.getElementById('lifespanMinSlider');
+            const lifespanMaxSlider = document.getElementById('lifespanMaxSlider');
+            
+            lifespanMinSlider.addEventListener('input', () => {
+                const min = parseInt(lifespanMinSlider.value);
+                const max = parseInt(lifespanMaxSlider.value);
+                
+                // Ensure min doesn't exceed max
+                if (min > max) {
+                    lifespanMaxSlider.value = min;
+                    document.getElementById('lifespanMaxValue').textContent = min + 'ms';
+                }
+                
+                document.getElementById('lifespanMinValue').textContent = min + 'ms';
+                
+                // Clear preset button selections
+                document.querySelectorAll('[data-lifespan]').forEach(btn => btn.classList.remove('active'));
+            });
+
+            lifespanMaxSlider.addEventListener('input', () => {
+                const min = parseInt(lifespanMinSlider.value);
+                const max = parseInt(lifespanMaxSlider.value);
+                
+                // Ensure max doesn't go below min
+                if (max < min) {
+                    lifespanMinSlider.value = max;
+                    document.getElementById('lifespanMinValue').textContent = max + 'ms';
+                }
+                
+                document.getElementById('lifespanMaxValue').textContent = max + 'ms';
+                
+                // Clear preset button selections
+                document.querySelectorAll('[data-lifespan]').forEach(btn => btn.classList.remove('active'));
+            });
+
+            lifespanMinSlider.addEventListener('change', () => {
+                const min = parseInt(lifespanMinSlider.value);
+                const max = parseInt(lifespanMaxSlider.value);
+                sendCommand(`PT:LIFESPAN:${min},${max}`);
+                console.log('Particle lifespan changed to:', min, '-', max, 'ms');
+            });
+
+            lifespanMaxSlider.addEventListener('change', () => {
+                const min = parseInt(lifespanMinSlider.value);
+                const max = parseInt(lifespanMaxSlider.value);
+                sendCommand(`PT:LIFESPAN:${min},${max}`);
+                console.log('Particle lifespan changed to:', min, '-', max, 'ms');
+            });
+
+            // Color mode buttons
+            document.querySelectorAll('[data-color-mode]').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all color mode buttons
+                    document.querySelectorAll('[data-color-mode]').forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    const mode = button.dataset.colorMode;
+                    const paletteSection = document.getElementById('colorPaletteSection');
+                    
+                    if (mode === 'palette') {
+                        paletteSection.style.display = 'block';
+                        // Send current palette selection
+                        const selectedColors = Array.from(document.querySelectorAll('.palette-color.active'))
+                            .map(btn => btn.dataset.hue);
+                        if (selectedColors.length > 0) {
+                            sendCommand(`PT:COLORMODE:PALETTE:${selectedColors.join(',')}`);
+                        }
+                    } else {
+                        paletteSection.style.display = 'none';
+                        sendCommand(`PT:COLORMODE:${mode.toUpperCase()}`);
+                    }
+                    
+                    console.log('Particle color mode set to:', mode);
+                });
+            });
+
+            // Color palette selection
+            document.querySelectorAll('.palette-color').forEach(colorBtn => {
+                colorBtn.addEventListener('click', () => {
+                    // Toggle active state
+                    colorBtn.classList.toggle('active');
+                    
+                    // Update border color
+                    if (colorBtn.classList.contains('active')) {
+                        colorBtn.style.border = '2px solid #4CAF50';
+                    } else {
+                        colorBtn.style.border = '2px solid #666';
+                    }
+                    
+                    // Send updated palette if palette mode is active
+                    const paletteMode = document.querySelector('[data-color-mode="palette"]');
+                    if (paletteMode && paletteMode.classList.contains('active')) {
+                        const selectedColors = Array.from(document.querySelectorAll('.palette-color.active'))
+                            .map(btn => btn.dataset.hue);
+                        
+                        if (selectedColors.length > 0) {
+                            sendCommand(`PT:COLORMODE:PALETTE:${selectedColors.join(',')}`);
+                            console.log('Updated color palette:', selectedColors);
+                        } else {
+                            // Fall back to single color mode if no colors selected
+                            document.querySelector('[data-color-mode="single"]').classList.add('active');
+                            paletteMode.classList.remove('active');
+                            document.getElementById('colorPaletteSection').style.display = 'none';
+                            sendCommand('PT:COLORMODE:SINGLE');
+                            console.log('No colors selected, switched to single color mode');
+                        }
                     }
                 });
             });
