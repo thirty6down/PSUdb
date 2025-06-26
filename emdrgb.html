@@ -2590,7 +2590,7 @@
 
             function sendColorCycleCommand() {
                 if (!ledCharacteristic || !isConnected) {
-                    showStatus('Not connected to device', 'error');
+                    updateStatus('Not connected to device', 'error');
                     return;
                 }
 
@@ -2598,7 +2598,7 @@
                     // Disable color cycling
                     console.log('Disabling color cycling');
                     sendCommand('COLORCYCLE:OFF');
-                    showStatus('Color cycling disabled', 'connected');
+                    updateStatus('Color cycling disabled', 'connected');
                     return;
                 }
 
@@ -2625,7 +2625,7 @@
                     sendCommand(`COLORCYCLE:SMOOTH:${smoothTransitions ? 'ON' : 'OFF'}`);
                 }, 200);
                 
-                showStatus(`Color cycling enabled with ${colorCycleArray.length} colors at ${colorCycleSpeed}x speed`, 'connected');
+                updateStatus(`Color cycling enabled with ${colorCycleArray.length} colors at ${colorCycleSpeed}x speed`, 'connected');
             }
             
             // Speed presets
@@ -3405,14 +3405,14 @@
             console.log('🎨 sendColorTest called with:', hex);
             
             if (!ledCharacteristic || !isConnected) {
-                showStatus('Not connected to device', 'error');
+                updateStatus('Not connected to device', 'error');
                 return;
             }
 
             // Convert hex to RGB
             const rgb = hexToRgb(hex);
             if (!rgb) {
-                showStatus('Failed to parse color', 'error');
+                updateStatus('Failed to parse color', 'error');
                 return;
             }
 
@@ -3429,7 +3429,7 @@
             // Send command to device
             const command = `SOLIDCOLOR:R${r},G${g},B${b}`;
             sendCommand(command);
-            showStatus(`Applied ${hex} at ${brightness}%`, 'connected');
+            updateStatus(`Applied ${hex} at ${brightness}%`, 'connected');
         }
 
         function applyCustomColor() {
@@ -3439,7 +3439,7 @@
             const hex = colorHex ? colorHex.value : '#FF0000';
             
             if (!isValidHex(hex)) {
-                showStatus('Invalid hex color code', 'error');
+                updateStatus('Invalid hex color code', 'error');
                 return;
             }
             
@@ -3567,6 +3567,9 @@
         document.getElementById('colorCyclingDisabled').classList.add('active');
         document.getElementById('colorCyclingEnabled').classList.remove('active');
         colorCycleEnabled = false;
+        
+        // Initialize color array with empty state
+        renderColorList();
 
         // Color Testing Setup
         setupColorSync();
