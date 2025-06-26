@@ -1193,7 +1193,7 @@
                     <div class="pref-section-header">
                         <div class="pref-section-title">
                             🌈 Color Cycling
-                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Dynamic Colors</span>
+                            <span style="font-size: 12px; font-weight: normal; color: #aaa;">Continues during pause</span>
                         </div>
                         <div class="pref-section-toggle">▼</div>
                     </div>
@@ -2079,6 +2079,7 @@
                         stopCyclePolling();
                         document.getElementById('playPauseBtn').textContent = 'Continue';
                         progressText.textContent = `Complete! ${targetCycles} cycles - Continue or go back`;
+                        
                     }
                     break;
 
@@ -2092,6 +2093,7 @@
                         stopCyclePolling();
                         document.getElementById('playPauseBtn').textContent = 'Continue';
                         progressText.textContent = `Complete! ${formatTime(targetTimeSeconds)} - Continue or go back`;
+                        
                     }
                     break;
 
@@ -2539,6 +2541,29 @@
                     const mode = button.dataset.particleMode;
                     sendCommand(mode === 'random' ? 'PT:MODE:RANDOM' : 'PT:MODE:PULSE');
                     console.log('Particle spawn mode:', mode);
+                });
+            });
+
+            // Particle color preset buttons
+            document.querySelectorAll('.color-preset').forEach(preset => {
+                preset.addEventListener('click', () => {
+                    // Remove active class from all particle color presets
+                    document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('active'));
+                    // Add active class to clicked preset
+                    preset.classList.add('active');
+                    
+                    // Handle different color types
+                    if (preset.dataset.hue) {
+                        // For hue-based colors (most buttons)
+                        const hue = parseInt(preset.dataset.hue);
+                        sendCommand(`PT:COLOR:${hue}`);
+                        console.log('Particle color set to hue:', hue);
+                    } else if (preset.dataset.color) {
+                        // For special colors like RAINBOW and WHITE
+                        const color = preset.dataset.color;
+                        sendCommand(`PT:COLOR:${color}`);
+                        console.log('Particle color set to:', color);
+                    }
                 });
             });
 
