@@ -1347,21 +1347,21 @@
                     <div style="margin-bottom: 20px;">
                         <div style="font-size: 14px; margin-bottom: 10px; color: #ccc; font-weight: bold;">Quick Color Presets</div>
                         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
-                            <button class="btn secondary" data-test-color="#FF0000" style="background: #FF0000; color: white;">🔴 Red</button>
-                            <button class="btn secondary" data-test-color="#00FF00" style="background: #00FF00; color: black;">🟢 Green</button>
-                            <button class="btn secondary" data-test-color="#0000FF" style="background: #0000FF; color: white;">🔵 Blue</button>
-                            <button class="btn secondary" data-test-color="#FFFF00" style="background: #FFFF00; color: black;">🟡 Yellow</button>
+                            <button class="btn secondary" onclick="sendColorTest('#FF0000')" style="background: #FF0000; color: white;">🔴 Red</button>
+                            <button class="btn secondary" onclick="sendColorTest('#00FF00')" style="background: #00FF00; color: black;">🟢 Green</button>
+                            <button class="btn secondary" onclick="sendColorTest('#0000FF')" style="background: #0000FF; color: white;">🔵 Blue</button>
+                            <button class="btn secondary" onclick="sendColorTest('#FFFF00')" style="background: #FFFF00; color: black;">🟡 Yellow</button>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
-                            <button class="btn secondary" data-test-color="#FF8000" style="background: #FF8000; color: black;">🟠 Orange</button>
-                            <button class="btn secondary" data-test-color="#8000FF" style="background: #8000FF; color: white;">🟣 Purple</button>
-                            <button class="btn secondary" data-test-color="#00FFFF" style="background: #00FFFF; color: black;">🟦 Cyan</button>
-                            <button class="btn secondary" data-test-color="#FF00FF" style="background: #FF00FF; color: white;">🌺 Pink</button>
+                            <button class="btn secondary" onclick="sendColorTest('#FF8000')" style="background: #FF8000; color: black;">🟠 Orange</button>
+                            <button class="btn secondary" onclick="sendColorTest('#8000FF')" style="background: #8000FF; color: white;">🟣 Purple</button>
+                            <button class="btn secondary" onclick="sendColorTest('#00FFFF')" style="background: #00FFFF; color: black;">🟦 Cyan</button>
+                            <button class="btn secondary" onclick="sendColorTest('#FF00FF')" style="background: #FF00FF; color: white;">🌺 Pink</button>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                            <button class="btn secondary" data-test-color="#FFFFFF" style="background: #FFFFFF; color: black; border: 1px solid #666;">⚪ White</button>
-                            <button class="btn secondary" data-test-color="#808080" style="background: #808080; color: white;">⚫ Gray</button>
-                            <button class="btn secondary" data-test-color="#FFA500" style="background: #FFA500; color: black;">🧡 Warm</button>
+                            <button class="btn secondary" onclick="sendColorTest('#FFFFFF')" style="background: #FFFFFF; color: black; border: 1px solid #666;">⚪ White</button>
+                            <button class="btn secondary" onclick="sendColorTest('#808080')" style="background: #808080; color: white;">⚫ Gray</button>
+                            <button class="btn secondary" onclick="sendColorTest('#FFA500')" style="background: #FFA500; color: black;">🧡 Warm</button>
                         </div>
                     </div>
                     
@@ -1369,10 +1369,10 @@
                     <div style="margin-bottom: 20px;">
                         <div style="font-size: 14px; margin-bottom: 10px; color: #ccc; font-weight: bold;">Custom Color</div>
                         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                            <input type="color" id="customColorPicker" value="#FF0000" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
-                            <input type="text" id="customColorHex" value="#FF0000" placeholder="#RRGGBB" 
+                            <input type="color" id="colorPicker" value="#FF0000" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
+                            <input type="text" id="colorHex" value="#FF0000" placeholder="#RRGGBB" 
                                    style="flex: 1; padding: 8px 12px; background: #333; border: 1px solid #555; border-radius: 8px; color: white; font-family: monospace;">
-                            <button class="btn primary" id="applyCustomColorBtn">Apply</button>
+                            <button class="btn primary" onclick="applyCustomColor()">Apply</button>
                         </div>
                         <div style="font-size: 12px; color: #666;">
                             Use the color picker or enter a hex code (e.g., #FF5500)
@@ -1384,16 +1384,16 @@
                         <div class="slider-container">
                             <div class="slider-label">
                                 <span>Test Brightness</span>
-                                <span id="testBrightnessValue">100%</span>
+                                <span id="brightnessValue">100%</span>
                             </div>
-                            <input type="range" class="slider" id="testBrightnessSlider" min="1" max="100" value="100">
+                            <input type="range" class="slider" id="brightnessSlider" min="10" max="100" value="100" oninput="updateBrightness()">
                         </div>
                     </div>
                     
                     <!-- Control Buttons -->
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <button class="btn primary" id="rainbowTestBtn" style="flex: 1;">🌈 Rainbow Test</button>
-                        <button class="btn secondary" id="clearTestBtn" style="flex: 1;">⬛ Clear LEDs</button>
+                        <button class="btn primary" onclick="sendCommand('RAINBOW_TEST')" style="flex: 1;">🌈 Rainbow Test</button>
+                        <button class="btn secondary" onclick="sendCommand('CLEAR_TEST')" style="flex: 1;">⬛ Clear LEDs</button>
                     </div>
                     
                     <!-- Debug Buttons -->
@@ -3401,94 +3401,11 @@
         // COLOR TESTING FUNCTIONS
         // ==============================================
 
-        function setupColorTestingEvents() {
-            console.log('🔧 Setting up color testing events...');
-            
-            // Color preset buttons
-            const colorButtons = document.querySelectorAll('[data-test-color]');
-            console.log('📌 Found', colorButtons.length, 'color buttons');
-            
-            colorButtons.forEach(btn => {
-                console.log('📌 Setting up event listener for color button:', btn.dataset.testColor);
-                btn.addEventListener('click', () => {
-                    const color = btn.dataset.testColor;
-                    console.log('🎨 Color preset button clicked:', color);
-                    applyTestColor(color);
-                });
-            });
-
-            // Custom color picker
-            document.getElementById('customColorPicker').addEventListener('change', (e) => {
-                document.getElementById('customColorHex').value = e.target.value;
-            });
-
-            // Custom color hex input
-            document.getElementById('customColorHex').addEventListener('input', (e) => {
-                const hex = e.target.value;
-                if (isValidHex(hex)) {
-                    document.getElementById('customColorPicker').value = hex;
-                }
-            });
-
-            // Apply custom color button
-            document.getElementById('applyCustomColorBtn').addEventListener('click', () => {
-                console.log('🎨 Apply custom color button clicked');
-                const hex = document.getElementById('customColorHex').value;
-                console.log('🎨 Custom hex value:', hex);
-                if (isValidHex(hex)) {
-                    console.log('🎨 Hex is valid, calling applyTestColor');
-                    applyTestColor(hex);
-                } else {
-                    console.log('❌ Invalid hex color code:', hex);
-                    showStatus('Invalid hex color code', 'error');
-                }
-            });
-
-            // Test brightness slider
-            document.getElementById('testBrightnessSlider').addEventListener('input', (e) => {
-                const brightness = parseInt(e.target.value);
-                document.getElementById('testBrightnessValue').textContent = brightness + '%';
-                
-                // Apply brightness immediately if we have a connection
-                if (ledCharacteristic && isConnected) {
-                    const brightnessValue = Math.round((brightness / 100) * 255);
-                    sendCommand(`B:${brightnessValue}`);
-                }
-            });
-
-            // Rainbow test button
-            document.getElementById('rainbowTestBtn').addEventListener('click', () => {
-                if (!ledCharacteristic || !isConnected) {
-                    showStatus('Not connected to device', 'error');
-                    return;
-                }
-                sendCommand('RAINBOW_TEST');
-                showStatus('Rainbow test mode activated', 'connected');
-            });
-
-            // Clear LEDs button
-            document.getElementById('clearTestBtn').addEventListener('click', () => {
-                if (!ledCharacteristic || !isConnected) {
-                    showStatus('Not connected to device', 'error');
-                    return;
-                }
-                sendCommand('CLEAR_TEST');
-                showStatus('LEDs cleared', 'connected');
-            });
-        }
-
-        function applyTestColor(hex) {
-            console.log('🎨 applyTestColor called with:', hex);
+        function sendColorTest(hex) {
+            console.log('🎨 sendColorTest called with:', hex);
             
             if (!ledCharacteristic || !isConnected) {
-                console.log('❌ Not connected to device');
                 showStatus('Not connected to device', 'error');
-                return;
-            }
-
-            if (!isValidHex(hex)) {
-                console.log('❌ Invalid hex format:', hex);
-                showStatus('Invalid color format', 'error');
                 return;
             }
 
@@ -3499,34 +3416,72 @@
                 return;
             }
 
-            // Apply test brightness
-            const brightness = parseInt(document.getElementById('testBrightnessSlider').value);
+            // Apply brightness from slider
+            const brightnessSlider = document.getElementById('brightnessSlider');
+            const brightness = brightnessSlider ? parseInt(brightnessSlider.value) : 100;
+            
             const r = Math.round((rgb.r * brightness) / 100);
             const g = Math.round((rgb.g * brightness) / 100);
             const b = Math.round((rgb.b * brightness) / 100);
 
-            // Debug logging
-            console.log('🎨 Color test debug:');
-            console.log(`  Original RGB: (${rgb.r}, ${rgb.g}, ${rgb.b})`);
-            console.log(`  Brightness: ${brightness}%`);
-            console.log(`  Final RGB: (${r}, ${g}, ${b})`);
-            
-            // Check for zero values that might cause black LEDs
-            if (r === 0 && g === 0 && b === 0) {
-                console.warn('⚠️ All RGB values are 0 - this will result in black LEDs');
-                console.log('💡 Try increasing brightness or using a brighter color');
-            }
+            console.log(`🎨 Sending color: ${hex} -> RGB(${r},${g},${b}) at ${brightness}%`);
 
             // Send command to device
             const command = `SOLIDCOLOR:R${r},G${g},B${b}`;
-            console.log('Sending color test command:', command);
             sendCommand(command);
+            showStatus(`Applied ${hex} at ${brightness}%`, 'connected');
+        }
+
+        function applyCustomColor() {
+            console.log('🎨 applyCustomColor called');
             
-            showStatus(`Applied color ${hex} at ${brightness}% brightness`, 'connected');
+            const colorHex = document.getElementById('colorHex');
+            const hex = colorHex ? colorHex.value : '#FF0000';
+            
+            if (!isValidHex(hex)) {
+                showStatus('Invalid hex color code', 'error');
+                return;
+            }
+            
+            sendColorTest(hex);
+        }
+
+        function updateBrightness() {
+            const slider = document.getElementById('brightnessSlider');
+            const display = document.getElementById('brightnessValue');
+            
+            if (slider && display) {
+                const brightness = parseInt(slider.value);
+                display.textContent = brightness + '%';
+                
+                // Update main device brightness too
+                if (ledCharacteristic && isConnected) {
+                    const brightnessValue = Math.round((brightness / 100) * 255);
+                    sendCommand(`B:${brightnessValue}`);
+                }
+            }
         }
 
         function isValidHex(hex) {
             return /^#[0-9A-F]{6}$/i.test(hex);
+        }
+
+        // Sync color picker and hex input
+        function setupColorSync() {
+            const picker = document.getElementById('colorPicker');
+            const hexInput = document.getElementById('colorHex');
+            
+            if (picker && hexInput) {
+                picker.addEventListener('change', () => {
+                    hexInput.value = picker.value;
+                });
+                
+                hexInput.addEventListener('input', () => {
+                    if (isValidHex(hexInput.value)) {
+                        picker.value = hexInput.value;
+                    }
+                });
+            }
         }
 
         // Debug function for testing color commands
@@ -3613,8 +3568,8 @@
         document.getElementById('colorCyclingEnabled').classList.remove('active');
         colorCycleEnabled = false;
 
-        // Color Testing Event Listeners
-        setupColorTestingEvents();
+        // Color Testing Setup
+        setupColorSync();
 
         // Initialize movement mode display
         const easingContainer = document.getElementById('easingIntensityContainer');
