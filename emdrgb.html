@@ -1460,6 +1460,53 @@
             easingIntensity: 0.7     // 0.0 to 1.0
         };
 
+        // Color cycling global state (moved here to avoid initialization issues)
+        let colorCycleArray = [];
+        let colorCycleEnabled = false;
+        let colorCycleSpeed = 1.0;
+        let smoothTransitions = true;
+
+        // Preset color arrays
+        const colorPresets = {
+            rainbow: [
+                { h: 0, s: 255, v: 255 },    // Red
+                { h: 42, s: 255, v: 255 },   // Orange  
+                { h: 64, s: 255, v: 255 },   // Yellow
+                { h: 85, s: 255, v: 255 },   // Green
+                { h: 128, s: 255, v: 255 },  // Cyan
+                { h: 170, s: 255, v: 255 },  // Blue
+                { h: 213, s: 255, v: 255 }   // Purple
+            ],
+            warmCool: [
+                { h: 0, s: 255, v: 255 },    // Red
+                { h: 16, s: 255, v: 255 },   // Orange
+                { h: 43, s: 255, v: 255 },   // Yellow
+                { h: 128, s: 255, v: 255 },  // Cyan
+                { h: 170, s: 255, v: 255 },  // Blue
+                { h: 192, s: 255, v: 255 }   // Purple
+            ],
+            sunset: [
+                { h: 14, s: 255, v: 255 },   // Deep orange
+                { h: 25, s: 255, v: 200 },   // Orange
+                { h: 35, s: 180, v: 255 },   // Light orange
+                { h: 45, s: 150, v: 255 },   // Yellow-orange
+                { h: 320, s: 100, v: 180 }   // Pink
+            ],
+            ocean: [
+                { h: 128, s: 255, v: 255 },  // Cyan
+                { h: 150, s: 200, v: 255 },  // Light blue
+                { h: 170, s: 255, v: 255 },  // Blue
+                { h: 190, s: 180, v: 200 },  // Deep blue
+                { h: 200, s: 255, v: 150 }   // Navy
+            ],
+            christmas: [
+                { h: 0, s: 255, v: 255 },    // Red
+                { h: 85, s: 255, v: 255 },   // Green
+                { h: 0, s: 255, v: 255 },    // Red
+                { h: 85, s: 255, v: 255 }    // Green
+            ]
+        };
+
         // Settings object
         let settings = {
             speed: 0.4,
@@ -3377,12 +3424,6 @@
         // GLOBAL COLOR CYCLING SYSTEM (moved from setupPreferences)
         // ==============================================
 
-        // Color cycling state
-        let colorCycleArray = [];
-        let colorCycleEnabled = false;
-        let colorCycleSpeed = 1.0;
-        let smoothTransitions = true;
-
         // Utility functions
         function isValidHex(hex) {
             return /^#[0-9A-F]{6}$/i.test(hex);
@@ -3456,47 +3497,6 @@
             const rgb = hsvToRgb(h, s, v);
             return `#${((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1)}`;
         }
-
-        // Preset color arrays
-        const colorPresets = {
-            rainbow: [
-                { h: 0, s: 255, v: 255 },    // Red
-                { h: 42, s: 255, v: 255 },   // Orange  
-                { h: 64, s: 255, v: 255 },   // Yellow
-                { h: 85, s: 255, v: 255 },   // Green
-                { h: 128, s: 255, v: 255 },  // Cyan
-                { h: 170, s: 255, v: 255 },  // Blue
-                { h: 213, s: 255, v: 255 }   // Purple
-            ],
-            warmCool: [
-                { h: 0, s: 255, v: 255 },    // Red
-                { h: 16, s: 255, v: 255 },   // Orange
-                { h: 43, s: 255, v: 255 },   // Yellow
-                { h: 128, s: 255, v: 255 },  // Cyan
-                { h: 170, s: 255, v: 255 },  // Blue
-                { h: 192, s: 255, v: 255 }   // Purple
-            ],
-            sunset: [
-                { h: 14, s: 255, v: 255 },   // Deep orange
-                { h: 25, s: 255, v: 200 },   // Orange
-                { h: 35, s: 180, v: 255 },   // Light orange
-                { h: 45, s: 150, v: 255 },   // Yellow-orange
-                { h: 320, s: 100, v: 180 }   // Pink
-            ],
-            ocean: [
-                { h: 128, s: 255, v: 255 },  // Cyan
-                { h: 150, s: 200, v: 255 },  // Light blue
-                { h: 170, s: 255, v: 255 },  // Blue
-                { h: 190, s: 180, v: 200 },  // Deep blue
-                { h: 200, s: 255, v: 150 }   // Navy
-            ],
-            christmas: [
-                { h: 0, s: 255, v: 255 },    // Red
-                { h: 85, s: 255, v: 255 },   // Green
-                { h: 0, s: 255, v: 255 },    // Red
-                { h: 85, s: 255, v: 255 }    // Green
-            ]
-        };
 
         // Color array management
         function addColorToArray(color = null) {
