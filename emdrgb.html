@@ -3481,20 +3481,17 @@
                 return;
             }
 
-            // Apply brightness from slider
-            const brightnessSlider = document.getElementById('brightnessSlider');
-            const brightness = brightnessSlider ? parseInt(brightnessSlider.value) : 100;
-            
-            const r = Math.round((rgb.r * brightness) / 100);
-            const g = Math.round((rgb.g * brightness) / 100);
-            const b = Math.round((rgb.b * brightness) / 100);
+            // Send raw RGB values without brightness scaling (device handles brightness separately)
+            const r = rgb.r;
+            const g = rgb.g;
+            const b = rgb.b;
 
-            console.log(`🎨 Sending color: ${hex} -> RGB(${r},${g},${b}) at ${brightness}%`);
+            console.log(`🎨 Sending color: ${hex} -> RGB(${r},${g},${b})`);
 
             // Send command to device
             const command = `SOLIDCOLOR:R${r},G${g},B${b}`;
             sendCommand(command);
-            updateStatus(`Applied ${hex} at ${brightness}%`, 'connected');
+            updateStatus(`Applied ${hex}`, 'connected');
         }
 
         function applyCustomColor() {
